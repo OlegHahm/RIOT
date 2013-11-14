@@ -30,8 +30,10 @@ License. See the file LICENSE in the top level directory for more details.
 
 #define WORDSIZE 16
 
-/* not used(?) */
-#define F_CPU 10000000
+/* used by hwtimer.c */
+#ifndef F_CPU
+#define F_CPU 8000000
+#endif
 
 extern volatile int __inISR;
 extern char __isr_stack[MSP430_ISR_STACK_SIZE];

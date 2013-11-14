@@ -48,9 +48,13 @@ static void multiplexer(int source)
     timer[source].callback(timer[source].data);
 }
 
+/*---------------------------------------------------------------------------*/
+
 static void hwtimer_releasemutex(void* mutex) {
     mutex_unlock((mutex_t*) mutex);
 }
+
+/*---------------------------------------------------------------------------*/
 
 void hwtimer_spin(unsigned long ticks)
 {
@@ -122,7 +126,6 @@ void hwtimer_wait(unsigned long ticks)
 
 /*---------------------------------------------------------------------------*/
 
-
 static int _hwtimer_set(unsigned long offset, void (*callback)(void*), void *ptr, bool absolute)
 {
     if (!inISR()) {
@@ -159,16 +162,19 @@ static int _hwtimer_set(unsigned long offset, void (*callback)(void*), void *ptr
     return n;
 }
 
+/*---------------------------------------------------------------------------*/
+
 int hwtimer_set(unsigned long offset, void (*callback)(void*), void *ptr)
 {
     return _hwtimer_set(offset, callback, ptr, false);
 }
 
+/*---------------------------------------------------------------------------*/
+
 int hwtimer_set_absolute(unsigned long offset, void (*callback)(void*), void *ptr)
 {
     return _hwtimer_set(offset, callback, ptr, true);
 }
-
 
 /*---------------------------------------------------------------------------*/
 

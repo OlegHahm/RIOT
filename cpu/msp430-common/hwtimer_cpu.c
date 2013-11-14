@@ -90,9 +90,9 @@ uint32_t hwtimer_arch_now()
     return ((uint32_t) timer_round << 16) + TA0R;
 }
 
-void hwtimer_arch_init(void (*handler)(int), uint32_t fcpu)
+void hwtimer_arch_init(void (*handler)(int),
+                       uint32_t __attribute__ ((unused)) fcpu)
 {
-    (void) fcpu;
     timerA_init();
     if (TIMER_B_COUNT > 0) {
         timerB_init();
