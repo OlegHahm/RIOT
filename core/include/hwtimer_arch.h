@@ -39,22 +39,22 @@ void hwtimer_arch_disable_interrupt(void);
  * Set a kernel timer to raise an interrupt after ::offset kernel timer ticks
  * from now.
  */
-void hwtimer_arch_set(unsigned long offset, short timer);
+void hwtimer_arch_set(uint32_t offset, uint8_t timer);
 
 /**
  * Set a kernel timer to raise an interrupt at specified system time.
  */
-void hwtimer_arch_set_absolute(unsigned long value, short timer);
+void hwtimer_arch_set_absolute(uint32_t value, uint8_t timer);
 
 /**
  * Unset the kernel timer with the given timer ID.
  */
-void hwtimer_arch_unset(short timer);
+void hwtimer_arch_unset(uint8_t timer);
 
 /**
  * Get the current tick count of the default hardware timer.
  */
-unsigned long hwtimer_arch_now(void);
+uint32_t hwtimer_arch_now(void);
 
 /**
  * @}

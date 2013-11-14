@@ -20,16 +20,27 @@ License. See the file LICENSE in the top level directory for more details.
 #endif
 #include <stdint.h>
 
-#ifdef __MSP430_HAS_TA2__
-#define ARCH_MAXTIMERS 2
-#endif
-#ifdef __MSP430_HAS_TA3__
-#define ARCH_MAXTIMERS 3
-#endif
-#ifdef __MSP430_HAS_T0A5__
-#define ARCH_MAXTIMERS 5
+#if defined (__MSP430_HAS_TA2__)
+#define TIMER_A_COUNT 2
+#elif defined (__MSP430_HAS_TA3__)
+#define TIMER_A_COUNT 3
+#elif defined (__MSP430_HAS_T0A5__)
+#define TIMER_A_COUNT 5
+#else
+#define TIMER_A_COUNT 0
 #endif
 
+#if defined (__MSP430_HAS_TB3__)
+#define TIMER_B_COUNT 3
+#elif defined (__MSP430_HAS_TB5__)
+#define TIMER_B_COUNT 5
+#elif defined (__MSP430_HAS_TB7__)
+#define TIMER_B_COUNT 7
+#else
+#define TIMER_B_COUNT 0
+#endif
+
+#define ARCH_MAXTIMERS (TIMER_A_COUNT + TIMER_B_COUNT)
 
 #ifndef ARCH_MAXTIMERS
 #warning "ARCH_MAXTIMERS UNSET!"
