@@ -24,6 +24,7 @@
 #define KERNEL_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "attributes.h"
 #include "config.h"
@@ -67,12 +68,11 @@
 #endif
 
 /* ------------------------------------------------------------------------- */
-
 /**
  * @def PID_NULL
  * @brief Identifier to detect an invalid PID
  */
-#define PID_NULL -1
+#define KERNEL_PID_NULL -1
 
 /**
  * @def PRIORITY_MIN

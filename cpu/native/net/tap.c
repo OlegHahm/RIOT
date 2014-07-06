@@ -64,7 +64,7 @@ int _native_tap_fd = -1;
 unsigned char _native_tap_mac[ETHER_ADDR_LEN];
 
 #ifdef __MACH__
-pid_t sigio_child_pid;
+kernel_pid_t sigio_child_pid;
 #endif
 
 void _native_handle_tap_input(void)
@@ -151,7 +151,7 @@ void _native_handle_tap_input(void)
 #ifdef __MACH__
 void sigio_child()
 {
-    pid_t parent = _native_pid;
+    kernel_pid_t parent = _native_pid;
 
     if ((sigio_child_pid = real_fork()) == -1) {
         err(EXIT_FAILURE, "sigio_child: fork");

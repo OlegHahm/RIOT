@@ -83,11 +83,11 @@ static handler_entry_t handlers[MAX_PACKET_HANDLERS];
 static const pm_table_t handler_table;
 static const char *cc1100_event_handler_name = "cc1100_event_handler";
 static mutex_t cc1100_mutex;
-volatile int cc1100_mutex_pid;
+volatile kernel_pid_t cc1100_mutex_pid;
 static vtimer_t cc1100_watch_dog;
 static timex_t cc1100_watch_dog_period;
 
-static uint16_t cc1100_event_handler_pid;
+static kernel_pid_t cc1100_event_handler_pid;
 static void *cc1100_event_handler_function(void *);
 
 static char event_handler_stack[KERNEL_CONF_STACKSIZE_MAIN];
@@ -174,7 +174,7 @@ void cc1100_phy_init(void)
     memset(seq_buffer, 0, sizeof(seq_buffer_entry_t) * MAX_SEQ_BUFFER_SIZE);
 
     /* Initialize mutex */
-    cc1100_mutex_pid = -1;
+    cc1100_mutex_pid = KERNEL_PID_NULL;
     mutex_init(&cc1100_mutex);
 
     /* Allocate event numbers and start cc1100 event process */
@@ -205,7 +205,7 @@ void cc1100_phy_mutex_lock(void)
 
 void cc1100_phy_mutex_unlock(void)
 {
-    cc1100_mutex_pid = -1;
+    cc1100_mutex_pid = KERNEL_PID_NULL;
     mutex_unlock(&cc1100_mutex);
 }
 

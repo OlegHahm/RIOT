@@ -27,7 +27,7 @@ See the file LICENSE in the top level directory for more details.
 //static volatile time_t epoch;
 static struct tm time_to_set;
 static int set_time = 0;
-int rtc_second_pid = 0;
+kernel_pid_t rtc_second_pid = 0;
 
 /*---------------------------------------------------------------------------*/
 void rtc_init(void)

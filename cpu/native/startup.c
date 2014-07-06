@@ -43,8 +43,8 @@ int _native_null_in_pipe[2];
 int _native_null_out_file;
 const char *_progname;
 char **_native_argv;
-pid_t _native_pid;
-pid_t _native_id;
+kernel_pid_t _native_pid;
+kernel_pid_t _native_id;
 const char *_native_unix_socket_path = NULL;
 
 /**

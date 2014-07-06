@@ -26,6 +26,8 @@ See the file LICENSE in the top level directory for more details.
 #include <stdint.h>
 #include <string.h>
 
+#include "kernel_types.h"
+
 /* cpu */
 #include "VIC.h"
 #include "lpc2387.h"

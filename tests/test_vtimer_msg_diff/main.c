@@ -103,7 +103,7 @@ void *timer_thread(void *arg)
 int main(void)
 {
     msg_t m;
-    int pid = thread_create(
+    kernel_pid_t pid = thread_create(
                   timer_stack,
                   sizeof(timer_stack),
                   PRIORITY_MAIN - 1,

@@ -35,8 +35,8 @@ void *sub_thread(void *arg)
 {
     (void) arg;
 
-    int pid = thread_getpid();
-    printf("THREAD %s (pid:%i) start\n", thread_getname(pid), pid);
+    kernel_pid_t pid = thread_getpid();
+    printf("THREAD %s (pid:%" PRIkernel_pid ") start\n", thread_getname(pid), pid);
 
     msg_t msg;
 

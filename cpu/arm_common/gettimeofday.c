@@ -19,6 +19,7 @@
  */
 
 #include <sys/time.h>
+#include "kernel_types.h"
 
 #if defined MODULE_RTC
 #   include "rtc.h"

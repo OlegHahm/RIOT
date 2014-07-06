@@ -56,7 +56,7 @@ int close(int fildes)
 }
 #endif
 
-pid_t getpid(void)
+kernel_pid_t getpid(void)
 {
     return sched_active_pid;
 }
@@ -76,7 +76,7 @@ int isatty(int fildes)
     return 0; /* sic */
 }
 
-int kill(pid_t pid, int sig)
+int kill(kernel_pid_t pid, int sig)
 {
     /* TODO */
     (void) pid;

@@ -50,7 +50,7 @@ char relay_stack[KERNEL_CONF_STACKSIZE_MAIN];
 #if RIOT_CCN_APPSERVER
 char appserver_stack[KERNEL_CONF_STACKSIZE_MAIN];
 #endif
-int relay_pid, appserver_pid;
+kernel_pid_t relay_pid, appserver_pid;
 
 int shell_max_cache_entries, shell_threshold_prefix, shell_threshold_aggregate;
 

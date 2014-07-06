@@ -50,7 +50,7 @@ int main(void)
 
     msg_t m;
 
-    int pid = thread_create(second_thread_stack, sizeof(second_thread_stack),
+    kernel_pid_t pid = thread_create(second_thread_stack, sizeof(second_thread_stack),
                             PRIORITY_MAIN - 1, CREATE_STACKTEST,
                             second_thread, NULL, "pong");
 

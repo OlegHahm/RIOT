@@ -30,7 +30,7 @@
 #define LIMIT 1000
 
 static char stacks[3][KERNEL_CONF_STACKSIZE_MAIN];
-static int pids[3];
+static kernel_pid_t pids[3];
 
 static void *first_thread(void *arg)
 {

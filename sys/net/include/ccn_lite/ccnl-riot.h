@@ -78,7 +78,7 @@ void ccnl_riot_relay_start(int max_cache_entries, int fib_threshold_prefix, int 
  *
  * @param relay_pid the pid of the relay
  */
-void ccnl_riot_appserver_start(int relay_pid);
+void ccnl_riot_appserver_start(kernel_pid_t relay_pid);
 
 /**
  * @}

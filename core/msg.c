@@ -52,7 +52,7 @@ static int queue_msg(tcb_t *target, msg_t *m)
     return 0;
 }
 
-int msg_send(msg_t *m, unsigned int target_pid, bool block)
+int msg_send(msg_t *m, kernel_pid_t target_pid, bool block)
 {
     if (inISR()) {
         return msg_send_int(m, target_pid);
@@ -142,7 +142,7 @@ int msg_send_to_self(msg_t *m)
     return res;
 }
 
-int msg_send_int(msg_t *m, unsigned int target_pid)
+int msg_send_int(msg_t *m, kernel_pid_t target_pid)
 {
     tcb_t *target = (tcb_t *) sched_threads[target_pid];
 
@@ -170,7 +170,7 @@ int msg_send_int(msg_t *m, unsigned int target_pid)
     }
 }
 
-int msg_send_receive(msg_t *m, msg_t *reply, unsigned int target_pid)
+int msg_send_receive(msg_t *m, msg_t *reply, kernel_pid_t target_pid)
 {
     dINT();
     tcb_t *me = (tcb_t*) sched_threads[sched_active_pid];

@@ -34,6 +34,7 @@
 #include <sys/time.h>
 #endif
 
+#include "kernel.h"
 #include "cpu.h"
 #include "irq.h"
 #include "vtimer.h"
@@ -321,10 +322,10 @@ void errx(int eval, const char *fmt, ...)
     verrx(eval, fmt, argp);
 }
 
-int getpid(void)
+kernel_pid_t getpid(void)
 {
     warnx("not implemented");
-    return -1;
+    return KERNEL_PID_NULL;
 }
 
 #ifdef MODULE_VTIMER
