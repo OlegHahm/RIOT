@@ -250,7 +250,7 @@ uint8_t transceiver_register(transceiver_type_t t, kernel_pid_t pid)
 }
 
 /* Unregister an upper layer thread */
-uint8_t transceiver_unregister(transceiver_type_t t, int pid)
+uint8_t transceiver_unregister(transceiver_type_t t, kernel_pid_t pid)
 {
     int result = 0;
     int state = disableIRQ();
@@ -499,7 +499,7 @@ static void receive_packet(uint16_t type, uint8_t pos)
     while (reg[i].transceivers != TRANSCEIVER_NONE) {
         if (reg[i].transceivers & t) {
             m.content.ptr = (char *) &(transceiver_buffer[transceiver_buffer_pos]);
-            DEBUG("transceiver: Notify thread %i\n", reg[i].pid);
+            DEBUG("transceiver: Notify thread %" PRIkernel_pid "\n", reg[i].pid);
 
             if (msg_send(&m, reg[i].pid, false) && (m.type != ENOBUFFER)) {
                 transceiver_buffer[transceiver_buffer_pos].processing++;

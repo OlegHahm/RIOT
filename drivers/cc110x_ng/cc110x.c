@@ -52,7 +52,7 @@ static void write_register(uint8_t r, uint8_t value);
 void cc110x_init(kernel_pid_t tpid)
 {
     transceiver_pid = tpid;
-    DEBUG("Transceiver PID: %i\n", transceiver_pid);
+    DEBUG("Transceiver PID: %" PRIkernel_pid "\n", transceiver_pid);
 
     rx_buffer_next = 0;
 

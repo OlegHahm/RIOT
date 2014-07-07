@@ -84,7 +84,7 @@ static void riot_ccn_appserver(int argc, char **argv)
             appserver_stack, sizeof(appserver_stack),
             PRIORITY_MAIN - 1, CREATE_STACKTEST,
             appserver_thread, NULL, "appserver");
-    DEBUG("ccn-lite appserver on thread_id %d...\n", appserver_pid);
+    DEBUG("ccn-lite appserver on thread_id %" PRIkernel_pid "...\n", appserver_pid);
 }
 #endif
 
@@ -174,7 +174,7 @@ static void riot_ccn_relay_start(int argc, char **argv)
             relay_stack, sizeof(relay_stack),
             PRIORITY_MAIN - 2, CREATE_STACKTEST,
             relay_thread, NULL, "relay");
-    DEBUG("ccn-lite relay on thread_id %d...\n", relay_pid);
+    DEBUG("ccn-lite relay on thread_id %" PRIkernel_pid "...\n", relay_pid);
 }
 
 static void riot_ccn_relay_stop(int argc, char **argv)

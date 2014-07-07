@@ -71,7 +71,7 @@ void sched_run(void)
 
 #ifdef SCHED_TEST_STACK
         if (*((unsigned int *)my_active_thread->stack_start) != (unsigned int) my_active_thread->stack_start) {
-            printf("scheduler(): stack overflow detected, task=%s pid=%u\n", my_active_thread->name, my_active_thread->pid);
+            printf("scheduler(): stack overflow detected, task=%s pid=%" PRIkernel_pid "\n", my_active_thread->name, my_active_thread->pid);
         }
 #endif
 

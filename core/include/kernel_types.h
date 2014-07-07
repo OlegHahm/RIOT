@@ -4,9 +4,14 @@
 #include <stdint.h>
 
 /**
+ * Macro for printing formatter
+ */
+#define PRIkernel_pid PRIi16
+
+/**
  * @brief Unique process identifier
  *
  */
-typedef int32_t kernel_pid_t;
+typedef int16_t kernel_pid_t;
 
 #endif /* KERNEL_TYPES_H */

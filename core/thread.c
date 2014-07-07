@@ -69,7 +69,7 @@ void thread_sleep(void)
 
 int thread_wakeup(kernel_pid_t pid)
 {
-    DEBUG("thread_wakeup: Trying to wakeup PID %i...\n", pid);
+    DEBUG("thread_wakeup: Trying to wakeup PID %" PRIkernel_pid "...\n", pid);
 
     int old_state = disableIRQ();
 
@@ -196,7 +196,7 @@ kernel_pid_t thread_create(char *stack, int stacksize, char priority, int flags,
 
     sched_num_threads++;
 
-    DEBUG("Created thread %s. PID: %u. Priority: %u.\n", name, cb->pid, priority);
+    DEBUG("Created thread %s. PID: %" PRIkernel_pid ". Priority: %u.\n", name, cb->pid, priority);
 
     if (flags & CREATE_SLEEPING) {
         sched_set_status(cb, STATUS_SLEEPING);

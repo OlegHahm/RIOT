@@ -322,10 +322,10 @@ void errx(int eval, const char *fmt, ...)
     verrx(eval, fmt, argp);
 }
 
-kernel_pid_t getpid(void)
+pid_t getpid(void)
 {
     warnx("not implemented");
-    return KERNEL_PID_NULL;
+    return -1;
 }
 
 #ifdef MODULE_VTIMER

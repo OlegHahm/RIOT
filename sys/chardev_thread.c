@@ -89,7 +89,7 @@ void chardev_loop(ringbuffer_t *rb)
                 case CLOSE:
                     DEBUG("CLOSE\n");
                     if (m.sender_pid == reader_pid) {
-                        DEBUG("uart0_thread: closing file from %i\n", reader_pid);
+                        DEBUG("uart0_thread: closing file from %" PRIkernel_pid "\n", reader_pid);
                         reader_pid = KERNEL_PID_NULL;
                         r = NULL;
                         m.content.value = 0;
@@ -112,7 +112,7 @@ void chardev_loop(ringbuffer_t *rb)
             DEBUG("Data is available\n");
             int state = disableIRQ();
             int nbytes = min(r->nbytes, rb->avail);
-            DEBUG("uart0_thread [%i]: sending %i bytes received from %i to pid %i\n", pid, nbytes, m.sender_pid, reader_pid);
+            DEBUG("uart0_thread [%i]: sending %i bytes received from %" PRIkernel_pid " to pid %" PRIkernel_pid "\n", pid, nbytes, m.sender_pid, reader_pid);
             ringbuffer_get(rb, r->buffer, nbytes);
             r->nbytes = nbytes;
 

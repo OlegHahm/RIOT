@@ -60,7 +60,7 @@ int ccnl_riot_client_get(kernel_pid_t relay_pid, char *name, char *reply_buf)
         }
         unsigned int interest_nonce = genrand_uint32();
         int interest_len = mkInterest(prefix, &interest_nonce, interest_pkg);
-        DEBUGMSG(1, "relay_pid=%u interest_len=%d\n", relay_pid, interest_len);
+        DEBUGMSG(1, "relay_pid=%" PRIkernel_pid " interest_len=%d\n", relay_pid, interest_len);
 
         riot_ccnl_msg_t rmsg;
         rmsg.payload = interest_pkg;
@@ -85,7 +85,7 @@ int ccnl_riot_client_get(kernel_pid_t relay_pid, char *name, char *reply_buf)
 
         unsigned char *data = rmsg_reply->payload;
         int datalen = (int) rmsg_reply->size;
-        DEBUGMSG(1, "%d bytes left; msg from=%u\n", datalen, rep.sender_pid);
+        DEBUGMSG(1, "%d bytes left; msg from=%" PRIkernel_pid "\n", datalen, rep.sender_pid);
 
         int scope = 3, aok = 3, minsfx = 0, maxsfx = CCNL_MAX_NAME_COMP,
             contlen = 0;

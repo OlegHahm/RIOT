@@ -54,7 +54,7 @@ struct timer_msg timer_msgs[] = { { .interval = { .seconds = 0, .microseconds = 
 void *timer_thread(void *arg)
 {
     (void) arg;
-    printf("This is thread %d\n", thread_getpid());
+    printf("This is thread %" PRIkernel_pid "\n", thread_getpid());
 
     msg_t msgq[16];
     msg_init_queue(msgq, sizeof(msgq));

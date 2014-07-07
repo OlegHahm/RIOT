@@ -44,7 +44,7 @@ void *timer_thread(void *arg)
 {
     (void) arg;
 
-    printf("This is thread %d\n", thread_getpid());
+    printf("This is thread %" PRIkernel_pid "\n", thread_getpid());
 
     /* we need a queue if the second message arrives while the first is still processed */
     /* without a queue, the message would get lost */
@@ -77,7 +77,7 @@ void *timer_thread_local(void *arg)
 {
     (void) arg;
 
-    printf("This is thread %d\n", thread_getpid());
+    printf("This is thread %" PRIkernel_pid "\n", thread_getpid());
 
     while (1) {
         msg_t m;

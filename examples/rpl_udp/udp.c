@@ -52,7 +52,7 @@ void udp_server(int argc, char **argv)
                                                        init_udp_server,
                                                        NULL,
                                                        "init_udp_server");
-    printf("UDP SERVER ON PORT %d (THREAD PID: %d)\n", HTONS(SERVER_PORT), udp_server_thread_pid);
+    printf("UDP SERVER ON PORT %d (THREAD PID: %" PRIkernel_pid ")\n", HTONS(SERVER_PORT), udp_server_thread_pid);
 }
 
 static void *init_udp_server(void *arg)

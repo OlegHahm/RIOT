@@ -74,12 +74,12 @@ int msg_send(msg_t *m, kernel_pid_t target_pid, bool block)
         return -1;
     }
 
-    DEBUG("msg_send() %s:%i: Sending from %i to %i. block=%i src->state=%i target->state=%i\n", __FILE__, __LINE__, sched_active_pid, target_pid, block, sched_active_thread->status, target->status);
+    DEBUG("msg_send() %s:%i: Sending from %" PRIkernel_pid " to %" PRIkernel_pid ". block=%i src->state=%i target->state=%i\n", __FILE__, __LINE__, sched_active_pid, target_pid, block, sched_active_thread->status, target->status);
 
     if (target->status != STATUS_RECEIVE_BLOCKED) {
-        DEBUG("msg_send() %s:%i: Target %i is not RECEIVE_BLOCKED.\n", __FILE__, __LINE__, target_pid);
+        DEBUG("msg_send() %s:%i: Target %" PRIkernel_pid " is not RECEIVE_BLOCKED.\n", __FILE__, __LINE__, target_pid);
         if (target->msg_array && queue_msg(target, m)) {
-            DEBUG("msg_send() %s:%i: Target %i has a msg_queue. Queueing message.\n", __FILE__, __LINE__, target_pid);
+            DEBUG("msg_send() %s:%i: Target %" PRIkernel_pid " has a msg_queue. Queueing message.\n", __FILE__, __LINE__, target_pid);
             eINT();
             if (sched_active_thread->status == STATUS_REPLY_BLOCKED) {
                 thread_yield();
@@ -118,7 +118,7 @@ int msg_send(msg_t *m, kernel_pid_t target_pid, bool block)
         DEBUG("msg_send: %s: Back from send block.\n", sched_active_thread->name);
     }
     else {
-        DEBUG("msg_send: %s: Direct msg copy from %i to %i.\n", sched_active_thread->name, thread_getpid(), target_pid);
+        DEBUG("msg_send: %s: Direct msg copy from %" PRIkernel_pid " to %" PRIkernel_pid ".\n", sched_active_thread->name, thread_getpid(), target_pid);
         /* copy msg to target */
         msg_t *target_message = (msg_t*) target->wait_data;
         *target_message = *m;
@@ -152,7 +152,7 @@ int msg_send_int(msg_t *m, kernel_pid_t target_pid)
     }
 
     if (target->status == STATUS_RECEIVE_BLOCKED) {
-        DEBUG("msg_send_int: Direct msg copy from %i to %i.\n", thread_getpid(), target_pid);
+        DEBUG("msg_send_int: Direct msg copy from %" PRIkernel_pid " to %" PRIkernel_pid ".\n", thread_getpid(), target_pid);
 
         m->sender_pid = target_pid;
 
@@ -189,7 +189,7 @@ int msg_reply(msg_t *m, msg_t *reply)
     tcb_t *target = (tcb_t*) sched_threads[m->sender_pid];
 
     if (!target) {
-        DEBUG("msg_reply(): %s: Target \"%" PRIu16 "\" not existing...dropping msg!\n", sched_active_thread->name, m->sender_pid);
+        DEBUG("msg_reply(): %s: Target \"%" PRIkernel_pid "\" not existing...dropping msg!\n", sched_active_thread->name, m->sender_pid);
         return -1;
     }
 
