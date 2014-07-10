@@ -56,7 +56,7 @@ int close(int fildes)
 }
 #endif
 
-kernel_pid_t getpid(void)
+int getpid(void)
 {
     return sched_active_pid;
 }
