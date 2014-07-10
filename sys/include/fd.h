@@ -23,6 +23,7 @@
 #define FD_H
 #include <stdlib.h>
 #include <sys/types.h>
+#include "kernel_types.h"
 #include "cpu.h"
 
 /**
@@ -45,7 +46,7 @@ typedef struct {
     ssize_t (*write)(int fd, const void *buf, size_t n);
 
     /** Close the file descriptor *fd*. */
-    int (*close)(int fd);
+    int (*close)(kernel_pid_t fd);
 } fd_t;
 
 /**
@@ -67,7 +68,7 @@ int fd_init(void);
  */
 int fd_new(int internal_fd, ssize_t (*internal_read)(int, void *, size_t),
            ssize_t (*internal_write)(int, const void *, size_t),
-           int (*internal_close)(int));
+           int (*internal_close)(kernel_pid_t));
 
 /**
  * @brief   Gets the file descriptor table entry associated with file
