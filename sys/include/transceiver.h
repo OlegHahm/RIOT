@@ -237,7 +237,7 @@ uint8_t transceiver_register(transceiver_type_t transceivers, kernel_pid_t pid);
  *
  * @return              1 on success, 0 otherwise
  */
-uint8_t transceiver_unregister(transceiver_type_t transceivers, int pid);
+uint8_t transceiver_unregister(transceiver_type_t transceivers, kernel_pid_t pid);
 
 #endif /* TRANSCEIVER_H */
 /** @} */

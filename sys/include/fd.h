@@ -33,7 +33,7 @@ typedef struct {
     int __active;
 
     /** the internal filedescriptor */
-    int fd;
+    kernel_pid_t fd;
 
     /**
      * Read *n* into *buf* from *fd*.  Return the
