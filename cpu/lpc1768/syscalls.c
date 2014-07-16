@@ -219,9 +219,9 @@ void _exit(int n)
 	while(1);
 }
 /*---------------------------------------------------------------------------*/
-kernel_pid_t _getpid(void)
+pid_t _getpid(void)
 {
-	return sched_active_thread->pid;
+	return (pid_t) sched_active_thread->pid;
 }
 /*---------------------------------------------------------------------------*/
 int _kill_r(struct _reent *r, int pid, int sig)

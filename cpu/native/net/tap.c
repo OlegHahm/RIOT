@@ -64,7 +64,7 @@ int _native_tap_fd = -1;
 unsigned char _native_tap_mac[ETHER_ADDR_LEN];
 
 #ifdef __MACH__
-int sigio_child_pid;
+pid_t sigio_child_pid;
 #endif
 
 void _native_handle_tap_input(void)
