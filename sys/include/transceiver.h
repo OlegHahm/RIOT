@@ -191,7 +191,7 @@ enum transceiver_msg_type_t {
  */
 typedef struct {
     transceiver_type_t transceivers;   ///< the tranceivers the thread is registered for
-    kernel_pid_t pid;                         ///< the thread's pid
+    kernel_pid_t pid;                  ///< the thread's pid
 } registered_t;
 
 typedef struct {
