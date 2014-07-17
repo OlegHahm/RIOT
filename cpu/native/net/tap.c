@@ -151,7 +151,7 @@ void _native_handle_tap_input(void)
 #ifdef __MACH__
 void sigio_child()
 {
-    int parent = _native_pid;
+    pid_t parent = _native_pid;
 
     if ((sigio_child_pid = real_fork()) == -1) {
         err(EXIT_FAILURE, "sigio_child: fork");
