@@ -76,7 +76,7 @@ int isatty(int fildes)
     return 0; /* sic */
 }
 
-int kill(kernel_pid_t pid, int sig)
+int kill(pid_t pid, int sig)
 {
     /* TODO */
     (void) pid;
