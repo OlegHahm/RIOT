@@ -11,9 +11,10 @@
  * @{
  *
  * @file
- * @brief slist (simple list) test application
+ * @brief slist (simple list) unittest
  *
  * @author      Benjamin Valentin <benpicco@zedat.fu-berlin.de>
+ * @author      Oliver Hahm <oliver.hahm@inria.fr>
  *
  * @}
  */
@@ -21,29 +22,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+
+#include "embUnit.h"
 #include "slist.h"
-
-int fail = 0;
-void cunit_named_check(int cond, const char *name, int line,
-                       const char *format, ...)
-{
-    va_list ap;
-
-    if (cond) {
-        return;
-    }
-
-    fail++;
-
-    va_start(ap, format);
-
-    printf("\t%s (%d) fail: ", name, line);
-    vprintf(format, ap);
-    puts("\n");
-    va_end(ap);
-}
-#define CHECK_TRUE(cond, format, args...) \
-    cunit_named_check(cond, __func__, __LINE__, format, ##args);
 
 char foo[] = "Hello World!";
 char bar[] = "Hello CUnit!";
@@ -194,6 +175,29 @@ void test_for_each_remove(void)
     simple_list_clear(&head);
 
     CHECK_TRUE(head == NULL, "list not cleared properly");
+}
+
+
+Test *tests_slist_tests(void)
+{
+    EMB_UNIT_TESTFIXTURES(fixtures) {
+        new_TestFixture(test_base64_01_encode_string),
+        new_TestFixture(test_base64_02_decode_base64),
+        new_TestFixture(test_base64_03_single_character),
+        new_TestFixture(test_base64_04_free_conversion),
+        new_TestFixture(test_base64_05_decode_larger),
+        new_TestFixture(test_base64_06_stream_encode),
+        new_TestFixture(test_base64_07_stream_decode),
+    };
+
+    EMB_UNIT_TESTCALLER(base64_tests, NULL, NULL, fixtures);
+
+    return (Test *)&base64_tests;
+}
+
+void tests_slist(void)
+{
+    TESTS_RUN(tests_slist_tests());
 }
 
 int main(void)
