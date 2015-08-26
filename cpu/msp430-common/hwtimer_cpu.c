@@ -57,7 +57,7 @@ static volatile unsigned int *get_control_reg_for_msp430_timer(int index)
         ptr = &TBCCTL0;
         break;
     default:
-        core_panic(0x0, "Wrong timer kind for MSP430");
+        core_panic(PANIC_GENERAL_ERROR, "Wrong timer kind for MSP430");
     }
 #else
     ptr = &TA0CCTL0;

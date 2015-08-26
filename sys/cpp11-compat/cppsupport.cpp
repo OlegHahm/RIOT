@@ -42,7 +42,7 @@ void *__dso_handle __attribute__((weak)) = NULL;
  */
 extern "C" void __cxa_pure_virtual ()
 {
-    core_panic(123, "PURE VIRTUAL CALL");
+    core_panic(PANIC_GENERAL_ERROR, "PURE VIRTUAL CALL");
 }
 
 /**
