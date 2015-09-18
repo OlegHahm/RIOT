@@ -67,4 +67,16 @@ ifneq (,$(filter fox,$(BOARD)))
 	USEMODULE += lsm303dlhc
 endif
 
+include $(RIOTBASE)/Makefile.dep
+ifeq (,$(filter netif,$(USEMODULE)))
+  DISABLE_MODULE += gnrc_netapi
+  DISABLE_MODULE += gnrc_netif
+  DISABLE_MODULE += gnrc_netif_hdr
+  DISABLE_MODULE += gnrc_netreg
+  DISABLE_MODULE += gnrc_netif_default
+  DISABLE_MODULE += gnrc_pktbuf
+  DISABLE_MODULE += gnrc_pktbuf_static
+  DISABLE_MODULE += gnrc_pktdump
+  DISABLE_MODULE += auto_init_gnrc_netif
+endif
 include $(RIOTBASE)/Makefile.include
