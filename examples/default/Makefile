@@ -34,15 +34,17 @@ USEMODULE += shell_commands
 USEMODULE += ps
 USEMODULE += config
 
-# Use modules for networking
-# gnrc is a meta module including all required, basic gnrc networking modules
-USEMODULE += gnrc
-# use the default network interface for the board
-USEMODULE += gnrc_netif_default
-# automatically initialize the network interface
-USEMODULE += auto_init_gnrc_netif
-# the application dumps received packets to stdout
-USEMODULE += gnrc_pktdump
+ifneq (,$(filter netif,$(FEATURES_PROVIDED)))
+  # Use modules for networking
+  # gnrc is a meta module including all required, basic gnrc networking modules
+  USEMODULE += gnrc
+  # use the default network interface for the board
+  USEMODULE += gnrc_netif_default
+  # automatically initialize the network interface
+  USEMODULE += auto_init_gnrc_netif
+  # the application dumps received packets to stdout
+  USEMODULE += gnrc_pktdump
+endif
 
 FEATURES_OPTIONAL += config
 FEATURES_OPTIONAL += periph_rtc
@@ -67,16 +69,4 @@ ifneq (,$(filter fox,$(BOARD)))
 	USEMODULE += lsm303dlhc
 endif
 
-include $(RIOTBASE)/Makefile.dep
-ifeq (,$(filter netif,$(USEMODULE)))
-  DISABLE_MODULE += gnrc_netapi
-  DISABLE_MODULE += gnrc_netif
-  DISABLE_MODULE += gnrc_netif_hdr
-  DISABLE_MODULE += gnrc_netreg
-  DISABLE_MODULE += gnrc_netif_default
-  DISABLE_MODULE += gnrc_pktbuf
-  DISABLE_MODULE += gnrc_pktbuf_static
-  DISABLE_MODULE += gnrc_pktdump
-  DISABLE_MODULE += auto_init_gnrc_netif
-endif
 include $(RIOTBASE)/Makefile.include
