@@ -6,4 +6,5 @@ FEATURES_PROVIDED += periph_rtt
 FEATURES_PROVIDED += periph_timer
 FEATURES_PROVIDED += periph_cpuid
 FEATURES_PROVIDED += cpp
+FEATURES_PROVIDED += netif
 FEATURES_MCU_GROUP = cortex_m3_1
