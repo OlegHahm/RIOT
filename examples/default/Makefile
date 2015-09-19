@@ -34,15 +34,17 @@ USEMODULE += shell_commands
 USEMODULE += ps
 USEMODULE += config
 
-# Use modules for networking
-# gnrc is a meta module including all required, basic gnrc networking modules
-USEMODULE += gnrc
-# use the default network interface for the board
-USEMODULE += gnrc_netif_default
-# automatically initialize the network interface
-USEMODULE += auto_init_gnrc_netif
-# the application dumps received packets to stdout
-USEMODULE += gnrc_pktdump
+ifneq (,$(filter netif,$(FEATURES_PROVIDED)))
+  # Use modules for networking
+  # gnrc is a meta module including all required, basic gnrc networking modules
+  USEMODULE += gnrc
+  # use the default network interface for the board
+  USEMODULE += gnrc_netif_default
+  # automatically initialize the network interface
+  USEMODULE += auto_init_gnrc_netif
+  # the application dumps received packets to stdout
+  USEMODULE += gnrc_pktdump
+endif
 
 FEATURES_OPTIONAL += config
 FEATURES_OPTIONAL += periph_rtc
