@@ -18,6 +18,7 @@
 #include "utlist.h"
 
 #include "net/gnrc/ipv6/hdr.h"
+#include "net/gnrc/udp.h"
 #include "net/gnrc/sixlowpan.h"
 #include "net/gnrc/sixlowpan/frag.h"
 #include "net/gnrc/sixlowpan/iphc.h"
@@ -64,6 +65,7 @@ static void _receive(gnrc_pktsnip_t *pkt)
 {
     gnrc_pktsnip_t *payload;
     uint8_t *dispatch;
+    gnrc_pktsnip_t *udp_hdr = NULL;
 
     /* seize payload as a temporary variable */
     payload = gnrc_pktbuf_start_write(pkt); /* need to duplicate since pkt->next
@@ -137,6 +139,26 @@ static void _receive(gnrc_pktsnip_t *pkt)
             gnrc_pktbuf_release(pkt);
             return;
         }
+//#ifdef MODULE_GNRC_SIXLOWPAN_IPHC_NHC
+        if (sixlowpan_iphc_nhc_is(dispatch)) {
+            udp_hdr = gnrc_pktbuf_add(NULL, NULL, sizeof(udp_hdr_t),
+                                      GNRC_NETTYPE_UDP);
+            if (udp_hdr == NULL) {
+                DEBUG("6lo: error on IPHC NHC decoding\n");
+                if (ipv6 != NULL) {
+                    gnrc_pktbuf_release(ipv6);
+                }
+                gnrc_pktbuf_release(pkt);
+                return;
+            }
+            dispatch_size = gnrc_sixlowpan_iphc_nhc_decode(udp_hdr, ipv6, pkt, dispatch_size);
+            if (dispatch_size == 0) {
+                gnrc_pktbuf_release(udp_hdr);
+                gnrc_pktbuf_release(pkt);
+                return;
+            }
+        }
+//#endif
         sixlowpan = gnrc_pktbuf_mark(pkt, dispatch_size, GNRC_NETTYPE_SIXLOWPAN);
         if (sixlowpan == NULL) {
             DEBUG("6lo: error on marking IPHC dispatch\n");
@@ -148,8 +170,15 @@ static void _receive(gnrc_pktsnip_t *pkt)
         /* Remove IPHC dispatch */
         gnrc_pktbuf_remove_snip(pkt, sixlowpan);
         /* Insert IPv6 header instead */
-        ipv6->next = pkt->next;
-        pkt->next = ipv6;
+        if (udp_hdr != NULL) {
+            udp_hdr->next = pkt->next;
+            ipv6->next = udp_hdr;
+            pkt->next = ipv6;
+        }
+        else {
+            ipv6->next = pkt->next;
+            pkt->next = ipv6;
+        }
     }
 #endif
     else {

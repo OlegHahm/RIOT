@@ -160,7 +160,7 @@ static inline bool sixlowpan_frag_is(sixlowpan_frag_t *hdr)
 #define SIXLOWPAN_IPHC1_NH          (0x04)
 #define SIXLOWPAN_NHC_UDP_MASK      (0xF8)
 #define SIXLOWPAN_NHC_UDP_ID        (0xF0)
-#define SIXLOWPAN_NHC_UDP_PP_MASK   (0xF3)
+#define SIXLOWPAN_NHC_UDP_PP_MASK   (0x03)
 #define SIXLOWPAN_NHC_UDP_SD_INLINE (0x00)
 #define SIXLOWPAN_NHC_UDP_S_INLINE  (0x01)
 #define SIXLOWPAN_NHC_UDP_D_INLINE  (0x02)
@@ -251,6 +251,20 @@ static inline bool sixlowpan_frag_is(sixlowpan_frag_t *hdr)
 static inline bool sixlowpan_iphc_is(uint8_t *data)
 {
     return ((*data & SIXLOWPAN_IPHC1_DISP_MASK) == SIXLOWPAN_IPHC1_DISP);
+}
+/** @} */
+
+/**
+ * @brief   Checks if next header is comressed.
+ *
+ * @param[in] data  Data of a datagram, may not be NULL.
+ *
+ * @return  true, if compressed flag is set.
+ * @return  false, if compressed flag is clear.
+ */
+static inline bool sixlowpan_iphc_nhc_is(uint8_t *data)
+{
+    return (*data & SIXLOWPAN_IPHC1_NH);
 }
 /** @} */
 
