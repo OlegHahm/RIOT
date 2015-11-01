@@ -1,6 +1,6 @@
 PKG_NAME=ccn-lite
 PKG_URL=https://github.com/OlegHahm/ccn-lite/
-PKG_VERSION=riot_integration_part1
+PKG_VERSION=riot_integration_l2
 PKG_DIR=$(CURDIR)/$(PKG_NAME)
 
 ifneq ($(RIOTBOARD),)
