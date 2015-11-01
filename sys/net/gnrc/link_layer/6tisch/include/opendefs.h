@@ -14,8 +14,11 @@
 
 // general
 #include <stdint.h>               // needed for uin8_t, uint16_t
-#include "toolchain_defs.h"
+//#include "toolchain_defs.h"
 #include "board_info.h"
+
+#define BEGIN_PACK   _Pragma("pack(1)");
+#define END_PACK     _Pragma("pack()");
 
 //=========================== define ==========================================
 
