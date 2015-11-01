@@ -6,9 +6,11 @@
 #undef USE_NFN
 
 #define USE_IPV6
+#define USE_IEEE802154
 #define USE_SUITE_NDNTLV
 #define NEEDS_PREFIX_MATCHING
 
+#include "net/packet.h"
 #include "ccnl-defs.h"
 #include "ccnl-core.h"
 #include "net/gnrc/netreg.h"
