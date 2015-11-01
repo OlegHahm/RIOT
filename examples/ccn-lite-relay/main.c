@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "thread.h"
 #include "msg.h"
 #include "timex.h"
 #include "shell_commands.h"
@@ -15,6 +16,8 @@
 #define MAIN_QUEUE_SIZE     (8)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 //static char addr_str[IPV6_ADDR_MAX_STR_LEN];
+//
+static char _ccnl_stack[THREAD_STACKSIZE_MAIN];
 
 struct ccnl_if_s *i;
 
@@ -51,6 +54,13 @@ static int _open_udp_socket(char **argv)
     i->sock = ccnl_open_udpdev(udpport);
 
     return 0;
+}
+
+static void *_ccnl_eventloop_trampoline(void *dummy)
+{
+    (void) dummy;
+    ccnl_event_loop(&theRelay);
+    return NULL;
 }
 
 static int _ccnl_fwd(int argc, char **argv)
@@ -92,7 +102,8 @@ static int _ccnl_fwd(int argc, char **argv)
     }
 
     ccnl_set_timer(SEC_IN_USEC, ccnl_minimalrelay_ageing, &theRelay, 0);
-    ccnl_event_loop(&theRelay);
+    thread_create(_ccnl_stack, sizeof(_ccnl_stack), THREAD_PRIORITY_MAIN - 1,
+                  CREATE_STACKTEST, _ccnl_eventloop_trampoline, NULL, "ccnl");
 
     return 0;
 }
