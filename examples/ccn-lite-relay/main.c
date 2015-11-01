@@ -77,10 +77,11 @@ static int _ccnl_fwd(int argc, char **argv)
             break;
         case 'i': {
             int pid = atoi(argv[2]);
+            i->if_pid = pid;
             if (ccnl_open_netif(pid, GNRC_NETTYPE_CCN) < 0) {
                 puts("Error registering at network interface!");
+                i->if_pid = KERNEL_PID_UNDEF;
             }
-            i->if_pid = pid;
             theRelay.ifcount++;
             break;
             }
