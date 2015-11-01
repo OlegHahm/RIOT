@@ -11,6 +11,7 @@
 
 #include "ccnl-defs.h"
 #include "ccnl-core.h"
+#include "net/gnrc/netreg.h"
 
 #define ccnl_malloc(s)                  malloc(s)
 #define ccnl_calloc(n,s)                calloc(n,s)
@@ -19,5 +20,6 @@
 
 void ccnl_event_loop(struct ccnl_relay_s *ccnl);
 void ccnl_minimalrelay_ageing(void *relay, void *aux);
+int ccnl_open_netif(kernel_pid_t if_pid, gnrc_nettype_t netreg_type);
 
 #endif /* CCN_LITE_RIOT_H */
