@@ -84,7 +84,9 @@ typedef enum {
      * @}
      */
 
-
+#ifdef MODULE_CCN_LITE
+    GNRC_NETTYPE_CCN,           /**< Protocol is CCN */
+#endif
     /**
      * @{
      * @name Testing
