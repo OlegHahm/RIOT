@@ -9,11 +9,11 @@
 */
 
 #include "packetfunctions.h"
-#include "crypto_engine.h"
+// #include "crypto_engine.h"
 #include "IEEE802154.h"
 #include "IEEE802154E.h"
 #include "idmanager.h"
-#include "openserial.h"
+// #include "openserial.h"
 #include "IEEE802154_security.h"
 
 //=============================define==========================================
@@ -238,9 +238,9 @@ void IEEE802154_security_prependAuxiliarySecurityHeader(OpenQueueEntry_t* msg){
          packetfunctions_writeAddress(msg,temp_keySource,OW_LITTLE_ENDIAN);
          break;
       default://error
-         openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                              (errorparameter_t)msg->l2_frameType,
-                              (errorparameter_t)0);
+         // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+         //                      (errorparameter_t)msg->l2_frameType,
+         //                      (errorparameter_t)0);
          return;
    }
 
@@ -304,9 +304,9 @@ owerror_t IEEE802154_security_outgoingFrameSecurity(OpenQueueEntry_t*   msg){
                                                            msg->l2_frameType);
 
    if (keyDescriptor==NULL){//key not found
-      openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                           (errorparameter_t)msg->l2_frameType,
-                           (errorparameter_t)1);
+      // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+      //                      (errorparameter_t)msg->l2_frameType,
+      //                      (errorparameter_t)1);
       return E_FAIL;
    }
 
@@ -365,9 +365,9 @@ owerror_t IEEE802154_security_outgoingFrameSecurity(OpenQueueEntry_t*   msg){
 
    // assert
    if (len_a + len_m > 125) {
-      openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                           (errorparameter_t)msg->l2_frameType,
-                           (errorparameter_t)2);
+      // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+      //                      (errorparameter_t)msg->l2_frameType,
+      //                      (errorparameter_t)2);
       return E_FAIL;
    }
 
@@ -378,20 +378,20 @@ owerror_t IEEE802154_security_outgoingFrameSecurity(OpenQueueEntry_t*   msg){
 
    //Encryption and/or authentication
    // CRYPTO_ENGINE overwrites m[] with ciphertext and appends the MIC
-   outStatus = CRYPTO_ENGINE.aes_ccms_enc(a,
-                                          len_a,
-                                          m,
-                                          &len_m,
-                                          nonce,
-                                          2, // L=2 in 15.4 std
-                                          key,
-                                          msg->l2_authenticationLength);
+   // outStatus = CRYPTO_ENGINE.aes_ccms_enc(a,
+   //                                        len_a,
+   //                                        m,
+   //                                        &len_m,
+   //                                        nonce,
+   //                                        2, // L=2 in 15.4 std
+   //                                        key,
+   //                                        msg->l2_authenticationLength);
 
    //verify that no errors occurred
    if (outStatus != E_SUCCESS) {
-      openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-      (errorparameter_t)msg->l2_frameType,
-      (errorparameter_t)3);
+      // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+      // (errorparameter_t)msg->l2_frameType,
+      // (errorparameter_t)3);
    }
 
    return outStatus;
@@ -450,9 +450,9 @@ void IEEE802154_security_retrieveAuxiliarySecurityHeader(OpenQueueEntry_t*      
       }
 
       if (l2_frameCounter.byte4 == 0xff){ //frame counter overflow
-         openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                              (errorparameter_t)msg->l2_frameType,
-                              (errorparameter_t)4);
+         // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+         //                      (errorparameter_t)msg->l2_frameType,
+         //                      (errorparameter_t)4);
          return;
       }
 
@@ -483,9 +483,9 @@ void IEEE802154_security_retrieveAuxiliarySecurityHeader(OpenQueueEntry_t*      
          tempheader->headerLength+=8;
          break;
       default: //error
-         openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                              (errorparameter_t)msg->l2_frameType,
-                              (errorparameter_t)5);
+         // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+         //                      (errorparameter_t)msg->l2_frameType,
+         //                      (errorparameter_t)5);
          return;
       }
 
@@ -527,9 +527,9 @@ owerror_t IEEE802154_security_incomingFrame(OpenQueueEntry_t* msg){
                                                           msg->l2_frameType);
 
    if (keyDescriptor==NULL){//can't find the key
-      openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                           (errorparameter_t)msg->l2_frameType,
-                           (errorparameter_t)6);
+      // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+      //                      (errorparameter_t)msg->l2_frameType,
+      //                      (errorparameter_t)6);
       return E_FAIL;
    }
 
@@ -539,9 +539,9 @@ owerror_t IEEE802154_security_incomingFrame(OpenQueueEntry_t* msg){
                                                                 keyDescriptor);
 
    if (deviceDescriptor==NULL){//can't find the device in the list of authorized neighbors
-      openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                           (errorparameter_t)msg->l2_frameType,
-                           (errorparameter_t)7);
+      // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+      //                      (errorparameter_t)msg->l2_frameType,
+      //                      (errorparameter_t)7);
       return E_FAIL;
    }
 
@@ -550,9 +550,9 @@ owerror_t IEEE802154_security_incomingFrame(OpenQueueEntry_t* msg){
                                                                               msg->commandFrameIdentifier);
 
    if (securityLevelDescriptor == NULL){//can't find the frame type in the list of allowed frame types
-      openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                           (errorparameter_t)msg->l2_frameType,
-                           (errorparameter_t)8);
+      // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+      //                      (errorparameter_t)msg->l2_frameType,
+      //                      (errorparameter_t)8);
       return E_FAIL;
    }
 
@@ -562,9 +562,9 @@ owerror_t IEEE802154_security_incomingFrame(OpenQueueEntry_t* msg){
                                                                  deviceDescriptor->Exempt);
 
    if(outStatus == FALSE) {//security level not allowed according to local security policies
-      openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                           (errorparameter_t)msg->l2_frameType,
-                           (errorparameter_t)9);
+      // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+      //                      (errorparameter_t)msg->l2_frameType,
+      //                      (errorparameter_t)9);
       return E_FAIL;
    }
 
@@ -573,9 +573,9 @@ owerror_t IEEE802154_security_incomingFrame(OpenQueueEntry_t* msg){
                                                                   msg->l2_frameType,
                                                                   0);
    if(outStatus == FALSE){// improper use of the key, according to local security policies
-     openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                          (errorparameter_t)msg->l2_frameType,
-                          (errorparameter_t)10);
+     // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+     //                      (errorparameter_t)msg->l2_frameType,
+     //                      (errorparameter_t)10);
      return E_FAIL;
    }
 
@@ -618,27 +618,27 @@ owerror_t IEEE802154_security_incomingFrame(OpenQueueEntry_t* msg){
 
    // assert
    if (len_a + len_c > 125) {
-      openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                           (errorparameter_t)msg->l2_frameType,
-                           (errorparameter_t)11);
+      // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+      //                      (errorparameter_t)msg->l2_frameType,
+      //                      (errorparameter_t)11);
       return E_FAIL;
    }
 
    //decrypt and/or verify authenticity of the frame
-   outStatus = CRYPTO_ENGINE.aes_ccms_dec(a,
-                                          len_a,
-                                          c,
-                                          &len_c,
-                                          nonce,
-                                          2,
-                                          keyDescriptor->key,
-                                          msg->l2_authenticationLength);
+   // outStatus = CRYPTO_ENGINE.aes_ccms_dec(a,
+   //                                        len_a,
+   //                                        c,
+   //                                        &len_c,
+   //                                        nonce,
+   //                                        2,
+   //                                        keyDescriptor->key,
+   //                                        msg->l2_authenticationLength);
 
    //verify if any error occurs
    if (outStatus != E_SUCCESS){
-      openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
-                           (errorparameter_t)msg->l2_frameType,
-                           (errorparameter_t)12);
+      // openserial_printError(COMPONENT_SECURITY,ERR_SECURITY,
+      //                      (errorparameter_t)msg->l2_frameType,
+      //                      (errorparameter_t)12);
    }
 
    packetfunctions_tossFooter(msg,msg->l2_authenticationLength);

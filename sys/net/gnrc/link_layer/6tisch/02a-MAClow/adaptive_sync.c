@@ -7,13 +7,13 @@
 #include "adaptive_sync.h"
 #include "IEEE802154E.h"
 #include "radio.h"
-#include "openserial.h"
-#include "leds.h"
+// #include "openserial.h"
+// #include "leds.h"
 #include "neighbors.h"
-#include "debugpins.h"
+// #include "debugpins.h"
 #include "packetfunctions.h"
 #include "sixtop.h"
-#include "scheduler.h"
+// #include "scheduler.h"
 #include "openqueue.h"
 #include "openrandom.h"
 
@@ -32,7 +32,7 @@ adaptive_sync_vars_t adaptive_sync_vars;
 /**
 \brief initial this module
 */
-void adaptive_sync_init() {
+void adaptive_sync_init(void) {
    // reset local variables
    memset(&adaptive_sync_vars,0x00,sizeof(adaptive_sync_vars_t));
 
@@ -170,7 +170,7 @@ void adaptive_sync_calculateCompensatedSlots(int16_t timeCorrection) {
 
 Once compensationTimeout == 0, extend or shorten current slot length for one tick.
 */
-void adaptive_sync_countCompensationTimeout() {
+void adaptive_sync_countCompensationTimeout(void) {
    uint16_t newSlotDuration;
 
    newSlotDuration  = TsSlotDuration;
@@ -199,8 +199,8 @@ void adaptive_sync_countCompensationTimeout() {
       radio_setTimerPeriod(newSlotDuration);
       adaptive_sync_vars.compensationTimeout = adaptive_sync_vars.compensationInfo_vars.compensationSlots;
 #ifdef OPENSIM
-      debugpins_debug_set();
-      debugpins_debug_clr();
+      // debugpins_debug_set();
+      // debugpins_debug_clr();
 #endif
    }
 }
@@ -253,8 +253,8 @@ void adaptive_sync_countCompensationTimeout_compoundSlots(uint16_t compoundSlots
       }
       radio_setTimerPeriod(newSlotDuration);
 #ifdef OPENSIM
-      debugpins_debug_set();
-      debugpins_debug_clr();
+      // debugpins_debug_set();
+      // debugpins_debug_clr();
 #endif
    }
 }
@@ -262,7 +262,7 @@ void adaptive_sync_countCompensationTimeout_compoundSlots(uint16_t compoundSlots
 /**
 \brief set driftChanged to true.
 */
-void adaptive_sync_driftChanged() {
+void adaptive_sync_driftChanged(void) {
 #ifndef NOADAPTIVESYNC
    adaptive_sync_vars.driftChanged = TRUE;
 #endif

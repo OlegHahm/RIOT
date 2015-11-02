@@ -31,7 +31,7 @@ bool isThisRowMatching(
 /**
 \brief Initializes this module.
 */
-void neighbors_init() {
+void neighbors_init(void) {
 
    // clear module variables
    memset(&neighbors_vars,0,sizeof(neighbors_vars_t));
@@ -51,7 +51,7 @@ void neighbors_init() {
 
 \returns This mote's current DAG rank.
 */
-dagrank_t neighbors_getMyDAGrank() {
+dagrank_t neighbors_getMyDAGrank(void) {
    return neighbors_vars.myDAGrank;
 }
 
@@ -60,7 +60,7 @@ dagrank_t neighbors_getMyDAGrank() {
 
 \returns The number of neighbors this mote's currently knows of.
 */
-uint8_t neighbors_getNumNeighbors() {
+uint8_t neighbors_getNumNeighbors(void) {
    uint8_t i;
    uint8_t returnVal;
 
@@ -444,22 +444,22 @@ void neighbors_indicateRxDIO(OpenQueueEntry_t* msg) {
    // neighbors_vars.dio = (icmpv6rpl_dio_ht*)(msg->payload);
    // retrieve rank
    temp_8b            = *(msg->payload+2);
-   neighbors_vars.dio->rank = (temp_8b << 8) + *(msg->payload+3);
+   // neighbors_vars.dio->rank = (temp_8b << 8) + *(msg->payload+3);
    if (isNeighbor(&(msg->l2_nextORpreviousHop))==TRUE) {
       for (i=0;i<MAXNUMNEIGHBORS;i++) {
          if (isThisRowMatching(&(msg->l2_nextORpreviousHop),i)) {
-            if (
-                  neighbors_vars.dio->rank > neighbors_vars.neighbors[i].DAGrank &&
-                  neighbors_vars.dio->rank - neighbors_vars.neighbors[i].DAGrank >(DEFAULTLINKCOST*2*MINHOPRANKINCREASE)
-               ) {
-                // the new DAGrank looks suspiciously high, only increment a bit
-                neighbors_vars.neighbors[i].DAGrank += (DEFAULTLINKCOST*2*MINHOPRANKINCREASE);
-                // openserial_printError(COMPONENT_NEIGHBORS,ERR_LARGE_DAGRANK,
-                //                (errorparameter_t)neighbors_vars.dio->rank,
-                //                (errorparameter_t)neighbors_vars.neighbors[i].DAGrank);
-            } else {
-               neighbors_vars.neighbors[i].DAGrank = neighbors_vars.dio->rank;
-            }
+            // if (
+            //       neighbors_vars.dio->rank > neighbors_vars.neighbors[i].DAGrank &&
+            //       neighbors_vars.dio->rank - neighbors_vars.neighbors[i].DAGrank >(DEFAULTLINKCOST*2*MINHOPRANKINCREASE)
+            //    ) {
+            //     // the new DAGrank looks suspiciously high, only increment a bit
+            //     neighbors_vars.neighbors[i].DAGrank += (DEFAULTLINKCOST*2*MINHOPRANKINCREASE);
+            //     // openserial_printError(COMPONENT_NEIGHBORS,ERR_LARGE_DAGRANK,
+            //     //                (errorparameter_t)neighbors_vars.dio->rank,
+            //     //                (errorparameter_t)neighbors_vars.neighbors[i].DAGrank);
+            // } else {
+               // neighbors_vars.neighbors[i].DAGrank = neighbors_vars.dio->rank;
+            // }
             break;
          }
       }
@@ -504,7 +504,7 @@ routing decisions to change. Examples are:
   very low DAGrank, I may want to change by routing parent.
 - I became a DAGroot, so my DAGrank should be 0.
 */
-void neighbors_updateMyDAGrankAndNeighborPreference() {
+void neighbors_updateMyDAGrankAndNeighborPreference(void) {
    uint8_t   i;
    uint16_t  rankIncrease;
    uint32_t  tentativeDAGrank; // 32-bit since is used to sum
@@ -564,7 +564,7 @@ void neighbors_updateMyDAGrankAndNeighborPreference() {
 
 //===== maintenance
 
-void  neighbors_removeOld() {
+void  neighbors_removeOld(void) {
    uint8_t    i;
    uint16_t   timeSinceHeard;
 
@@ -588,7 +588,7 @@ status information about several modules in the OpenWSN stack.
 
 \returns TRUE if this function printed something, FALSE otherwise.
 */
-bool debugPrint_neighbors() {
+bool debugPrint_neighbors(void) {
    debugNeighborEntry_t temp;
    neighbors_vars.debugRow=(neighbors_vars.debugRow+1)%MAXNUMNEIGHBORS;
    temp.row=neighbors_vars.debugRow;
