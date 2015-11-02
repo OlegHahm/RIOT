@@ -70,6 +70,16 @@
 #define IPHC_M_DAC_DAM_M_8          (0x0b)
 #define IPHC_M_DAC_DAM_M_UC_PREFIX  (0x0c)
 
+#define NHC_UDP_MASK                (0xF8)
+#define NHC_UDP_ID                  (0xF0)
+#define NHC_UDP_PP_MASK             (0x03)
+#define NHC_UDP_SD_INLINE           (0x00)
+#define NHC_UDP_S_INLINE            (0x01)
+#define NHC_UDP_D_INLINE            (0x02)
+#define NHC_UDP_SD_ELIDED           (0x03)
+#define NHC_UDP_C_MASK              (0xF4)
+#define NHC_UDP_C_ELIDED            (0x03)
+
 #define NHC_UDP_4BIT_PORT           (0xF0B0)
 #define NHC_UDP_4BIT_MASK           (0xFFF0)
 #define NHC_UDP_8BIT_PORT           (0xF000)
@@ -398,14 +408,14 @@ size_t gnrc_sixlowpan_iphc_nhc_decode(gnrc_pktsnip_t *udp, gnrc_pktsnip_t *ipv6,
     network_uint16_t *dst_port = &(udp_hdr->dst_port);
     uint8_t tmp;
 
-    if ((udp_nhc  & SIXLOWPAN_NHC_UDP_MASK) != SIXLOWPAN_NHC_UDP_ID) {
+    if ((udp_nhc  & NHC_UDP_MASK) != NHC_UDP_ID) {
         DEBUG("6lo iphc nhc: unspecified header type\n");
         return 0;
     }
 
-    switch (udp_nhc & SIXLOWPAN_NHC_UDP_PP_MASK) {
+    switch (udp_nhc & NHC_UDP_PP_MASK) {
 
-        case SIXLOWPAN_NHC_UDP_SD_INLINE:
+        case NHC_UDP_SD_INLINE:
             DEBUG("6lo iphc nhc: SD_INLINE\n");
             src_port->u8[0] = payload[offset++];
             src_port->u8[1] = payload[offset++];
@@ -413,21 +423,21 @@ size_t gnrc_sixlowpan_iphc_nhc_decode(gnrc_pktsnip_t *udp, gnrc_pktsnip_t *ipv6,
             dst_port->u8[1] = payload[offset++];
             break;
 
-        case SIXLOWPAN_NHC_UDP_S_INLINE:
+        case NHC_UDP_S_INLINE:
             DEBUG("6lo iphc nhc: S_INLINE\n");
             src_port->u8[0] = payload[offset++];
             src_port->u8[1] = payload[offset++];
             *dst_port = byteorder_htons(payload[offset++] + NHC_UDP_8BIT_PORT);
             break;
 
-        case SIXLOWPAN_NHC_UDP_D_INLINE:
+        case NHC_UDP_D_INLINE:
             DEBUG("6lo iphc nhc: D_INLINE\n");
             *src_port = byteorder_htons(payload[offset++] + NHC_UDP_8BIT_PORT);
             dst_port->u8[0] = payload[offset++];
             dst_port->u8[1] = payload[offset++];
             break;
 
-        case SIXLOWPAN_NHC_UDP_SD_ELIDED:
+        case NHC_UDP_SD_ELIDED:
             DEBUG("6lo iphc nhc: SD_ELIDED\n");
             tmp = payload[offset++];
             *src_port = byteorder_htons((tmp >> 4) + NHC_UDP_4BIT_PORT);
@@ -438,7 +448,7 @@ size_t gnrc_sixlowpan_iphc_nhc_decode(gnrc_pktsnip_t *udp, gnrc_pktsnip_t *ipv6,
             break;
     }
 
-    if ((udp_nhc & SIXLOWPAN_NHC_UDP_C_MASK) == SIXLOWPAN_NHC_UDP_C_ELIDED) {
+    if ((udp_nhc & NHC_UDP_C_MASK) == NHC_UDP_C_ELIDED) {
         DEBUG("6lo iphc nhc: unsupported elided checksum\n");
         return 0;
     }
