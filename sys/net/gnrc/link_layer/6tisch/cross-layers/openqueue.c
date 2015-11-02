@@ -1,6 +1,6 @@
 #include "opendefs.h"
 #include "openqueue.h"
-#include "openserial.h"
+// #include "openserial.h"
 #include "packetfunctions.h"
 #include "IEEE802154E.h"
 #include "ieee802154_security_driver.h"
@@ -20,7 +20,7 @@ void openqueue_reset_entry(OpenQueueEntry_t* entry);
 /**
 \brief Initialize this module.
 */
-void openqueue_init() {
+void openqueue_init(void) {
    uint8_t i;
    for (i=0;i<QUEUELENGTH;i++){
       openqueue_reset_entry(&(openqueue_vars.queue[i]));
@@ -35,14 +35,14 @@ status information about several modules in the OpenWSN stack.
 
 \returns TRUE if this function printed something, FALSE otherwise.
 */
-bool debugPrint_queue() {
+bool debugPrint_queue(void) {
    debugOpenQueueEntry_t output[QUEUELENGTH];
    uint8_t i;
    for (i=0;i<QUEUELENGTH;i++) {
       output[i].creator = openqueue_vars.queue[i].creator;
       output[i].owner   = openqueue_vars.queue[i].owner;
    }
-   openserial_printStatus(STATUS_QUEUE,(uint8_t*)&output,QUEUELENGTH*sizeof(debugOpenQueueEntry_t));
+   // openserial_printStatus(STATUS_QUEUE,(uint8_t*)&output,QUEUELENGTH*sizeof(debugOpenQueueEntry_t));
    return TRUE;
 }
 
@@ -103,9 +103,9 @@ owerror_t openqueue_freePacketBuffer(OpenQueueEntry_t* pkt) {
       if (&openqueue_vars.queue[i]==pkt) {
          if (openqueue_vars.queue[i].owner==COMPONENT_NULL) {
             // log the error
-            openserial_printCritical(COMPONENT_OPENQUEUE,ERR_FREEING_UNUSED,
-                                  (errorparameter_t)0,
-                                  (errorparameter_t)0);
+            // openserial_printCritical(COMPONENT_OPENQUEUE,ERR_FREEING_UNUSED,
+            //                       (errorparameter_t)0,
+            //                       (errorparameter_t)0);
          }
          openqueue_reset_entry(&(openqueue_vars.queue[i]));
          ENABLE_INTERRUPTS();
@@ -113,9 +113,9 @@ owerror_t openqueue_freePacketBuffer(OpenQueueEntry_t* pkt) {
       }
    }
    // log the error
-   openserial_printCritical(COMPONENT_OPENQUEUE,ERR_FREEING_ERROR,
-                         (errorparameter_t)0,
-                         (errorparameter_t)0);
+   // openserial_printCritical(COMPONENT_OPENQUEUE,ERR_FREEING_ERROR,
+   //                       (errorparameter_t)0,
+   //                       (errorparameter_t)0);
    ENABLE_INTERRUPTS();
    return E_FAIL;
 }
@@ -156,7 +156,7 @@ void openqueue_removeAllOwnedBy(uint8_t owner) {
 
 //======= called by RES
 
-OpenQueueEntry_t* openqueue_sixtopGetSentPacket() {
+OpenQueueEntry_t* openqueue_sixtopGetSentPacket(void) {
    uint8_t i;
    INTERRUPT_DECLARATION();
    DISABLE_INTERRUPTS();
@@ -171,7 +171,7 @@ OpenQueueEntry_t* openqueue_sixtopGetSentPacket() {
    return NULL;
 }
 
-OpenQueueEntry_t* openqueue_sixtopGetReceivedPacket() {
+OpenQueueEntry_t* openqueue_sixtopGetReceivedPacket(void) {
    uint8_t i;
    INTERRUPT_DECLARATION();
    DISABLE_INTERRUPTS();
@@ -222,7 +222,7 @@ OpenQueueEntry_t* openqueue_macGetDataPacket(open_addr_t* toNeighbor) {
    return NULL;
 }
 
-OpenQueueEntry_t* openqueue_macGetEBPacket() {
+OpenQueueEntry_t* openqueue_macGetEBPacket(void) {
    uint8_t i;
    INTERRUPT_DECLARATION();
    DISABLE_INTERRUPTS();

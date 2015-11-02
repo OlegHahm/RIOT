@@ -4,14 +4,14 @@
 #include "openqueue.h"
 #include "neighbors.h"
 #include "IEEE802154E.h"
-#include "iphc.h"
+// #include "iphc.h"
 #include "otf.h"
 #include "packetfunctions.h"
 #include "openrandom.h"
-#include "scheduler.h"
+// #include "scheduler.h"
 #include "opentimers.h"
-#include "debugpins.h"
-#include "leds.h"
+// #include "debugpins.h"
+// #include "leds.h"
 #include "processIE.h"
 #include "IEEE802154.h"
 #include "IEEE802154_security.h"
@@ -115,7 +115,7 @@ bool          sixtop_areAvailableCellsToBeScheduled(
 
 //=========================== public ==========================================
 
-void sixtop_init() {
+void sixtop_init(void) {
 
    sixtop_vars.periodMaintenance  = 872 +(openrandom_get16b()&0xff);
    sixtop_vars.busySendingKA      = FALSE;
@@ -457,7 +457,7 @@ owerror_t sixtop_send(OpenQueueEntry_t *msg) {
 
 //======= from lower layer
 
-void task_sixtopNotifSendDone() {
+void task_sixtopNotifSendDone(void) {
    OpenQueueEntry_t* msg;
 
    // get recently-sent packet from openqueue
@@ -525,12 +525,12 @@ void task_sixtopNotifSendDone() {
 
       default:
          // send the rest up the stack
-         iphc_sendDone(msg,msg->l2_sendDoneError);
+         // iphc_sendDone(msg,msg->l2_sendDoneError);
          break;
    }
 }
 
-void task_sixtopNotifReceive() {
+void task_sixtopNotifReceive(void) {
    OpenQueueEntry_t* msg;
    uint16_t          lenIE;
 
@@ -584,7 +584,7 @@ void task_sixtopNotifReceive() {
       case IEEE154_TYPE_CMD:
          if (msg->length>0) {
             // send to upper layer
-            iphc_receive(msg);
+            // iphc_receive(msg);
          } else {
             // free up the RAM
             openqueue_freePacketBuffer(msg);
@@ -615,7 +615,7 @@ status information about several modules in the OpenWSN stack.
 
 \returns TRUE if this function printed something, FALSE otherwise.
 */
-bool debugPrint_myDAGrank() {
+bool debugPrint_myDAGrank(void) {
    uint16_t output;
 
    output = 0;
@@ -633,7 +633,7 @@ status information about several modules in the OpenWSN stack.
 
 \returns TRUE if this function printed something, FALSE otherwise.
 */
-bool debugPrint_kaPeriod() {
+bool debugPrint_kaPeriod(void) {
    uint16_t output;
 
    output = sixtop_vars.kaPeriod;
@@ -696,11 +696,11 @@ owerror_t sixtop_send_internal(
 // timer interrupt callbacks
 
 void sixtop_maintenance_timer_cb(opentimer_id_t id) {
-   scheduler_push_task(timer_sixtop_management_fired,TASKPRIO_SIXTOP);
+   // scheduler_push_task(timer_sixtop_management_fired,TASKPRIO_SIXTOP);
 }
 
 void sixtop_timeout_timer_cb(opentimer_id_t id) {
-   scheduler_push_task(timer_sixtop_six2six_timeout_fired,TASKPRIO_SIXTOP_TIMEOUT);
+   // scheduler_push_task(timer_sixtop_six2six_timeout_fired,TASKPRIO_SIXTOP_TIMEOUT);
 }
 
 //======= EB/KA task
@@ -750,7 +750,7 @@ This is one of the MAC management tasks. This function inlines in the
 timers_res_fired() function, but is declared as a separate function for better
 readability of the code.
 */
-port_INLINE void sixtop_sendEB() {
+port_INLINE void sixtop_sendEB(void) {
    OpenQueueEntry_t* eb;
    uint8_t len;
 
@@ -827,7 +827,7 @@ This is one of the MAC management tasks. This function inlines in the
 timers_res_fired() function, but is declared as a separate function for better
 readability of the code.
 */
-port_INLINE void sixtop_sendKA() {
+port_INLINE void sixtop_sendKA(void) {
    OpenQueueEntry_t* kaPkt;
    open_addr_t*      kaNeighAddr;
 
@@ -886,8 +886,8 @@ port_INLINE void sixtop_sendKA() {
    sixtop_vars.busySendingKA = TRUE;
 
 #ifdef OPENSIM
-   debugpins_ka_set();
-   debugpins_ka_clr();
+   // debugpins_ka_set();
+   // debugpins_ka_clr();
 #endif
 }
 
@@ -965,7 +965,7 @@ void sixtop_six2six_sendDone(OpenQueueEntry_t* msg, owerror_t error){
          }
          sixtop_vars.six2six_state = SIX_IDLE;
          opentimers_stop(sixtop_vars.timeoutTimerId);
-         leds_debug_off();
+         // leds_debug_off();
          if (sixtop_vars.handler == SIX_HANDLER_MAINTAIN){
              sixtop_addCells(&(msg->l2_nextORpreviousHop),1);
              sixtop_vars.handler = SIX_HANDLER_NONE;
@@ -1245,7 +1245,7 @@ void sixtop_notifyReceiveLinkResponse(
       // link request success,inform uplayer
       }
    }
-   leds_debug_off();
+   // leds_debug_off();
    sixtop_vars.six2six_state = SIX_IDLE;
    sixtop_vars.handler = SIX_HANDLER_NONE;
 
@@ -1263,7 +1263,7 @@ void sixtop_notifyReceiveRemoveLinkRequest(
    frameID = schedule_ie->frameID;
    cellList = schedule_ie->cellList;
 
-   leds_debug_on();
+   // leds_debug_on();
 
    sixtop_removeCellsByState(frameID,numOfCells,cellList,addr);
 
@@ -1281,7 +1281,7 @@ void sixtop_notifyReceiveRemoveLinkRequest(
 
    sixtop_vars.six2six_state = SIX_IDLE;
 
-   leds_debug_off();
+   // leds_debug_off();
 }
 
 //======= helper functions
