@@ -25,7 +25,7 @@
 
 #include "net/gnrc/sixlowpan/iphc.h"
 
-#define ENABLE_DEBUG    (0)
+#define ENABLE_DEBUG    (1)
 #include "debug.h"
 
 /* dispatch byte definitions */
@@ -69,6 +69,11 @@
 #define IPHC_M_DAC_DAM_M_32         (0x0a)
 #define IPHC_M_DAC_DAM_M_8          (0x0b)
 #define IPHC_M_DAC_DAM_M_UC_PREFIX  (0x0c)
+
+#define NHC_UDP_4BIT_PORT           (0xF0B0)
+#define NHC_UDP_4BIT_MASK           (0xFFF0)
+#define NHC_UDP_8BIT_PORT           (0xF000)
+#define NHC_UDP_8BIT_MASK           (0xFF00)
 
 static inline bool _context_overlaps_iid(gnrc_sixlowpan_ctx_t *ctx,
                                          ipv6_addr_t *addr,
@@ -401,28 +406,32 @@ size_t gnrc_sixlowpan_iphc_nhc_decode(gnrc_pktsnip_t *udp, gnrc_pktsnip_t *ipv6,
     switch (udp_nhc & SIXLOWPAN_NHC_UDP_PP_MASK) {
 
         case SIXLOWPAN_NHC_UDP_SD_INLINE:
+            DEBUG("6lo iphc nhc: SD_INLINE\n");
             src_port->u8[0] = payload[offset++];
             src_port->u8[1] = payload[offset++];
             dst_port->u8[0] = payload[offset++];
             dst_port->u8[1] = payload[offset++];
             break;
 
-        case SIXLOWPAN_NHC_UDP_D_INLINE:
+        case SIXLOWPAN_NHC_UDP_S_INLINE:
+            DEBUG("6lo iphc nhc: S_INLINE\n");
             src_port->u8[0] = payload[offset++];
             src_port->u8[1] = payload[offset++];
-            *dst_port = byteorder_htons(payload[offset++] + 0xf000);
+            *dst_port = byteorder_htons(payload[offset++] + NHC_UDP_8BIT_PORT);
             break;
 
-        case SIXLOWPAN_NHC_UDP_S_INLINE:
-            *src_port = byteorder_htons(payload[offset++] + 0xf000);
+        case SIXLOWPAN_NHC_UDP_D_INLINE:
+            DEBUG("6lo iphc nhc: D_INLINE\n");
+            *src_port = byteorder_htons(payload[offset++] + NHC_UDP_8BIT_PORT);
             dst_port->u8[0] = payload[offset++];
             dst_port->u8[1] = payload[offset++];
             break;
 
         case SIXLOWPAN_NHC_UDP_SD_ELIDED:
+            DEBUG("6lo iphc nhc: SD_ELIDED\n");
             tmp = payload[offset++];
-            *src_port = byteorder_htons((tmp >> 4) + 0xf0b0);
-            *dst_port = byteorder_htons((tmp & 0xf) + 0xf0b0);
+            *src_port = byteorder_htons((tmp >> 4) + NHC_UDP_4BIT_PORT);
+            *dst_port = byteorder_htons((tmp & 0xf) + NHC_UDP_4BIT_PORT);
             break;
 
         default:
