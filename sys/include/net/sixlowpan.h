@@ -158,15 +158,6 @@ static inline bool sixlowpan_frag_is(sixlowpan_frag_t *hdr)
  *      </a>
  */
 #define SIXLOWPAN_IPHC1_NH          (0x04)
-#define SIXLOWPAN_NHC_UDP_MASK      (0xF8)
-#define SIXLOWPAN_NHC_UDP_ID        (0xF0)
-#define SIXLOWPAN_NHC_UDP_PP_MASK   (0x03)
-#define SIXLOWPAN_NHC_UDP_SD_INLINE (0x00)
-#define SIXLOWPAN_NHC_UDP_S_INLINE  (0x01)
-#define SIXLOWPAN_NHC_UDP_D_INLINE  (0x02)
-#define SIXLOWPAN_NHC_UDP_SD_ELIDED (0x03)
-#define SIXLOWPAN_NHC_UDP_C_MASK    (0xF4)
-#define SIXLOWPAN_NHC_UDP_C_ELIDED  (0x03)
 
 /**
  * @brief   Flag for Hop Limit elision (part of first byte of LOWPAN_IPHC).
