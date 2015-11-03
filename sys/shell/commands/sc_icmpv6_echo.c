@@ -118,7 +118,7 @@ int _handle_reply(gnrc_pktsnip_t *pkt, uint32_t time)
 }
 
 static void _print_stats(char *addr_str, int success, int count, uint64_t total_time,
-                         uint64_t sum_rtt, uint64_t min_rtt, uint64_t max_rtt)
+                         uint64_t sum_rtt, uint32_t min_rtt, uint32_t max_rtt)
 {
     printf("--- %s ping statistics ---\n", addr_str);
 
@@ -132,9 +132,9 @@ static void _print_stats(char *addr_str, int success, int count, uint64_t total_
                "%" PRIu32 ".%03" PRIu32 "/"
                "%" PRIu32 ".%03" PRIu32 "/"
                "%" PRIu32 ".%03" PRIu32 " ms\n",
-               (uint32_t)min_rtt / MS_IN_USEC, (uint32_t)min_rtt % MS_IN_USEC,
+               min_rtt / MS_IN_USEC, min_rtt % MS_IN_USEC,
                avg_rtt / MS_IN_USEC, avg_rtt % MS_IN_USEC,
-               (uint32_t)max_rtt / MS_IN_USEC, (uint32_t)max_rtt % MS_IN_USEC);
+               max_rtt / MS_IN_USEC, max_rtt % MS_IN_USEC);
     }
     else {
         printf("%d packets transmitted, 0 received, 100%% packet loss\n", count);
@@ -152,7 +152,7 @@ int _icmpv6_ping(int argc, char **argv)
     gnrc_netreg_entry_t *ipv6_entry, my_entry = { NULL, ICMPV6_ECHO_REP,
                                                   thread_getpid()
                                                 };
-    uint64_t min_rtt = UINT64_MAX, max_rtt = 0;
+    uint32_t min_rtt = UINT64_MAX, max_rtt = 0;
     uint64_t sum_rtt = 0;
     uint64_t total_time;
     int param_offset = 0;
