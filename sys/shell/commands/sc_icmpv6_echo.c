@@ -117,7 +117,7 @@ int _handle_reply(gnrc_pktsnip_t *pkt, uint64_t time)
     return 1;
 }
 
-static void _print_stats(char *addr_str, int success, int count, uint64_t stop,
+static void _print_stats(char *addr_str, int success, int count, uint64_t total_time,
                          uint64_t sum_rtt, uint64_t min_rtt, uint64_t max_rtt)
 {
     printf("--- %s ping statistics ---\n", addr_str);
@@ -125,15 +125,16 @@ static void _print_stats(char *addr_str, int success, int count, uint64_t stop,
     if (success > 0) {
         uint64_t avg_rtt = sum_rtt / count;  /* get average */
         printf("%d packets transmitted, %d received, %d%% packet loss, time %"
-               PRIu64 ".06%" PRIu64 " s\n", count, success,
-               (100 - ((success * 100) / count)), stop / SEC_IN_USEC, stop % SEC_IN_USEC);
+               PRIu32 ".06%" PRIu32 " s\n", count, success,
+               (100 - ((success * 100) / count)),
+               (uint32_t)total_time / SEC_IN_USEC, (uint32_t)total_time % SEC_IN_USEC);
         printf("rtt min/avg/max = "
-               "%" PRIu64 ".%03" PRIu64 "/"
-               "%" PRIu64 ".%03" PRIu64 "/"
-               "%" PRIu64 ".%03" PRIu64 " ms\n",
-               min_rtt / MS_IN_USEC, min_rtt % MS_IN_USEC,
-               avg_rtt / MS_IN_USEC, avg_rtt % MS_IN_USEC,
-               max_rtt / MS_IN_USEC, max_rtt % MS_IN_USEC);
+               "%" PRIu32 ".%03" PRIu32 "/"
+               "%" PRIu32 ".%03" PRIu32 "/"
+               "%" PRIu32 ".%03" PRIu32 " ms\n",
+               (uint32_t)min_rtt / MS_IN_USEC, (uint32_t)min_rtt % MS_IN_USEC,
+               (uint32_t)avg_rtt / MS_IN_USEC, (uint32_t)avg_rtt % MS_IN_USEC,
+               (uint32_t)max_rtt / MS_IN_USEC, (uint32_t)max_rtt % MS_IN_USEC);
     }
     else {
         printf("%d packets transmitted, 0 received, 100%% packet loss\n", count);
@@ -153,7 +154,7 @@ int _icmpv6_ping(int argc, char **argv)
                                                 };
     uint64_t min_rtt = UINT64_MAX, max_rtt = 0;
     uint64_t sum_rtt = 0;
-    uint64_t ping_start;
+    uint64_t total_time;
     int param_offset = 0;
 
     if (argc < 2) {
@@ -204,11 +205,11 @@ int _icmpv6_ping(int argc, char **argv)
 
     remaining = count;
 
-    ping_start = xtimer_now64();
+    total_time = xtimer_now64();
 
     while ((remaining--) > 0) {
         gnrc_pktsnip_t *pkt;
-        uint64_t start, stop, timeout = 1 * SEC_IN_USEC;
+        uint32_t start, stop, timeout = 1 * SEC_IN_USEC;
 
         pkt = gnrc_icmpv6_echo_build(ICMPV6_ECHO_REQ, id, ++max_seq_expected,
                                      NULL, payload_len);
@@ -228,17 +229,17 @@ int _icmpv6_ping(int argc, char **argv)
             continue;
         }
 
-        start = xtimer_now64();
+        start = xtimer_now();
         if (gnrc_netapi_send(ipv6_entry->pid, pkt) < 1) {
             puts("error: unable to send ICMPv6 echo request\n");
             gnrc_pktbuf_release(pkt);
             continue;
         }
 
-        if (xtimer_msg_receive_timeout64(&msg, timeout) >= 0) {
+        if (xtimer_msg_receive_timeout(&msg, timeout) >= 0) {
             switch (msg.type) {
                 case GNRC_NETAPI_MSG_TYPE_RCV:
-                    stop = xtimer_now64() - start;
+                    stop = xtimer_now() - start;
 
                     gnrc_pktsnip_t *pkt = (gnrc_pktsnip_t *)msg.content.ptr;
                     success += _handle_reply(pkt, stop);
@@ -278,8 +279,9 @@ int _icmpv6_ping(int argc, char **argv)
             xtimer_usleep64(delay * MS_IN_USEC);
         }
         if ((++stat_counter == stat_interval) || (remaining == 0)) {
-            stop = xtimer_now64() - ping_start;
-            _print_stats(addr_str, success, (count - remaining), stop, sum_rtt, min_rtt, max_rtt);
+            total_time = xtimer_now64() - total_time;
+            _print_stats(addr_str, success, (count - remaining), total_time, sum_rtt, min_rtt,
+                         max_rtt);
             stat_counter = 0;
         }
 
