@@ -236,7 +236,8 @@ int _icmpv6_ping(int argc, char **argv)
             continue;
         }
 
-        if (xtimer_msg_receive_timeout(&msg, timeout) >= 0) {
+        /* TODO: replace when #4219 was fixed */
+        if (xtimer_msg_receive_timeout64(&msg, (uint64_t)timeout) >= 0) {
             switch (msg.type) {
                 case GNRC_NETAPI_MSG_TYPE_RCV:
                     stop = xtimer_now() - start;
