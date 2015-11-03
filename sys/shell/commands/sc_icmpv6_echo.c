@@ -78,7 +78,7 @@ static inline bool _expected_seq(uint16_t seq)
     }
 }
 
-int _handle_reply(gnrc_pktsnip_t *pkt, uint64_t time)
+int _handle_reply(gnrc_pktsnip_t *pkt, uint32_t time)
 {
     gnrc_pktsnip_t *ipv6, *icmpv6;
     ipv6_hdr_t *ipv6_hdr;
@@ -103,10 +103,10 @@ int _handle_reply(gnrc_pktsnip_t *pkt, uint64_t time)
         }
 
         printf("%u bytes from %s: id=%" PRIu16 " seq=%" PRIu16 " hop limit=%" PRIu8
-               " time = %" PRIu64 ".%03" PRIu64 " ms\n", (unsigned) icmpv6->size,
+               " time = %" PRIu32 ".%03" PRIu32 " ms\n", (unsigned) icmpv6->size,
                ipv6_addr_to_str(ipv6_str, &(ipv6_hdr->src), sizeof(ipv6_str)),
-               byteorder_ntohs(icmpv6_hdr->id), seq, ipv6_hdr->hl, time / MS_IN_USEC,
-               time % MS_IN_USEC);
+               byteorder_ntohs(icmpv6_hdr->id), seq, ipv6_hdr->hl,
+               time / MS_IN_USEC, time % MS_IN_USEC);
         gnrc_ipv6_nc_still_reachable(&ipv6_hdr->src);
     }
     else {
@@ -123,7 +123,7 @@ static void _print_stats(char *addr_str, int success, int count, uint64_t total_
     printf("--- %s ping statistics ---\n", addr_str);
 
     if (success > 0) {
-        uint64_t avg_rtt = sum_rtt / count;  /* get average */
+        uint32_t avg_rtt = (uint32_t)sum_rtt / count;  /* get average */
         printf("%d packets transmitted, %d received, %d%% packet loss, time %"
                PRIu32 ".06%" PRIu32 " s\n", count, success,
                (100 - ((success * 100) / count)),
@@ -133,7 +133,7 @@ static void _print_stats(char *addr_str, int success, int count, uint64_t total_
                "%" PRIu32 ".%03" PRIu32 "/"
                "%" PRIu32 ".%03" PRIu32 " ms\n",
                (uint32_t)min_rtt / MS_IN_USEC, (uint32_t)min_rtt % MS_IN_USEC,
-               (uint32_t)avg_rtt / MS_IN_USEC, (uint32_t)avg_rtt % MS_IN_USEC,
+               avg_rtt / MS_IN_USEC, avg_rtt % MS_IN_USEC,
                (uint32_t)max_rtt / MS_IN_USEC, (uint32_t)max_rtt % MS_IN_USEC);
     }
     else {
