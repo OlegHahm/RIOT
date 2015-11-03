@@ -151,7 +151,7 @@ int _icmpv6_ping(int argc, char **argv)
     gnrc_netreg_entry_t *ipv6_entry, my_entry = { NULL, ICMPV6_ECHO_REP,
                                                   thread_getpid()
                                                 };
-    uint64_t min_rtt = UINT32_MAX, max_rtt = 0;
+    uint64_t min_rtt = UINT64_MAX, max_rtt = 0;
     uint64_t sum_rtt = 0;
     uint64_t ping_start;
     int param_offset = 0;
