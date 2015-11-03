@@ -246,20 +246,6 @@ static inline bool sixlowpan_iphc_is(uint8_t *data)
 /** @} */
 
 /**
- * @brief   Checks if next header is comressed.
- *
- * @param[in] data  Data of a datagram, may not be NULL.
- *
- * @return  true, if compressed flag is set.
- * @return  false, if compressed flag is clear.
- */
-static inline bool sixlowpan_iphc_nhc_is(uint8_t *data)
-{
-    return (*data & SIXLOWPAN_IPHC1_NH);
-}
-/** @} */
-
-/**
  * @brief   Prints 6LoWPAN dispatch to stdout.
  *
  * @param[in] data  A 6LoWPAN frame.
