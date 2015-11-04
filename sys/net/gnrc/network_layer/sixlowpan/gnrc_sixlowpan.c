@@ -18,7 +18,6 @@
 #include "utlist.h"
 
 #include "net/gnrc/ipv6/hdr.h"
-#include "net/gnrc/udp.h"
 #include "net/gnrc/sixlowpan.h"
 #include "net/gnrc/sixlowpan/frag.h"
 #include "net/gnrc/sixlowpan/iphc.h"
