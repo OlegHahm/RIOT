@@ -119,7 +119,7 @@ void gnrc_sixlowpan_nd_uc_rtr_sol(gnrc_ipv6_nc_t *nce)
     gnrc_ndp_internal_send_rtr_sol(nce->iface, &nce->ipv6_addr);
 }
 
-kernel_pid_t gnrc_sixlowpan_nd_next_hop_l2addr(uint8_t *l2addr, uint8_t *l2addr_len,
+kernel_pid_t gnrc_sixlowpan_nd_next_hop_l2addr(uint8_t *l2addr, uint16_t *l2addr_len,
                                                kernel_pid_t iface, ipv6_addr_t *dst)
 {
     ipv6_addr_t *next_hop = NULL;

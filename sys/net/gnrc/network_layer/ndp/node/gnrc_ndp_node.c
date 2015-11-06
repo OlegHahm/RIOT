@@ -55,7 +55,7 @@ static gnrc_pktqueue_t *_alloc_pkt_node(gnrc_pktsnip_t *pkt)
     return NULL;
 }
 
-kernel_pid_t gnrc_ndp_node_next_hop_l2addr(uint8_t *l2addr, uint8_t *l2addr_len,
+kernel_pid_t gnrc_ndp_node_next_hop_l2addr(uint8_t *l2addr, uint16_t *l2addr_len,
                                            kernel_pid_t iface, ipv6_addr_t *dst,
                                            gnrc_pktsnip_t *pkt)
 {

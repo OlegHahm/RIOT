@@ -523,7 +523,7 @@ static void _send_multicast(kernel_pid_t iface, gnrc_pktsnip_t *pkt,
 #endif  /* GNRC_NETIF_NUMOF */
 }
 
-static inline kernel_pid_t _next_hop_l2addr(uint8_t *l2addr, uint8_t *l2addr_len,
+static inline kernel_pid_t _next_hop_l2addr(uint8_t *l2addr, uint16_t *l2addr_len,
                                             kernel_pid_t iface, ipv6_addr_t *dst,
                                             gnrc_pktsnip_t *pkt)
 {
@@ -639,7 +639,7 @@ static void _send(gnrc_pktsnip_t *pkt, bool prep_hdr)
         }
     }
     else {
-        uint8_t l2addr_len = GNRC_IPV6_NC_L2_ADDR_MAX;
+        uint16_t l2addr_len = GNRC_IPV6_NC_L2_ADDR_MAX;
         uint8_t l2addr[l2addr_len];
 
         iface = _next_hop_l2addr(l2addr, &l2addr_len, iface, &hdr->dst, pkt);
