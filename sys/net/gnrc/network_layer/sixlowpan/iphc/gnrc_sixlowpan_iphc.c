@@ -468,7 +468,7 @@ size_t gnrc_sixlowpan_iphc_decode(gnrc_pktsnip_t *ipv6, gnrc_pktsnip_t *pkt, siz
 
 #ifdef MODULE_GNRC_SIXLOWPAN_IPHC_NHC
     if (iphc_hdr[IPHC1_IDX] & SIXLOWPAN_IPHC1_NH) {
-        switch (iphc_hdr[IPHC_NHC_IDX] & NHC_ID_MASK) {
+        switch (iphc_hdr[payload_offset] & NHC_ID_MASK) {
 #ifdef MODULE_GNRC_UDP
             case NHC_UDP_ID:
                 payload_offset = iphc_nhc_udp_decode(pkt, ipv6, payload_offset);
