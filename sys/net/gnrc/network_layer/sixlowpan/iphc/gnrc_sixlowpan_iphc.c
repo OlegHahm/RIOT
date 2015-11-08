@@ -545,7 +545,7 @@ bool gnrc_sixlowpan_iphc_encode(gnrc_pktsnip_t *pkt)
     ipv6_hdr_t *ipv6_hdr = pkt->next->data;
     uint8_t *iphc_hdr;
     uint16_t inline_pos = SIXLOWPAN_IPHC_HDR_LEN;
-    bool addr_comp = false;
+    bool addr_comp = false, nhc_comp = false;
     gnrc_sixlowpan_ctx_t *src_ctx = NULL, *dst_ctx = NULL;
     gnrc_pktsnip_t *dispatch = gnrc_pktbuf_add(NULL, NULL, pkt->next->size,
                                                GNRC_NETTYPE_SIXLOWPAN);
@@ -623,7 +623,7 @@ bool gnrc_sixlowpan_iphc_encode(gnrc_pktsnip_t *pkt)
         case PROTNUM_UDP:
             iphc_nhc_udp_encode(pkt->next->next, ipv6_hdr);
             iphc_hdr[IPHC1_IDX] |= SIXLOWPAN_IPHC1_NH;
-            iphc_hdr[inline_pos++] = ipv6_hdr->nh;
+            nhc_comp = true;
             break;
 #endif
 
@@ -825,6 +825,10 @@ bool gnrc_sixlowpan_iphc_encode(gnrc_pktsnip_t *pkt)
         iphc_hdr[IPHC2_IDX] |= IPHC_SAC_SAM_FULL;
         memcpy(iphc_hdr + inline_pos, &ipv6_hdr->dst, 16);
         inline_pos += 16;
+    }
+
+    if (nhc_comp) {
+        iphc_hdr[inline_pos++] = ipv6_hdr->nh;
     }
 
     /* shrink dispatch allocation to final size */
