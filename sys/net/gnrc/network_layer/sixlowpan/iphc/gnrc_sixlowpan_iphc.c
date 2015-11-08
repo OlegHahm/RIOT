@@ -21,6 +21,7 @@
 #include "net/gnrc/sixlowpan/ctx.h"
 #include "net/sixlowpan.h"
 #include "utlist.h"
+#include "net/gnrc/nettype.h"
 #include "net/gnrc/udp.h"
 
 #include "net/gnrc/sixlowpan/iphc.h"
@@ -468,9 +469,11 @@ size_t gnrc_sixlowpan_iphc_decode(gnrc_pktsnip_t *ipv6, gnrc_pktsnip_t *pkt, siz
 #ifdef MODULE_GNRC_SIXLOWPAN_IPHC_NHC
     if (iphc_hdr[IPHC1_IDX] & SIXLOWPAN_IPHC1_NH) {
         switch (iphc_hdr[IPHC_NHC_IDX] & NHC_ID_MASK) {
+#ifdef MODULE_GNRC_UDP
             case NHC_UDP_ID:
                 payload_offset = iphc_nhc_udp_decode(pkt, ipv6, payload_offset);
                 break;
+#endif
 
             default:
                 break;
@@ -481,6 +484,7 @@ size_t gnrc_sixlowpan_iphc_decode(gnrc_pktsnip_t *ipv6, gnrc_pktsnip_t *pkt, siz
     return payload_offset;
 }
 
+#ifdef MODULE_GNRC_UDP
 inline static size_t iphc_nhc_udp_encode(gnrc_pktsnip_t *udp, ipv6_hdr_t *ipv6_hdr)
 {
     udp_hdr_t *udp_hdr = udp->data;
@@ -533,6 +537,7 @@ inline static size_t iphc_nhc_udp_encode(gnrc_pktsnip_t *udp, ipv6_hdr_t *ipv6_h
 
     return nhc_len;
 }
+#endif
 
 bool gnrc_sixlowpan_iphc_encode(gnrc_pktsnip_t *pkt)
 {
@@ -614,7 +619,7 @@ bool gnrc_sixlowpan_iphc_encode(gnrc_pktsnip_t *pkt)
 
     /* compress next header */
     switch (ipv6_hdr->nh) {
-#ifdef MODULE_GNRC_SIXLOWPAN_IPHC_NHC
+#if defined(MODULE_GNRC_SIXLOWPAN_IPHC_NHC) && defined(MODULE_GNRC_UDP)
         case PROTNUM_UDP:
             iphc_nhc_udp_encode(pkt->next->next, ipv6_hdr);
             iphc_hdr[IPHC1_IDX] |= SIXLOWPAN_IPHC1_NH;
