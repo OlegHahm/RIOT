@@ -16,19 +16,27 @@
 #define MAIN_QUEUE_SIZE     (8)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 //static char addr_str[IPV6_ADDR_MAX_STR_LEN];
-//
+
 static char _ccnl_stack[THREAD_STACKSIZE_MAIN];
+static int _suite = CCNL_SUITE_NDNTLV;
 
 struct ccnl_if_s *i;
 
 extern struct ccnl_relay_s theRelay;
 
+extern int send_interest(kernel_pid_t pid, int *sock, int suite, int argc, char **argv);
+
 extern int ccnl_open_udpdev(int port);
 
-static int _ccnl_fwd(int argc, char **argv);
+static int _ccnl_open(int argc, char **argv);
+static int _ccnl_interest(int argc, char **argv);
+static int _ccnl_config(int argc, char **argv);
+static int _ccnl_suite(int s);
 
 static const shell_command_t shell_commands[] = {
-    { "ccnl", "start a NDN forwarder", _ccnl_fwd},
+    { "open", "opens an interface or socket", _ccnl_open},
+    { "interest", "sends an interest", _ccnl_interest},
+    { "config", "set and set various configuration options", _ccnl_config},
     { NULL, NULL, NULL }
 };
 
@@ -63,7 +71,7 @@ static void *_ccnl_eventloop_trampoline(void *dummy)
     return NULL;
 }
 
-static int _ccnl_fwd(int argc, char **argv)
+static int _ccnl_open(int argc, char **argv)
 {
     struct ccnl_if_s *i;
     i = &theRelay.ifs[theRelay.ifcount];
@@ -108,6 +116,49 @@ static int _ccnl_fwd(int argc, char **argv)
     return 0;
 }
 
+static int _ccnl_interest(int argc, char **argv)
+{
+    if (argc < 2) {
+        printf("usage: %s <name>\n", argv[0]);
+        return 1;
+    }
+    send_interest(i->if_pid, &(i->sock), _suite, argc, argv);
+    return 0;
+}
+
+static int _ccnl_config(int argc, char **argv)
+{
+    if (argc < 3) {
+        printf("usage: %s get/set <key> [value]\n", argv[0]);
+        return 1;
+    }
+    if (strncmp(argv[2], "suite", strlen("suite")) == 0) {
+        if (strncmp(argv[1], "set", strlen("set")) == 0) {
+            if (argc < 4) {
+                printf("usage: %s set suite <number>\n", argv[0]);
+                return 1;
+            }
+            else {
+                _ccnl_suite(atoi(argv[3]));
+            }
+        }
+        else {
+            _ccnl_suite(-1);
+        }
+    }
+    return 0;
+}
+
+static int _ccnl_suite(int s)
+{
+    if (s < 0) {
+        printf("Active suite is %i\n", _suite);
+    }
+    else {
+        _suite = s;
+    }
+    return 0;
+}
 
 int main(void)
 {
