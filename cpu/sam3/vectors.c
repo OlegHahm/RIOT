@@ -80,69 +80,69 @@ WEAK_DEFAULT void isr_can1(void);
 /* interrupt vector table */
 ISR_VECTORS const void *interrupt_vector[] = {
     /* Exception stack pointer */
-    (void*) (&_estack),             /* pointer to the top of the stack */
+    __extension__ (void*) (&_estack),             /* pointer to the top of the stack */
     /* Cortex-M3 handlers */
-    (void*) reset_handler_default,  /* entry point of the program */
-    (void*) nmi_default,            /* non maskable interrupt handler */
-    (void*) hard_fault_default,     /* hard fault exception */
-    (void*) mem_manage_default,     /* memory manage exception */
-    (void*) bus_fault_default,      /* bus fault exception */
-    (void*) usage_fault_default,    /* usage fault exception */
-    (void*) (0UL),                  /* Reserved */
-    (void*) (0UL),                  /* Reserved */
-    (void*) (0UL),                  /* Reserved */
-    (void*) (0UL),                  /* Reserved */
-    (void*) isr_svc,                /* system call interrupt, in RIOT used for
+    __extension__ (void*) reset_handler_default,  /* entry point of the program */
+    __extension__ (void*) nmi_default,            /* non maskable interrupt handler */
+    __extension__ (void*) hard_fault_default,     /* hard fault exception */
+    __extension__ (void*) mem_manage_default,     /* memory manage exception */
+    __extension__ (void*) bus_fault_default,      /* bus fault exception */
+    __extension__ (void*) usage_fault_default,    /* usage fault exception */
+    __extension__ (void*) (0UL),                  /* Reserved */
+    __extension__ (void*) (0UL),                  /* Reserved */
+    __extension__ (void*) (0UL),                  /* Reserved */
+    __extension__ (void*) (0UL),                  /* Reserved */
+    __extension__ (void*) isr_svc,                /* system call interrupt, in RIOT used for
                                      * switching into thread context on boot */
-    (void*) debug_mon_default,      /* debug monitor exception */
-    (void*) (0UL),                  /* Reserved */
-    (void*) isr_pendsv,             /* pendSV interrupt, in RIOT the actual
+    __extension__ (void*) debug_mon_default,      /* debug monitor exception */
+    __extension__ (void*) (0UL),                  /* Reserved */
+    __extension__ (void*) isr_pendsv,             /* pendSV interrupt, in RIOT the actual
                                      * context switching is happening here */
-    (void*) isr_systick,            /* SysTick interrupt, not used in RIOT */
+    __extension__ (void*) isr_systick,            /* SysTick interrupt, not used in RIOT */
     /* SAM3X8E specific peripheral handlers */
-    (void*) isr_supc,               /*  0 supply controller */
-    (void*) isr_rstc,               /*  1 reset controller */
-    (void*) isr_rtc,                /*  2 real time clock */
-    (void*) isr_rtt,                /*  3 real timer timer */
-    (void*) isr_wdt,                /*  4 watchdog timer */
-    (void*) isr_pmc,                /*  5 power management controller */
-    (void*) isr_efc0,               /*  6 enhanced flash controller 0 */
-    (void*) isr_efc1,               /*  7 enhanced flash controller 1 */
-    (void*) isr_uart,               /*  8 universal asynchronous receiver transceiver */
-    (void*) isr_smc,                /*  9 static memory controller */
-    (void*) (0UL),
-    (void*) isr_pioa,               /* 11 GPIO port A */
-    (void*) isr_piob,               /* 12 GPIO port B */
-    (void*) isr_pioc,               /* 13 GPIO port C */
-    (void*) isr_piod,               /* 14 GPIO port D */
-    (void*) (0UL),
-    (void*) (0UL),
-    (void*) isr_usart0,             /* 17 USART0 */
-    (void*) isr_usart1,             /* 18 USART1 */
-    (void*) isr_usart2,             /* 19 USART2 */
-    (void*) isr_usart3,             /* 20 USART3 */
-    (void*) isr_hsmci,              /* 21 multimedia card interface */
-    (void*) isr_twi0,               /* 22 two-wire interface 0 */
-    (void*) isr_twi1,               /* 23 two-wire interface 1 */
-    (void*) isr_spi0,               /* 24 serial peripheral interface */
-    (void*) (0UL),
-    (void*) isr_ssc,                /* 26 synchronous serial controller */
-    (void*) isr_tc0,                /* 27 timer counter 0 */
-    (void*) isr_tc1,                /* 28 timer counter 1 */
-    (void*) isr_tc2,                /* 29 timer counter 2 */
-    (void*) isr_tc3,                /* 30 timer counter 3 */
-    (void*) isr_tc4,                /* 31 timer counter 4 */
-    (void*) isr_tc5,                /* 32 timer counter 5 */
-    (void*) isr_tc6,                /* 33 timer counter 6 */
-    (void*) isr_tc7,                /* 34 timer counter 7 */
-    (void*) isr_tc8,                /* 35 timer counter 8 */
-    (void*) isr_pwm,                /* 36 pulse width modulation controller */
-    (void*) isr_adc,                /* 37 ADC controller */
-    (void*) isr_dacc,               /* 38 DAC controller */
-    (void*) isr_dmac,               /* 39 DMA controller */
-    (void*) isr_uotghs,             /* 40 USB OTG high speed */
-    (void*) isr_trng,               /* 41 true random number generator */
-    (void*) isr_emac,               /* 42 Ethernet MAC*/
-    (void*) isr_can0,               /* 43 CAN controller 0*/
-    (void*) isr_can1,               /* 44 CAN controller 1*/
+    __extension__ (void*) isr_supc,               /*  0 supply controller */
+    __extension__ (void*) isr_rstc,               /*  1 reset controller */
+    __extension__ (void*) isr_rtc,                /*  2 real time clock */
+    __extension__ (void*) isr_rtt,                /*  3 real timer timer */
+    __extension__ (void*) isr_wdt,                /*  4 watchdog timer */
+    __extension__ (void*) isr_pmc,                /*  5 power management controller */
+    __extension__ (void*) isr_efc0,               /*  6 enhanced flash controller 0 */
+    __extension__ (void*) isr_efc1,               /*  7 enhanced flash controller 1 */
+    __extension__ (void*) isr_uart,               /*  8 universal asynchronous receiver transceiver */
+    __extension__ (void*) isr_smc,                /*  9 static memory controller */
+    __extension__ (void*) (0UL),
+    __extension__ (void*) isr_pioa,               /* 11 GPIO port A */
+    __extension__ (void*) isr_piob,               /* 12 GPIO port B */
+    __extension__ (void*) isr_pioc,               /* 13 GPIO port C */
+    __extension__ (void*) isr_piod,               /* 14 GPIO port D */
+    __extension__ (void*) (0UL),
+    __extension__ (void*) (0UL),
+    __extension__ (void*) isr_usart0,             /* 17 USART0 */
+    __extension__ (void*) isr_usart1,             /* 18 USART1 */
+    __extension__ (void*) isr_usart2,             /* 19 USART2 */
+    __extension__ (void*) isr_usart3,             /* 20 USART3 */
+    __extension__ (void*) isr_hsmci,              /* 21 multimedia card interface */
+    __extension__ (void*) isr_twi0,               /* 22 two-wire interface 0 */
+    __extension__ (void*) isr_twi1,               /* 23 two-wire interface 1 */
+    __extension__ (void*) isr_spi0,               /* 24 serial peripheral interface */
+    __extension__ (void*) (0UL),
+    __extension__ (void*) isr_ssc,                /* 26 synchronous serial controller */
+    __extension__ (void*) isr_tc0,                /* 27 timer counter 0 */
+    __extension__ (void*) isr_tc1,                /* 28 timer counter 1 */
+    __extension__ (void*) isr_tc2,                /* 29 timer counter 2 */
+    __extension__ (void*) isr_tc3,                /* 30 timer counter 3 */
+    __extension__ (void*) isr_tc4,                /* 31 timer counter 4 */
+    __extension__ (void*) isr_tc5,                /* 32 timer counter 5 */
+    __extension__ (void*) isr_tc6,                /* 33 timer counter 6 */
+    __extension__ (void*) isr_tc7,                /* 34 timer counter 7 */
+    __extension__ (void*) isr_tc8,                /* 35 timer counter 8 */
+    __extension__ (void*) isr_pwm,                /* 36 pulse width modulation controller */
+    __extension__ (void*) isr_adc,                /* 37 ADC controller */
+    __extension__ (void*) isr_dacc,               /* 38 DAC controller */
+    __extension__ (void*) isr_dmac,               /* 39 DMA controller */
+    __extension__ (void*) isr_uotghs,             /* 40 USB OTG high speed */
+    __extension__ (void*) isr_trng,               /* 41 true random number generator */
+    __extension__ (void*) isr_emac,               /* 42 Ethernet MAC*/
+    __extension__ (void*) isr_can0,               /* 43 CAN controller 0*/
+    __extension__ (void*) isr_can1,               /* 44 CAN controller 1*/
 };

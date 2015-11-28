@@ -72,56 +72,56 @@ WEAK_DEFAULT void isr_swi5(void);
 /* interrupt vector table */
 ISR_VECTORS const void *interrupt_vector[] = {
     /* Exception stack pointer */
-    (void*) (&_estack),             /* pointer to the top of the stack */
+    __extension__ (void*) (&_estack),             /* pointer to the top of the stack */
     /* Cortex-M0 handlers */
-    (void*) reset_handler_default,  /* entry point of the program */
-    (void*) nmi_default,            /* non maskable interrupt handler */
-    (void*) hard_fault_default,     /* hard fault exception */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
-    (void*) isr_svc,                /* system call interrupt, in RIOT used for
+    __extension__ (void*) reset_handler_default,  /* entry point of the program */
+    __extension__ (void*) nmi_default,            /* non maskable interrupt handler */
+    __extension__ (void*) hard_fault_default,     /* hard fault exception */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) isr_svc,                /* system call interrupt, in RIOT used for
                                      * switching into thread context on boot */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
-    (void*) isr_pendsv,             /* pendSV interrupt, in RIOT the actual
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) isr_pendsv,             /* pendSV interrupt, in RIOT the actual
                                      * context switching is happening here */
-    (void*) isr_systick,            /* SysTick interrupt, not used in RIOT */
+    __extension__ (void*) isr_systick,            /* SysTick interrupt, not used in RIOT */
     /* nRF51 specific peripheral handlers */
-    (void*) isr_power_clock,        /* power_clock */
-    (void*) isr_radio,              /* radio */
-    (void*) isr_uart0,              /* uart0 */
-    (void*) isr_spi0_twi0,          /* spi0_twi0 */
-    (void*) isr_spi1_twi1,          /* spi1_twi1 */
-    (void*) (0UL),                  /* reserved */
-    (void*) isr_gpiote,             /* gpiote */
-    (void*) isr_adc,                /* adc */
-    (void*) isr_timer0,             /* timer0 */
-    (void*) isr_timer1,             /* timer1 */
-    (void*) isr_timer2,             /* timer2 */
-    (void*) isr_rtc0,               /* rtc0 */
-    (void*) isr_temp,               /* temp */
-    (void*) isr_rng,                /* rng */
-    (void*) isr_ecb,                /* ecb */
-    (void*) isr_ccm_aar,            /* ccm_aar */
-    (void*) isr_wdt,                /* wdt */
-    (void*) isr_rtc1,               /* rtc1 */
-    (void*) isr_qdec,               /* qdec */
-    (void*) isr_lpcomp,             /* lpcomp */
-    (void*) isr_swi0,               /* swi0 */
-    (void*) isr_swi1,               /* swi1 */
-    (void*) isr_swi2,               /* swi2 */
-    (void*) isr_swi3,               /* swi3 */
-    (void*) isr_swi4,               /* swi4 */
-    (void*) isr_swi5,               /* swi5 */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
-    (void*) (0UL),                  /* reserved */
+    __extension__ (void*) isr_power_clock,        /* power_clock */
+    __extension__ (void*) isr_radio,              /* radio */
+    __extension__ (void*) isr_uart0,              /* uart0 */
+    __extension__ (void*) isr_spi0_twi0,          /* spi0_twi0 */
+    __extension__ (void*) isr_spi1_twi1,          /* spi1_twi1 */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) isr_gpiote,             /* gpiote */
+    __extension__ (void*) isr_adc,                /* adc */
+    __extension__ (void*) isr_timer0,             /* timer0 */
+    __extension__ (void*) isr_timer1,             /* timer1 */
+    __extension__ (void*) isr_timer2,             /* timer2 */
+    __extension__ (void*) isr_rtc0,               /* rtc0 */
+    __extension__ (void*) isr_temp,               /* temp */
+    __extension__ (void*) isr_rng,                /* rng */
+    __extension__ (void*) isr_ecb,                /* ecb */
+    __extension__ (void*) isr_ccm_aar,            /* ccm_aar */
+    __extension__ (void*) isr_wdt,                /* wdt */
+    __extension__ (void*) isr_rtc1,               /* rtc1 */
+    __extension__ (void*) isr_qdec,               /* qdec */
+    __extension__ (void*) isr_lpcomp,             /* lpcomp */
+    __extension__ (void*) isr_swi0,               /* swi0 */
+    __extension__ (void*) isr_swi1,               /* swi1 */
+    __extension__ (void*) isr_swi2,               /* swi2 */
+    __extension__ (void*) isr_swi3,               /* swi3 */
+    __extension__ (void*) isr_swi4,               /* swi4 */
+    __extension__ (void*) isr_swi5,               /* swi5 */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
+    __extension__ (void*) (0UL),                  /* reserved */
 };
