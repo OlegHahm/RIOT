@@ -10,8 +10,8 @@ at most MAX_NUM_TIMERS timers.
 #include "opendefs.h"
 #include "opentimers.h"
 // #include "bsp_timer.h"
-#include "leds.h"
-#include "periph/timer.h"
+// #include "leds.h"
+#include "xtimer.h"
 
 //=========================== define ==========================================
 
@@ -23,6 +23,8 @@ opentimers_vars_t opentimers_vars;
 //=========================== prototypes ======================================
 
 void opentimers_timer_callback(void);
+void opentimers_xtimer_callback(void*);
+xtimer_t timer;
 
 //=========================== public ==========================================
 
@@ -31,7 +33,7 @@ void opentimers_timer_callback(void);
 
 Initializes data structures and hardware timer.
  */
-void opentimers_init(){
+void opentimers_init(void){
    uint8_t i;
 
    // initialize local variables
@@ -47,6 +49,7 @@ void opentimers_init(){
 
    // set callback for bsp_timers module
    // bsp_timer_set_callback(opentimers_timer_callback);
+   timer.callback = opentimers_xtimer_callback;
 }
 
 /**
@@ -122,9 +125,11 @@ opentimer_id_t opentimers_start(uint32_t duration, timer_type_t type, time_type_
       ) {
          opentimers_vars.currentTimeout            = opentimers_vars.timersBuf[id].ticks_remaining;
          if (opentimers_vars.running==FALSE) {
-            bsp_timer_reset();
+            // bsp_timer_reset();
+            xtimer_remove(&timer);
          }
-         bsp_timer_scheduleIn(opentimers_vars.timersBuf[id].ticks_remaining);
+         // bsp_timer_scheduleIn(opentimers_vars.timersBuf[id].ticks_remaining);
+         xtimer_set(&timer, opentimers_vars.timersBuf[id].ticks_remaining);
 
       }
 
@@ -152,9 +157,9 @@ void  opentimers_setPeriod(opentimer_id_t id,time_type_t timetype,uint32_t newDu
 
       // we can not print from within the drivers. Instead:
       // blink the error LED
-      leds_error_blink();
+      // leds_error_blink();
       // reset the board
-      board_reset();
+      // board_reset();
    }
    if(opentimers_vars.timersBuf[id].wraps_remaining==0) {
       if        (timetype==TIME_MS){
@@ -198,7 +203,7 @@ This function maps the expiration event to possibly multiple timers, calls the
 corresponding callback(s), and restarts the hardware timer with the next timer
 to expire.
  */
-void opentimers_timer_callback() {
+void opentimers_timer_callback(void) {
 
    opentimer_id_t   id;
    PORT_TIMER_WIDTH min_timeout;
@@ -276,7 +281,8 @@ void opentimers_timer_callback() {
    if (found==TRUE) {
       // at least one timer pending
       opentimers_vars.currentTimeout = min_timeout;
-      bsp_timer_scheduleIn(opentimers_vars.currentTimeout);
+      // bsp_timer_scheduleIn(opentimers_vars.currentTimeout);
+      xtimer_set(&timer, opentimers_vars.currentTimeout);
    } else {
       // no more timers pending
       opentimers_vars.running = FALSE;
@@ -357,9 +363,17 @@ void opentimers_sleepTimeCompesation(uint16_t sleepTime)
    if (found==TRUE) {
       // at least one timer pending
       opentimers_vars.currentTimeout = min_timeout;
-      bsp_timer_scheduleIn(opentimers_vars.currentTimeout);
+      // bsp_timer_scheduleIn(opentimers_vars.currentTimeout);
+      xtimer_set(&timer, opentimers_vars.currentTimeout);
    } else {
       // no more timers pending
       opentimers_vars.running = FALSE;
    }
+}
+
+void opentimers_xtimer_callback(void *arg)
+{
+   (void)arg;
+   opentimers_timer_callback();
+   return;
 }
