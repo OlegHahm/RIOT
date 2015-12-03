@@ -8,9 +8,8 @@ On openmoteSTM32, we use RTC for the radiotimer module.
 #include "stdint.h"
 
 #include "periph/timer.h"
-#include "hwtimer.h"
 
-#include "leds.h"
+// #include "leds.h"
 #include "radiotimer.h"
 #include "board_info.h"
 
