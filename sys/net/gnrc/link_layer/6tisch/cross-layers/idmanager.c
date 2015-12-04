@@ -174,11 +174,12 @@ bool idmanager_isMyAddress(open_addr_t* addr) {
 }
 
 void idmanager_triggerAboutRoot(void) {
-   uint8_t         number_bytes_from_input_buffer;
+   uint8_t         number_bytes_from_input_buffer = 0;
    uint8_t         input_buffer[9];
    open_addr_t     myPrefix;
    uint8_t         dodagid[16];
 
+   memset(input_buffer, 0, sizeof(input_buffer));
    //=== get command from OpenSerial
    // number_bytes_from_input_buffer = openserial_getInputBuffer(input_buffer,sizeof(input_buffer));
    if (number_bytes_from_input_buffer!=sizeof(input_buffer)) {

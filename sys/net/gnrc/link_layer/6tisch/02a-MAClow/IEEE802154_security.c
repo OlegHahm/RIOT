@@ -286,7 +286,7 @@ owerror_t IEEE802154_security_outgoingFrameSecurity(OpenQueueEntry_t*   msg){
    uint8_t j;
    uint8_t nonce[13];
    uint8_t key[16];
-   owerror_t outStatus;
+   owerror_t outStatus = E_FAIL;
    uint8_t* a;
    uint8_t len_a;
    uint8_t* m;
@@ -313,6 +313,7 @@ owerror_t IEEE802154_security_outgoingFrameSecurity(OpenQueueEntry_t*   msg){
    for (j=0;j<16;j++){
       key[j] = keyDescriptor->key[j];
    }
+   (void) key;
 
    uint8_t vectASN[5];
    macFrameCounter_t l2_frameCounter;
@@ -841,6 +842,7 @@ m_keyDescriptor* IEEE802154_security_keyDescriptorLookup(uint8_t      KeyIdMode,
                                                          open_addr_t* DeviceAddress,
                                                          open_addr_t* panID,
                                                          uint8_t      frameType){
+   (void) frameType;
    uint8_t i;
    INTERRUPT_DECLARATION();
    DISABLE_INTERRUPTS();

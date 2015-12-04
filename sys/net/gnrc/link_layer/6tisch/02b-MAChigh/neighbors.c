@@ -444,6 +444,7 @@ void neighbors_indicateRxDIO(OpenQueueEntry_t* msg) {
    // neighbors_vars.dio = (icmpv6rpl_dio_ht*)(msg->payload);
    // retrieve rank
    temp_8b            = *(msg->payload+2);
+   (void) temp_8b;
    // neighbors_vars.dio->rank = (temp_8b << 8) + *(msg->payload+3);
    if (isNeighbor(&(msg->l2_nextORpreviousHop))==TRUE) {
       for (i=0;i<MAXNUMNEIGHBORS;i++) {
@@ -593,6 +594,7 @@ bool debugPrint_neighbors(void) {
    neighbors_vars.debugRow=(neighbors_vars.debugRow+1)%MAXNUMNEIGHBORS;
    temp.row=neighbors_vars.debugRow;
    temp.neighborEntry=neighbors_vars.neighbors[neighbors_vars.debugRow];
+   (void) temp;
    // openserial_printStatus(STATUS_NEIGHBORS,(uint8_t*)&temp,sizeof(debugNeighborEntry_t));
    return TRUE;
 }

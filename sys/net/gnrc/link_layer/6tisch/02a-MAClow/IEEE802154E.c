@@ -502,6 +502,7 @@ port_INLINE void activity_synchronize_startOfFrame(PORT_RADIOTIMER_WIDTH capture
 }
 
 port_INLINE void activity_synchronize_endOfFrame(PORT_RADIOTIMER_WIDTH capturedTime) {
+   (void) capturedTime;
    ieee802154_header_iht ieee802514_header;
    uint16_t              lenIE;
 
@@ -819,7 +820,7 @@ port_INLINE bool ieee154e_processIEs(OpenQueueEntry_t* pkt, uint16_t* lenIE) {
 port_INLINE void activity_ti1ORri1(void) {
    cellType_t  cellType;
    open_addr_t neighbor;
-   uint8_t     i;
+   int i;
    sync_IE_ht  sync_IE;
    bool        changeToRX=FALSE;
    bool        couldSendEB=FALSE;

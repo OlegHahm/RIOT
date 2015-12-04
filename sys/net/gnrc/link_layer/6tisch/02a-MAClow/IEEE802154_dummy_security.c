@@ -11,26 +11,35 @@ static void init(void) {
 }
 
 static void prependAuxiliarySecurityHeader(OpenQueueEntry_t* msg){
+   (void) msg;
    return;
 }
 
 static void retrieveAuxiliarySecurityHeader(OpenQueueEntry_t* msg, ieee802154_header_iht* tempheader) {
+   (void) msg;
+   (void) tempheader;
    return;
 }
 
 static owerror_t outgoingFrame(OpenQueueEntry_t* msg) {
+   (void) msg;
    return E_SUCCESS;
 }
 
 static owerror_t incomingFrame(OpenQueueEntry_t* msg) {
+   (void) msg;
    return E_SUCCESS;
 }
 
 static uint8_t authenticationTagLen(uint8_t sec_level) {
+   (void) sec_level;
    return (uint8_t) 0;
 }
 
 static uint8_t auxiliaryHeaderLen(uint8_t kid, uint8_t sup, uint8_t size) {
+   (void) kid;
+   (void) sup;
+   (void) size;
    return (uint8_t) 0;
 }
 

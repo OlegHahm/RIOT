@@ -14,11 +14,12 @@
 
 // general
 #include <stdint.h>               // needed for uin8_t, uint16_t
+#include <stdbool.h>
 //#include "toolchain_defs.h"
 #include "board_info.h"
 
-#define BEGIN_PACK   _Pragma("pack(1)");
-#define END_PACK     _Pragma("pack()");
+#define BEGIN_PACK   _Pragma("pack(1)")
+#define END_PACK     _Pragma("pack()")
 
 //=========================== define ==========================================
 
@@ -275,7 +276,7 @@ typedef struct {                                 // always written big endian, i
       uint8_t addr_128b[16];
       uint8_t panid[2];
       uint8_t prefix[8];
-   };
+   } addr;
 } open_addr_t;
 END_PACK
 
