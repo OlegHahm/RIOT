@@ -754,7 +754,7 @@ void schedule_resetEntry(scheduleEntry_t* e) {
    e->channelOffset          = 0;
 
    e->neighbor.type          = ADDR_NONE;
-   memset(&e->neighbor.addr_64b[0], 0x00, sizeof(e->neighbor.addr_64b));
+   memset(&e->neighbor.addr.addr_64b[0], 0x00, sizeof(e->neighbor.addr.addr_64b));
 
    e->numRx                  = 0;
    e->numTx                  = 0;

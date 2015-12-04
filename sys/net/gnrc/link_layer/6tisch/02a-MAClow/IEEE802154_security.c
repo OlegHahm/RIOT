@@ -116,14 +116,14 @@ void IEEE802154_security_init(void) {
 
    //macDefaultKeySource - shared
    ieee802154_security_vars.m_macDefaultKeySource.type = ADDR_64B;
-   ieee802154_security_vars.m_macDefaultKeySource.addr_64b[0] = 0x14;
-   ieee802154_security_vars.m_macDefaultKeySource.addr_64b[1] = 0x15;
-   ieee802154_security_vars.m_macDefaultKeySource.addr_64b[2] = 0x92;
-   ieee802154_security_vars.m_macDefaultKeySource.addr_64b[3] = 0x00;
-   ieee802154_security_vars.m_macDefaultKeySource.addr_64b[4] = 0x00;
-   ieee802154_security_vars.m_macDefaultKeySource.addr_64b[5] = 0x15;
-   ieee802154_security_vars.m_macDefaultKeySource.addr_64b[6] = 0x16;
-   ieee802154_security_vars.m_macDefaultKeySource.addr_64b[7] = 0x5a;
+   ieee802154_security_vars.m_macDefaultKeySource.addr.addr_64b[0] = 0x14;
+   ieee802154_security_vars.m_macDefaultKeySource.addr.addr_64b[1] = 0x15;
+   ieee802154_security_vars.m_macDefaultKeySource.addr.addr_64b[2] = 0x92;
+   ieee802154_security_vars.m_macDefaultKeySource.addr.addr_64b[3] = 0x00;
+   ieee802154_security_vars.m_macDefaultKeySource.addr.addr_64b[4] = 0x00;
+   ieee802154_security_vars.m_macDefaultKeySource.addr.addr_64b[5] = 0x15;
+   ieee802154_security_vars.m_macDefaultKeySource.addr.addr_64b[6] = 0x16;
+   ieee802154_security_vars.m_macDefaultKeySource.addr.addr_64b[7] = 0x5a;
 
    //store the key and related attributes
    //Creation of the KeyDescriptor
@@ -229,9 +229,9 @@ void IEEE802154_security_prependAuxiliarySecurityHeader(OpenQueueEntry_t* msg){
       case IEEE154_ASH_KEYIDMODE_EXPLICIT_16: //keySource with 16b address
          temp_keySource = &msg->l2_keySource;
          packetfunctions_reserveHeaderSize(msg, sizeof(uint8_t));
-         *((uint8_t*)(msg->payload)) = temp_keySource->addr_64b[6];
+         *((uint8_t*)(msg->payload)) = temp_keySource->addr.addr_64b[6];
          packetfunctions_reserveHeaderSize(msg, sizeof(uint8_t));
-         *((uint8_t*)(msg->payload)) = temp_keySource->addr_64b[7];
+         *((uint8_t*)(msg->payload)) = temp_keySource->addr.addr_64b[7];
          break;
       case IEEE154_ASH_KEYIDMODE_EXPLICIT_64: //keySource with 64b address
          temp_keySource = &msg->l2_keySource;
@@ -331,7 +331,7 @@ owerror_t IEEE802154_security_outgoingFrameSecurity(OpenQueueEntry_t*   msg){
    //nonce creation
    memset(&nonce[0], 0, 13);
    //first 8 bytes of the nonce are always the source address of the frame
-   memcpy(&nonce[0],idmanager_getMyID(ADDR_64B)->addr_64b,8);
+   memcpy(&nonce[0],idmanager_getMyID(ADDR_64B)->addr.addr_64b,8);
 
    //Frame Counter (ASN)
    for (i=0;i<5;i++){
@@ -583,7 +583,7 @@ owerror_t IEEE802154_security_incomingFrame(OpenQueueEntry_t* msg){
    //create nonce
    memset(&nonce[0], 0, 13);
    //first 8 bytes of the nonce are always the source address of the frame
-   memcpy(&nonce[0],msg->l2_nextORpreviousHop.addr_64b,8);
+   memcpy(&nonce[0],msg->l2_nextORpreviousHop.addr.addr_64b,8);
 
    //Frame Counter (ASN)
    ieee154e_getAsn(myASN);
@@ -873,8 +873,8 @@ m_keyDescriptor* IEEE802154_security_keyDescriptorLookup(uint8_t      KeyIdMode,
    if (KeyIdMode == IEEE154_ASH_KEYIDMODE_EXPLICIT_16){
       for (i=0; i<MAXNUMKEYS; i++ ){
          if (KeyIndex == ieee802154_security_vars.MacKeyTable.KeyDescriptorElement[i].KeyIdLookupList.KeyIndex){
-            if (keySource->addr_16b[0] == ieee802154_security_vars.MacKeyTable.KeyDescriptorElement[i].KeyIdLookupList.KeySource.addr_16b[0] &&
-               keySource->addr_16b[1] == ieee802154_security_vars.MacKeyTable.KeyDescriptorElement[i].KeyIdLookupList.KeySource.addr_16b[1]
+            if (keySource->addr.addr_16b[0] == ieee802154_security_vars.MacKeyTable.KeyDescriptorElement[i].KeyIdLookupList.KeySource.addr.addr_16b[0] &&
+               keySource->addr.addr_16b[1] == ieee802154_security_vars.MacKeyTable.KeyDescriptorElement[i].KeyIdLookupList.KeySource.addr.addr_16b[1]
                && packetfunctions_sameAddress(panID, &ieee802154_security_vars.MacKeyTable.KeyDescriptorElement[i].KeyIdLookupList.PANId)
                ){
                ENABLE_INTERRUPTS();
