@@ -35,8 +35,9 @@
 #ifndef __BOARD_INFO_H
 #define __BOARD_INFO_H
 
-#include "stdint.h"
-#include "string.h"
+#include <stdint.h>
+#include <string.h>
+#include "irq.h"
 #include "board.h"
 
 

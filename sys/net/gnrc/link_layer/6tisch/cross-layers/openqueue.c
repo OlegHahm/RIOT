@@ -42,6 +42,7 @@ bool debugPrint_queue(void) {
       output[i].creator = openqueue_vars.queue[i].creator;
       output[i].owner   = openqueue_vars.queue[i].owner;
    }
+   (void) output;
    // openserial_printStatus(STATUS_QUEUE,(uint8_t*)&output,QUEUELENGTH*sizeof(debugOpenQueueEntry_t));
    return TRUE;
 }

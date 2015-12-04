@@ -153,6 +153,7 @@ bool debugPrint_backoff(void) {
    // gather status data
    temp[0] = schedule_vars.backoffExponent;
    temp[1] = schedule_vars.backoff;
+   (void) temp;
 
    // send status data over serial port
    // openserial_printStatus(
