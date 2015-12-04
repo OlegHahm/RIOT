@@ -477,7 +477,7 @@ void neighbors_indicateRxDIO(OpenQueueEntry_t* msg) {
 void  neighbors_getNeighbor(open_addr_t* address, uint8_t addr_type, uint8_t index){
    switch(addr_type) {
       case ADDR_64B:
-         memcpy(&(address->addr_64b),&(neighbors_vars.neighbors[index].addr_64b.addr_64b),LENGTH_ADDR64b);
+         memcpy(&(address->addr.addr_64b),&(neighbors_vars.neighbors[index].addr_64b),LENGTH_ADDR64b);
          address->type=ADDR_64B;
          break;
       default:
