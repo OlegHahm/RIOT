@@ -44,7 +44,9 @@
 //=========================== defines =========================================
 // typedef uint32_t irqflags_t;
 
-
+/* define here for simplicity now, should be moved to
+   RIOT's board.h later */
+#define OWSN_TIMER TIMER_1
 typedef enum {
    DO_NOT_KICK_SCHEDULER,
    KICK_SCHEDULER,
