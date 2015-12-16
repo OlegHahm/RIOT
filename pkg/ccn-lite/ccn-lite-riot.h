@@ -42,7 +42,7 @@ extern "C" {
 /**
  * Define the log level of the CCN-Lite stack
  */
-#define LOG_LEVEL LOG_DEBUG
+#define LOG_LEVEL LOG_WARNING
 #include "log.h"
 
 /**
@@ -50,10 +50,31 @@ extern "C" {
  *
  * @{
  */
-#define ccnl_malloc(s)                  malloc(s)
-#define ccnl_calloc(n,s)                calloc(n,s)
-#define ccnl_realloc(p,s)               realloc(p,s)
-#define ccnl_free(p)                    free(p)
+static inline void *ccnl_malloc(size_t s)
+{
+    void *p = malloc(s);
+    printf("malloc for %i at %p\n", s, p);
+    return p;
+}
+
+static inline void *ccnl_calloc(size_t n, size_t s)
+{
+    void *p = calloc(n, s);
+    printf("calloc for %i at %p\n", s, p);
+    return p;
+}
+
+static inline void *ccnl_realloc(void *p, size_t s)
+{
+    printf("realloc: %i\n", s);
+    return realloc(p,s);
+}
+
+static inline void ccnl_free(void *p)
+{
+    puts("FREE!");
+    free(p);
+}
 /**
  * @}
  */
