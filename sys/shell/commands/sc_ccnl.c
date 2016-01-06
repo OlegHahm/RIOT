@@ -138,8 +138,8 @@ int _ccnl_content(int argc, char **argv)
 
     struct ccnl_content_s *c = 0;
     struct ccnl_pkt_s *pk = ccnl_ndntlv_bytes2pkt(typ, olddata, &data, &arg_len);
-    c = ccnl_content_new(&theRelay, &pk);
-    ccnl_content_add2cache(&theRelay, c);
+    c = ccnl_content_new(&ccnl_relay, &pk);
+    ccnl_content_add2cache(&ccnl_relay, c);
     c->flags |= CCNL_CONTENT_FLAGS_STATIC;
 
     return 0;
