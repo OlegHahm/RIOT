@@ -180,3 +180,14 @@ int _ccnl_interest(int argc, char **argv)
 
     return -1;
 }
+
+int _ccnl_fib(int argc, char **argv)
+{
+    if (argc < 2) {
+        ccnl_show_fib(&ccnl_relay);
+    }
+    else {
+        printf("Usage: %s\n", argv[0]);
+    }
+    return 0;
+}

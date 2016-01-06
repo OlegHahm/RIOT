@@ -170,6 +170,20 @@ int ccnl_send_interest(int suite, char *name, uint8_t *addr, size_t addr_len,
  */
 int ccnl_wait_for_chunk(void *buf, size_t buf_len);
 
+/**
+ * @brief Add entry to the CCN-Lite FIB
+ *
+ * @par[in] relay   Local relay struct
+ * @par[in] pfx     Prefix of the FIB entry
+ * @par[in] face    Face for the FIB entry
+ *
+ * @return 0    on success
+ * @return -1   on error
+ */
+int ccnl_add_fib_entry(struct ccnl_relay_s *relay, struct ccnl_prefix_s *pfx,
+                       struct ccnl_face_s *face);
+
+void ccnl_show_fib(struct ccnl_relay_s *relay);
 #ifdef __cplusplus
 }
 #endif
