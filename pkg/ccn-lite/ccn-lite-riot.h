@@ -123,7 +123,7 @@ extern "C" {
 /**
  * Struct holding CCN-Lite's central relay information
  */
-extern struct ccnl_relay_s theRelay;
+extern struct ccnl_relay_s ccnl_relay;
 
 /**
  * @brief   Start the main CCN-Lite event-loop
