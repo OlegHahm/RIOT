@@ -28,7 +28,7 @@
 /**
  * Maximum number of Interest retransmissions
  */
-#define CCNL_INTEREST_RETRIES   (3)
+#define CCNL_INTEREST_RETRIES   (1)
 
 #define MAX_ADDR_LEN            (8U)
 
