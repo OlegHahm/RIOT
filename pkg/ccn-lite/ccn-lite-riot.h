@@ -165,6 +165,9 @@ int ccnl_send_interest(int suite, char *name, uint8_t *addr, size_t addr_len,
 /**
  * @brief Waits for incoming content chunk
  *
+ * @param[out] buf      Buffer to stores the received content
+ * @param[in]  buf_len  Size of @p buf
+ *
  * @return 0 if a content was received
  * @return -ETIMEDOUT if no chunk was received until timeout
  */
