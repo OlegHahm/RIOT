@@ -42,7 +42,7 @@ extern "C" {
 /**
  * Define the log level of the CCN-Lite stack
  */
-#define LOG_LEVEL LOG_DEBUG
+#define LOG_LEVEL LOG_INFO
 #include "log.h"
 
 /**
@@ -85,7 +85,7 @@ extern "C" {
  * @{
  */
 #define DEBUGMSG(LVL, ...) do {       \
-        if ((LVL)>debug_level) break;   \
+        if ((LVL)>ccnl_debug_level) break;   \
         LOG(LVL, __VA_ARGS__);   \
     } while (0)
 
@@ -95,7 +95,7 @@ extern "C" {
 #define DEBUGMSG_PIOT(...) DEBUGMSG(__VA_ARGS__)
 
 #define DEBUGSTMT(LVL, ...) do { \
-        if ((LVL)>debug_level) break; \
+        if ((LVL)>ccnl_debug_level) break; \
         __VA_ARGS__; \
      } while (0)
 
@@ -124,6 +124,11 @@ extern "C" {
  * Struct holding CCN-Lite's central relay information
  */
 extern struct ccnl_relay_s ccnl_relay;
+
+/**
+ * Debug level for logging output
+ */
+extern int ccnl_debug_level;
 
 /**
  * @brief   Start the main CCN-Lite event-loop
