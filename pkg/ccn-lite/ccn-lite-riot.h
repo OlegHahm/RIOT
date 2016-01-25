@@ -167,11 +167,12 @@ int ccnl_send_interest(int suite, char *name, uint8_t *addr, size_t addr_len,
  *
  * @param[out] buf      Buffer to stores the received content
  * @param[in]  buf_len  Size of @p buf
+ * @param[in]  timeout  Maximum to wait for the chunk, set to a default value if 0
  *
  * @return 0 if a content was received
  * @return -ETIMEDOUT if no chunk was received until timeout
  */
-int ccnl_wait_for_chunk(void *buf, size_t buf_len);
+int ccnl_wait_for_chunk(void *buf, size_t buf_len, uint64_t timeout);
 
 /**
  * @brief Add entry to the CCN-Lite FIB

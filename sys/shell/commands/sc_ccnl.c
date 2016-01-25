@@ -171,7 +171,7 @@ int _ccnl_interest(int argc, char **argv)
     memset(_cont_buf, '\0', BUF_SIZE);
     for (int cnt = 0; cnt < CCNL_INTEREST_RETRIES; cnt++) {
         ccnl_send_interest(CCNL_SUITE_NDNTLV, argv[1], relay_addr, addr_len, NULL, _int_buf, BUF_SIZE);
-        if (ccnl_wait_for_chunk(_cont_buf, BUF_SIZE) > 0) {
+        if (ccnl_wait_for_chunk(_cont_buf, BUF_SIZE, 0) > 0) {
             printf("Content received: %s\n", _cont_buf);
             return 0;
         }
