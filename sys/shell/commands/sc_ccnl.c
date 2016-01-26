@@ -144,12 +144,49 @@ int _ccnl_content(int argc, char **argv)
     return 0;
 }
 
+static int _intern_fib_add(char *pfx, char *addr_str)
+{
+    int suite = CCNL_SUITE_NDNTLV;
+    struct ccnl_prefix_s *prefix = ccnl_URItoPrefix(pfx, suite, NULL, 0);
+    if (!prefix) {
+        puts("Error: prefix could not be created!");
+        return -1;
+    }
+
+    /* initialize address with 0xFF for broadcast */
+    size_t addr_len = MAX_ADDR_LEN;
+    uint8_t relay_addr[MAX_ADDR_LEN];
+    memset(relay_addr, UINT8_MAX, MAX_ADDR_LEN);
+
+    addr_len = gnrc_netif_addr_from_str(relay_addr, sizeof(relay_addr), addr_str);
+    if (addr_len == 0) {
+        printf("Error: %s is not a valid link layer address\n", addr_str);
+        return -1;
+    }
+
+    sockunion sun;
+    sun.sa.sa_family = AF_PACKET;
+    memcpy(&(sun.linklayer.sll_addr), relay_addr, addr_len);
+    sun.linklayer.sll_halen = addr_len;
+    sun.linklayer.sll_protocol = htons(ETHERTYPE_NDN);
+
+    /* TODO: set correct interface instead of always 0 */
+    struct ccnl_face_s *fibface = ccnl_get_face_or_create(&ccnl_relay, 0, &sun.sa, sizeof(sun.linklayer));
+    fibface->flags |= CCNL_FACE_FLAGS_STATIC;
+
+    if (ccnl_add_fib_entry(&ccnl_relay, prefix, fibface) != 0) {
+        printf("Error adding (%s : %s) to the FIB\n", pfx, addr_str);
+        return -1;
+    }
+
+    return 0;
+}
+
 static void _interest_usage(char *arg)
 {
     printf("usage: %s <URI> [relay]\n"
-            "%% %s /riot/peter/schmerzl                     (classic lookup)\n"
-            "%% %s /riot/peter/schmerzl 01:02:03:04:05:06\n",
-            arg, arg, arg);
+            "%% %s /riot/peter/schmerzl                     (classic lookup)\n",
+            arg, arg);
 }
 
 int _ccnl_interest(int argc, char **argv)
@@ -159,18 +196,17 @@ int _ccnl_interest(int argc, char **argv)
         return -1;
     }
 
-    /* initialize address with 0xFF for broadcast */
-    size_t addr_len = MAX_ADDR_LEN;
-    uint8_t relay_addr[MAX_ADDR_LEN];
-    memset(relay_addr, UINT8_MAX, MAX_ADDR_LEN);
     if (argc > 2) {
-        addr_len = gnrc_netif_addr_from_str(relay_addr, sizeof(relay_addr), argv[2]);
+        if (_intern_fib_add(argv[1], argv[2]) < 0) {
+            _interest_usage(argv[0]);
+            return -1;
+        }
     }
 
     memset(_int_buf, '\0', BUF_SIZE);
     memset(_cont_buf, '\0', BUF_SIZE);
     for (int cnt = 0; cnt < CCNL_INTEREST_RETRIES; cnt++) {
-        ccnl_send_interest(CCNL_SUITE_NDNTLV, argv[1], relay_addr, addr_len, NULL, _int_buf, BUF_SIZE);
+        ccnl_send_interest(CCNL_SUITE_NDNTLV, argv[1], NULL, _int_buf, BUF_SIZE);
         if (ccnl_wait_for_chunk(_cont_buf, BUF_SIZE, 0) > 0) {
             printf("Content received: %s\n", _cont_buf);
             return 0;
@@ -195,36 +231,8 @@ int _ccnl_fib(int argc, char **argv)
         ccnl_show_fib(&ccnl_relay);
     }
     else if (argc == 3) {
-        size_t addr_len = MAX_ADDR_LEN;
-        uint8_t relay_addr[MAX_ADDR_LEN];
-        int suite = CCNL_SUITE_NDNTLV;
-        memset(relay_addr, UINT8_MAX, MAX_ADDR_LEN);
-        addr_len = gnrc_netif_addr_from_str(relay_addr, sizeof(relay_addr), argv[2]);
-
-        if (addr_len == 0) {
-            printf("Error: %s is not a valid link layer address\n", argv[2]);
-            return -1;
-        }
-
-        struct ccnl_prefix_s *prefix = ccnl_URItoPrefix(argv[1], suite, NULL, 0);
-
-        if (!prefix) {
-            puts("Error: prefix could not be created!");
-            return -1;
-        }
-
-        sockunion sun;
-        sun.sa.sa_family = AF_PACKET;
-        memcpy(&(sun.linklayer.sll_addr), relay_addr, addr_len);
-        sun.linklayer.sll_halen = addr_len;
-        sun.linklayer.sll_protocol = htons(ETHERTYPE_NDN);
-
-        /* TODO: set correct interface instead of always 0 */
-        struct ccnl_face_s *fibface = ccnl_get_face_or_create(&ccnl_relay, 0, &sun.sa, sizeof(sun.linklayer));
-        fibface->flags |= CCNL_FACE_FLAGS_STATIC;
-
-        if (ccnl_add_fib_entry(&ccnl_relay, prefix, fibface) != 0) {
-            printf("Error adding (%s : %s) to the FIB\n", argv[1], argv[2]);
+        if (_intern_fib_add(argv[1], argv[2]) < 0) {
+            _ccnl_fib_usage(argv[0]);
             return -1;
         }
     }
