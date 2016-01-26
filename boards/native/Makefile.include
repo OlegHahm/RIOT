@@ -34,6 +34,7 @@ export DEBUGGER = gdb
 export TERMPROG = $(ELF)
 export FLASHER = true
 export VALGRIND ?= valgrind
+export VALGRIND_DEBUG ?= $(RIOTBASE)/dist/tools/valgrind-gdb/valgrind-gdb.sh
 export CGANNOTATE ?= cg_annotate
 export GPROF ?= gprof
 
@@ -135,11 +136,11 @@ all-valgrind: all
 all-cachegrind: all
 
 term-valgrind:
-# use this if you want to attach gdb from valgrind:
-#	echo 0 > /proc/sys/kernel/yama/ptrace_scope
-#	VALGRIND_FLAGS += --db-attach=yes
 	$(VALGRIND) $(VALGRIND_FLAGS) $(ELF) $(PORT)
 
+debug-valgrind:
+	$(VALGRIND_DEBUG) $(ELF) $(PORT)
+	
 term-cachegrind:
 	$(VALGRIND) $(CACHEGRIND_FLAGS) $(ELF) $(PORT)
 
