@@ -42,7 +42,7 @@ extern "C" {
 /**
  * Define the log level of the CCN-Lite stack
  */
-#define LOG_LEVEL LOG_INFO
+#define LOG_LEVEL LOG_DEBUG
 #include "log.h"
 
 /**
@@ -154,8 +154,6 @@ int ccnl_open_netif(kernel_pid_t if_pid, gnrc_nettype_t netreg_type);
  *
  * @param[in] suite     CCN packet format
  * @param[in] name      The name that is requested
- * @param[in] addr      The relay's address to send to
- * @param[in] addr_len  Length of @p addr
  * @param[in] chunknum  Number of the requested content chunk
  * @param[out] buf      Buffer to write the content chunk to
  * @param[in] buf_len   Size of @p buf
@@ -163,9 +161,8 @@ int ccnl_open_netif(kernel_pid_t if_pid, gnrc_nettype_t netreg_type);
  * @return 0 on successfully sent Interest
  * @return -1 if Interested couldn't be sent
  */
-int ccnl_send_interest(int suite, char *name, uint8_t *addr, size_t addr_len,
-                        unsigned int *chunknum, unsigned char *buf,
-                        size_t buf_len);
+int ccnl_send_interest(int suite, char *name, unsigned int *chunknum,
+                       unsigned char *buf, size_t buf_len);
 
 /**
  * @brief Waits for incoming content chunk
