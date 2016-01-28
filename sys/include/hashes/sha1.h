@@ -86,6 +86,23 @@ uint8_t *sha1_final(sha1_context *s);
  */
 void sha1(uint8_t *dst, const uint8_t *src, size_t len);
 
+/**
+ * @brief function to compute a hmac-sha1 from a given message
+ *
+ * @param[in] key key used in the hmac-sha1 computation
+ * @param[in] key_length the size in bytes of the key
+ * @param[in] message poiter to the message to generate the hmac-sha1
+ * @param[in] message_length the length of the message in bytes
+ * @param[out] result the computed hmac-sha1,
+ *             length MUST be SHA1_DIGEST_LENGTH
+ *             if result == NULL, a static buffer is used
+ */
+unsigned char * hmac_sha1(const unsigned char *key,
+                            size_t key_length,
+                            const unsigned *message,
+                            size_t message_length,
+                            unsigned char *result);
+
 #ifdef __cplusplus
 }
 #endif

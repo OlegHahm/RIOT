@@ -162,3 +162,62 @@ void sha1(uint8_t *dst, const uint8_t *src, size_t len)
     sha1_update(&ctx, (unsigned char*) src, len);
     memcpy(dst, sha1_final(&ctx), SHA1_DIGEST_LENGTH);
 }
+
+unsigned char * hmac_sha1(const unsigned char *key,
+                            size_t key_length,
+                            const unsigned *message,
+                            size_t message_length,
+                            unsigned char *result)
+{
+    unsigned char k[64];
+    memset((void *)k, 0x00, 64);
+
+    if (key_length > 64) {
+        sha1((uint8_t*)k, key, key_length);
+    }
+    else {
+        memcpy((void *)k, key, key_length);
+    }
+
+    /* 
+     * create the inner and outer keypads 
+     * rising hamming distance enforcing i_* and o_* are distinct
+     * in at least one bit 
+     */
+    unsigned char o_key_pad[64];
+    unsigned char i_key_pad[64];
+
+    for (size_t i = 0; i < 64; ++i) {
+        o_key_pad[i] = 0x5c^k[i];
+        i_key_pad[i] = 0x36^k[i];
+    }
+
+    /*
+     * Create the inner hash 
+     * tmp = hash(i_key_pad CONCAT message) 
+     */
+    sha1_context c;
+    unsigned char tmp[SHA1_DIGEST_LENGTH];
+
+    sha1_init(&c);
+    sha1_update(&c, i_key_pad, 64);
+    sha1_update(&c, (unsigned char *)message, message_length);
+    memcpy(tmp, sha1_final(&c), SHA1_DIGEST_LENGTH);
+
+    static unsigned char m[SHA1_DIGEST_LENGTH];
+
+    if (result == NULL) {
+        result = m;
+    }
+
+    /*
+     * Create the outer hash 
+     * result = hash(o_key_pad CONCAT tmp) 
+     */
+    sha1_init(&c);
+    sha1_update(&c, o_key_pad, 64);
+    sha1_update(&c, tmp, SHA1_DIGEST_LENGTH);
+    memcpy(result, sha1_final(&c), SHA1_DIGEST_LENGTH);
+
+    return result;
+}
