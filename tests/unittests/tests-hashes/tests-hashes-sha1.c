@@ -100,6 +100,32 @@ static int calc_and_compare_hash2(const char *str, const char *expected)
     return strncmp(tmp, expected, strlen((char*) tmp));
 }
 
+static void test_crypto_hmac_sha1_hash_sequence(void)
+{
+    unsigned char key[64];
+    /* prepare an empty key */
+    memset((void*)key, 0x0, 64);
+    static unsigned char hmac[SHA1_DIGEST_LENGTH];
+    
+    /* use an empty message */
+    const unsigned *m = NULL;
+    hmac_sha1(key, 64, m, 0, hmac);
+    
+    TEST_ASSERT(calc_and_compare_hash2(
+                 "fbdb1d1b18aa6c08324b7d64b71fb76370690e1d", (char *)hmac));
+    
+    /* use a real message */
+    const char str[] = "The quick brown fox jumps over the lazy dog";
+    key[0] = 'k';
+    key[1] = 'e';
+    key[2] = 'y';
+
+    hmac_sha1(key, 3, (unsigned*)str, strlen(str), hmac);
+    TEST_ASSERT(calc_and_compare_hash2(
+                 "de7c9b85b8b78aa6bc8a7a36f70a90701c9db4d9", (char *)hmac));
+}
+
+
 /* test cases copied from section 7.3 of RFC 3174
  * https://tools.ietf.org/html/rfc3174#section-7.3
  */
@@ -119,6 +145,7 @@ Test *tests_hashes_sha1_tests(void)
 {
     EMB_UNIT_TESTFIXTURES(fixtures) {
         new_TestFixture(test_hashes_sha1),
+        new_TestFixture(test_crypto_hmac_sha1_hash_sequence),
     };
 
     EMB_UNIT_TESTCALLER(test_hashes_sha1, NULL, NULL, fixtures);
