@@ -77,6 +77,15 @@ void sha1_update(sha1_context *s, const unsigned char *data, size_t len);
  */
 uint8_t *sha1_final(sha1_context *s);
 
+/**
+ * @brief   Calculate a SHA1 hash from the given data
+ *
+ * @param[out] dst      Result location, must be 20 byte
+ * @param[in] src       Input data
+ * @param[in] len       Length of @p buf
+ */
+void sha1(uint8_t *dst, const uint8_t *src, size_t len);
+
 #ifdef __cplusplus
 }
 #endif

@@ -154,3 +154,11 @@ uint8_t *sha1_final(sha1_context *s)
     /* Return pointer to hash (20 characters) */
     return (uint8_t *) s->state;
 }
+
+void sha1(uint8_t *dst, const uint8_t *src, size_t len)
+{
+    sha1_context ctx;
+    sha1_init(&ctx);
+    sha1_update(&ctx, (unsigned char*) src, len);
+    memcpy(dst, sha1_final(&ctx), SHA1_DIGEST_LENGTH);
+}
