@@ -430,21 +430,21 @@ void at86rf2xx_set_state(at86rf2xx_t *dev, uint8_t state)
     }
     /* make sure there is no ongoing transmission, or state transition already
      * in progress */
-    while (old_state == AT86RF2XX_STATE_BUSY_RX_AACK ||
-           old_state == AT86RF2XX_STATE_BUSY_TX_ARET ||
+    while (old_state == AT86RF2XX_STATE_BUSY_RX ||
+           old_state == AT86RF2XX_STATE_TX_START ||
            old_state == AT86RF2XX_STATE_IN_PROGRESS) {
         old_state = at86rf2xx_get_status(dev);
     }
 
-    /* we need to go via PLL_ON if we are moving between RX_AACK_ON <-> TX_ARET_ON */
-    if ((old_state == AT86RF2XX_STATE_RX_AACK_ON &&
-             state == AT86RF2XX_STATE_TX_ARET_ON) ||
-        (old_state == AT86RF2XX_STATE_TX_ARET_ON &&
-             state == AT86RF2XX_STATE_RX_AACK_ON)) {
-        _set_state(dev, AT86RF2XX_STATE_PLL_ON);
-    }
+    // /* we need to go via PLL_ON if we are moving between RX_AACK_ON <-> TX_ARET_ON */
+    // if ((old_state == AT86RF2XX_STATE_RX &&
+    //          state == AT86RF2XX_STATE_TX_ARET_ON) ||
+    //     (old_state == AT86RF2XX_STATE_TX_ARET_ON &&
+    //          state == AT86RF2XX_STATE_RX_AACK_ON)) {
+    //     _set_state(dev, AT86RF2XX_STATE_PLL_ON);
+    // }
     /* check if we need to wake up from sleep mode */
-    else if (old_state == AT86RF2XX_STATE_SLEEP) {
+    if (old_state == AT86RF2XX_STATE_SLEEP) {
         DEBUG("at86rf2xx: waking up from sleep mode\n");
         at86rf2xx_assert_awake(dev);
     }
