@@ -19,6 +19,7 @@
  */
 
 #include "random.h"
+#include "sched.h"
 #include "net/gnrc/netif.h"
 #include "ccn-lite-riot.h"
 #include "ccnl-pkt-ndntlv.h"
@@ -206,11 +207,19 @@ int _ccnl_interest(int argc, char **argv)
     memset(_int_buf, '\0', BUF_SIZE);
     memset(_cont_buf, '\0', BUF_SIZE);
     for (int cnt = 0; cnt < CCNL_INTEREST_RETRIES; cnt++) {
+        gnrc_netreg_entry_t _ne;
+        /* register for content chunks */
+        _ne.demux_ctx =  GNRC_NETREG_DEMUX_CTX_ALL;
+        _ne.pid = sched_active_pid;
+        gnrc_netreg_register(GNRC_NETTYPE_CCN_CHUNK, &_ne);
+
         ccnl_send_interest(CCNL_SUITE_NDNTLV, argv[1], NULL, _int_buf, BUF_SIZE);
         if (ccnl_wait_for_chunk(_cont_buf, BUF_SIZE, 0) > 0) {
+            gnrc_netreg_unregister(GNRC_NETTYPE_CCN_CHUNK, &_ne);
             printf("Content received: %s\n", _cont_buf);
             return 0;
         }
+        gnrc_netreg_unregister(GNRC_NETTYPE_CCN_CHUNK, &_ne);
     }
     printf("Timeout! No content received in response to the Interest for %s.\n", argv[1]);
 
