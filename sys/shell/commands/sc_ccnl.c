@@ -175,7 +175,7 @@ static int _intern_fib_add(char *pfx, char *addr_str)
     struct ccnl_face_s *fibface = ccnl_get_face_or_create(&ccnl_relay, 0, &sun.sa, sizeof(sun.linklayer));
     fibface->flags |= CCNL_FACE_FLAGS_STATIC;
 
-    if (ccnl_add_fib_entry(&ccnl_relay, prefix, fibface) != 0) {
+    if (ccnl_fib_add_entry(&ccnl_relay, prefix, fibface) != 0) {
         printf("Error adding (%s : %s) to the FIB\n", pfx, addr_str);
         return -1;
     }
@@ -237,7 +237,7 @@ static void _ccnl_fib_usage(char *argv)
 int _ccnl_fib(int argc, char **argv)
 {
     if (argc < 2) {
-        ccnl_show_fib(&ccnl_relay);
+        ccnl_fib_show(&ccnl_relay);
     }
     else if (argc == 3) {
         if (_intern_fib_add(argv[1], argv[2]) < 0) {
