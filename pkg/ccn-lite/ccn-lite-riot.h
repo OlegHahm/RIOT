@@ -190,7 +190,7 @@ int ccnl_wait_for_chunk(void *buf, size_t buf_len, uint64_t timeout);
  * @return 0    on success
  * @return -1   on error
  */
-int ccnl_add_fib_entry(struct ccnl_relay_s *relay, struct ccnl_prefix_s *pfx,
+int ccnl_fib_add_entry(struct ccnl_relay_s *relay, struct ccnl_prefix_s *pfx,
                        struct ccnl_face_s *face);
 
 /**
@@ -198,6 +198,8 @@ int ccnl_add_fib_entry(struct ccnl_relay_s *relay, struct ccnl_prefix_s *pfx,
  *
  * @par[in] relay   Local relay struct
  */
+void ccnl_fib_show(struct ccnl_relay_s *relay);
+
 #ifdef __cplusplus
 }
 #endif
