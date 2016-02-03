@@ -145,15 +145,8 @@ int _ccnl_content(int argc, char **argv)
     return 0;
 }
 
-static int _intern_fib_add(char *pfx, char *addr_str)
+static struct ccnl_face_s *_intern_face_get(char *addr_str)
 {
-    int suite = CCNL_SUITE_NDNTLV;
-    struct ccnl_prefix_s *prefix = ccnl_URItoPrefix(pfx, suite, NULL, 0);
-    if (!prefix) {
-        puts("Error: prefix could not be created!");
-        return -1;
-    }
-
     /* initialize address with 0xFF for broadcast */
     size_t addr_len = MAX_ADDR_LEN;
     uint8_t relay_addr[MAX_ADDR_LEN];
@@ -162,7 +155,7 @@ static int _intern_fib_add(char *pfx, char *addr_str)
     addr_len = gnrc_netif_addr_from_str(relay_addr, sizeof(relay_addr), addr_str);
     if (addr_len == 0) {
         printf("Error: %s is not a valid link layer address\n", addr_str);
-        return -1;
+        return NULL;
     }
 
     sockunion sun;
@@ -173,6 +166,23 @@ static int _intern_fib_add(char *pfx, char *addr_str)
 
     /* TODO: set correct interface instead of always 0 */
     struct ccnl_face_s *fibface = ccnl_get_face_or_create(&ccnl_relay, 0, &sun.sa, sizeof(sun.linklayer));
+
+    return fibface;
+}
+
+static int _intern_fib_add(char *pfx, char *addr_str)
+{
+    int suite = CCNL_SUITE_NDNTLV;
+    struct ccnl_prefix_s *prefix = ccnl_URItoPrefix(pfx, suite, NULL, 0);
+    if (!prefix) {
+        puts("Error: prefix could not be created!");
+        return -1;
+    }
+
+    struct ccnl_face_s *fibface = _intern_face_get(addr_str);
+    if (fibface == NULL) {
+        return -1;
+    }
     fibface->flags |= CCNL_FACE_FLAGS_STATIC;
 
     if (ccnl_fib_add_entry(&ccnl_relay, prefix, fibface) != 0) {
@@ -238,6 +248,28 @@ int _ccnl_fib(int argc, char **argv)
 {
     if (argc < 2) {
         ccnl_fib_show(&ccnl_relay);
+    }
+    else if (argc == 2) {
+        int suite = CCNL_SUITE_NDNTLV;
+        if (strchr(argv[1], '/')) {
+            struct ccnl_prefix_s *prefix = ccnl_URItoPrefix(argv[1], suite, NULL, 0);
+            if (!prefix) {
+                puts("Error: prefix could not be created!");
+                return -1;
+            }
+            int res = ccnl_fib_rem_entry(&ccnl_relay, prefix, NULL);
+            free_prefix(prefix);
+            return res;
+        }
+        else {
+            struct ccnl_face_s *face = _intern_face_get(argv[1]);
+            if (face == NULL) {
+                printf("There is no face for address %s\n", argv[1]);
+                return -1;
+            }
+            int res = ccnl_fib_rem_entry(&ccnl_relay, NULL, face);
+            return res;
+        }
     }
     else if (argc == 3) {
         if (_intern_fib_add(argv[1], argv[2]) < 0) {
