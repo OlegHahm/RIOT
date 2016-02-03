@@ -165,7 +165,11 @@ int ccnl_send_interest(int suite, char *name, unsigned int *chunknum,
                        unsigned char *buf, size_t buf_len);
 
 /**
- * @brief Waits for incoming content chunk
+ * @brief Wait for incoming content chunk
+ *
+ * @pre The thread has to register for CCNL_CONT_CHUNK in @ref netreg first
+ *
+ * @post The thread should unregister from @ref netreg after this function returns
  *
  * @param[out] buf      Buffer to stores the received content
  * @param[in]  buf_len  Size of @p buf
@@ -189,7 +193,11 @@ int ccnl_wait_for_chunk(void *buf, size_t buf_len, uint64_t timeout);
 int ccnl_add_fib_entry(struct ccnl_relay_s *relay, struct ccnl_prefix_s *pfx,
                        struct ccnl_face_s *face);
 
-void ccnl_show_fib(struct ccnl_relay_s *relay);
+/**
+ * @brief Prints the current CCN-Lite FIB
+ *
+ * @par[in] relay   Local relay struct
+ */
 #ifdef __cplusplus
 }
 #endif
