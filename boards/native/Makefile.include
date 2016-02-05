@@ -34,7 +34,6 @@ export DEBUGGER = gdb
 export TERMPROG = $(ELF)
 export FLASHER = true
 export VALGRIND ?= valgrind
-export VALGRIND_DEBUG ?= $(RIOTBASE)/dist/tools/valgrind-gdb/valgrind-gdb.sh
 export CGANNOTATE ?= cg_annotate
 export GPROF ?= gprof
 
@@ -87,6 +86,11 @@ term-valgrind: export VALGRIND_FLAGS ?= \
 	--track-origins=yes \
 	--fullpath-after=$(RIOTBASE)/ \
 	--read-var-info=yes
+debug-valgrind-server: export VALGRIND_FLAGS ?= --vgdb=yes --vgdb-error=0 -v \
+	--leak-check=full --track-origins=yes --fullpath-after=${RIOTBASE} \
+	--read-var-info=yes
+debug-valgrind: export VALGRIND_PID ?= $(shell pgrep -n memcheck-x86-li -u ${USER} | cut -d" " -f1)
+debug-valgrind: export DEBUGGER_FLAGS := -ex "target remote | vgdb --pid=${VALGRIND_PID}" $(DEBUGGER_FLAGS)
 term-cachegrind: export CACHEGRIND_FLAGS += --tool=cachegrind
 term-gprof: export TERMPROG = GMON_OUT_PREFIX=gmon.out $(ELF)
 all-valgrind: export CFLAGS += -DHAVE_VALGRIND_H -g
@@ -138,8 +142,12 @@ all-cachegrind: all
 term-valgrind:
 	$(VALGRIND) $(VALGRIND_FLAGS) $(ELF) $(PORT)
 
+debug-valgrind-server:
+	$(VALGRIND) $(VALGRIND_FLAGS) $(ELF) $(PORT)
+
 debug-valgrind:
-	$(VALGRIND_DEBUG) $(ELF) $(PORT)
+	@echo $(VALGRIND_PID)
+	$(DEBUGGER) $(DEBUGGER_FLAGS)
 	
 term-cachegrind:
 	$(VALGRIND) $(CACHEGRIND_FLAGS) $(ELF) $(PORT)
