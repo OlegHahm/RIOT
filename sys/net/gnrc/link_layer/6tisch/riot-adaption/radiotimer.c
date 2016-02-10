@@ -95,6 +95,7 @@ inline PORT_RADIOTIMER_WIDTH radiotimer_getCapturedTime(void) {
 
 //=========================== interrupt handlers ==============================
 void radiotimer_isr(void* arg) {
+    (void) arg;
     DEBUG("%s cmp\n", __PRETTY_FUNCTION__);
     if (radiotimer_vars.compare_cb!=NULL) {
         radiotimer_vars.compare_cb();

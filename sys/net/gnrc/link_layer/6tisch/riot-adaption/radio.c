@@ -1,8 +1,6 @@
 #include "board_info.h"
 #include "radio.h"
 #include "board.h"
-#include "at86rf2xx.h"
-#include "at86rf2xx_netdev.h"
 #include "radiotimer.h"
 #include "net/gnrc/pktbuf.h"
 #include "net/gnrc/netapi.h"
@@ -198,6 +196,12 @@ void radio_getReceivedFrame(uint8_t* pBufRead,
                              int8_t* pRssi,
                             uint8_t* pLqi,
                                bool* pCrc) {
+    (void) pBufRead;
+    (void) pLenRead;
+    (void) maxBufLen;
+    (void) pRssi;
+    (void) pLqi;
+    (void) pCrc;
    /* The driver notifies the MAC with the registered
       `event_cb` that a new packet arrived.
       I think this function should not be used to access
