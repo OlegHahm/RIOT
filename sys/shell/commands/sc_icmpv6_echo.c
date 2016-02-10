@@ -242,7 +242,7 @@ int _icmpv6_ping(int argc, char **argv)
 
     while ((remaining--) > 0) {
         gnrc_pktsnip_t *pkt;
-        uint32_t start, stop, timeout = 1 * SEC_IN_USEC;
+        uint32_t start, stop, timeout = 300 * MS_IN_USEC;
 
         pkt = gnrc_icmpv6_echo_build(ICMPV6_ECHO_REQ, id, ++max_seq_expected,
                                      NULL, payload_len);
