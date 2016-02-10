@@ -15,6 +15,7 @@
  *
  * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
  * @author      Kaspar Schleiser <kaspar@schleiser.de>
+ * @author      Oliver Hahm <oliver.hahm@inria.fr>
  * @}
  */
 
@@ -26,6 +27,7 @@
 
 #include "net/gnrc.h"
 #include "net/gnrc/nettype.h"
+#include "net/gnrc/pktqueue.h"
 #include "net/netdev2.h"
 
 #include "net/gnrc/netdev2.h"
@@ -76,6 +78,33 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
 
                     break;
                 }
+            case NETDEV2_EVENT_TX_NOACK:
+            case NETDEV2_EVENT_TX_MEDIUM_BUSY:
+                DEBUG("gnrc_netdev2: no ACK received or medium busy: retrans count is = %u\n", (unsigned) gnrc_netdev2->retrans_head->cnt);
+                if (!gnrc_netdev2->retrans_head) {
+                    DEBUG("\n!!! gnrc_netdev2: queue is empty while retransmitting, this shouldn't happen!\n\n");
+                }
+                else if (gnrc_netdev2->retrans_head->cnt-- <= 0) {
+                    DEBUG("packet sent, removing from buffer and queue: %p\n", gnrc_netdev2->retrans_head->pkt);
+                    gnrc_pktbuf_release(gnrc_netdev2->retrans_head->pkt);
+                    gnrc_netdev2->retrans_head->pkt = NULL;
+                    gnrc_pktqueue_remove_head((gnrc_pktqueue_t**)&(gnrc_netdev2->retrans_head));
+                }
+                else {
+                    gnrc_netdev2->send(gnrc_netdev2, gnrc_netdev2->retrans_head->pkt);
+                }
+                break;
+            case NETDEV2_EVENT_TX_COMPLETE:
+                if (!gnrc_netdev2->retrans_head) {
+                    DEBUG("\n!!! gnrc_netdev2: queue is empty while handling ACK, this shouldn't happen!\n\n");
+                }
+                else {
+                    DEBUG("packet sent, removing from buffer and queue: %p\n", gnrc_netdev2->retrans_head->pkt);
+                    gnrc_pktbuf_release(gnrc_netdev2->retrans_head->pkt);
+                    gnrc_netdev2->retrans_head->pkt = NULL;
+                    gnrc_pktqueue_remove_head((gnrc_pktqueue_t**)&(gnrc_netdev2->retrans_head));
+                }
+                break;
             default:
                 DEBUG("gnrc_netdev2: warning: unhandled event %u.\n", event);
         }
