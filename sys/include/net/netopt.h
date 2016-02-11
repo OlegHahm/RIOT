@@ -199,6 +199,11 @@ typedef enum {
      */
     NETOPT_CCA_THRESHOLD,
 
+    /**
+     * @brief get statistics about sent and received packets of the layer
+     */
+    NETOPT_STATS,
+
     /* add more options if needed */
 
     /**
