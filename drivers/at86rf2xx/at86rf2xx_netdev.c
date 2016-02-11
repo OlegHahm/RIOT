@@ -287,6 +287,10 @@ static void _receive_data(at86rf2xx_t *dev)
         return;
     }
 
+#ifdef MODULE_NETSTATS
+    netdev->stats.rx_count++;
+#endif
+
     /* in raw mode, just read the binary dump into the packet buffer */
     if (dev->options & AT86RF2XX_OPT_RAWDUMP) {
         payload = gnrc_pktbuf_add(NULL, NULL, pkt_len, GNRC_NETTYPE_UNDEF);
