@@ -68,7 +68,9 @@ extern "C" {
  */
 typedef struct {
     netdev2_t netdev;                       /**< @ref netdev2_t base class */
+#ifdef MODULE_NETSTATS
     netstats_t stats;
+#endif
     /**
      * @brief IEEE 802.15.4 specific fields
      * @{

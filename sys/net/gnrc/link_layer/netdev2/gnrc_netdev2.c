@@ -75,6 +75,7 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
 
                     break;
                 }
+#ifdef MODULE_NETSTATS
             case NETDEV2_EVENT_TX_MEDIUM_BUSY:
                 dev->stats.tx_failed++;
             case NETDEV2_EVENT_TX_NOACK:
@@ -83,6 +84,7 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
                  * being acknowledged */
                 dev->stats.acks_count++;
                 break;
+#endif
             default:
                 DEBUG("gnrc_netdev2: warning: unhandled event %u.\n", event);
         }
