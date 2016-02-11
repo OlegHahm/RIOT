@@ -88,7 +88,9 @@ static int _init(netdev2_t *netdev)
         return -1;
     }
 
+#ifdef MODULE_NETSTATS
     memset(&netdev->stats, 0, sizeof(netstats_t));
+#endif
     /* reset device to default values and put it into RX state */
     at86rf2xx_reset(dev);
 
@@ -141,7 +143,9 @@ static int _recv(netdev2_t *netdev, char *buf, int len)
         at86rf2xx_fb_stop(dev);
         return pkt_len;
     }
+#ifdef MODULE_NETSTATS
     netdev->stats.rx_count++;
+#endif
     /* not enough space in buf */
     if (pkt_len > len) {
         at86rf2xx_fb_stop(dev);

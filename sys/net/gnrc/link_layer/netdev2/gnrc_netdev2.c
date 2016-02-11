@@ -80,7 +80,9 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
                 }
 #ifdef MODULE_NETDEV_RETRANS
             case NETDEV2_EVENT_TX_MEDIUM_BUSY:
+#ifdef MODULE_NETSTATS
                 dev->stats.tx_failed++;
+#endif
             case NETDEV2_EVENT_TX_NOACK:
                 DEBUG("gnrc_netdev2: no ACK received or medium busy: retrans count is = %u\n", (unsigned) gnrc_netdev2->retrans_head->cnt);
                 if (!gnrc_netdev2->retrans_head) {
@@ -101,10 +103,12 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
                     DEBUG("\n!!! gnrc_netdev2: queue is empty while handling ACK, this shouldn't happen!\n\n");
                 }
                 else {
+#ifdef MODULE_NETSTATS
                     if (!(((gnrc_netif_hdr_t*)gnrc_netdev2->retrans_head->pkt->data)->flags &
                         (GNRC_NETIF_HDR_FLAGS_BROADCAST | GNRC_NETIF_HDR_FLAGS_MULTICAST))) {
                         dev->stats.acks_count++;
                     }
+#endif
                     DEBUG("packet sent, removing from buffer and queue: %p\n", gnrc_netdev2->retrans_head->pkt);
                     gnrc_pktbuf_release(gnrc_netdev2->retrans_head->pkt);
                     gnrc_netdev2->retrans_head->pkt = NULL;
