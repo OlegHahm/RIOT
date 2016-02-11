@@ -28,7 +28,7 @@
 #include "net/ieee802154.h"
 #include "net/netdev2.h"
 #include "net/netdev2_ieee802154.h"
-#include "net/gnrc/nettype.h"
+
 #include "at86rf2xx.h"
 #include "at86rf2xx_netdev.h"
 #include "at86rf2xx_internal.h"
