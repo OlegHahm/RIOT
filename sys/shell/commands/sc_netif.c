@@ -15,6 +15,7 @@
  *
  * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
  * @author      Martine Lenders <mlenders@inf.fu-berlin.de>
+ * @author      Oliver Hahm <oliver.hahm@inria.fr>
  */
 
 #include <stdbool.h>
@@ -25,6 +26,7 @@
 #include <inttypes.h>
 
 #include "thread.h"
+#include "net/netstats.h"
 #include "net/ipv6/addr.h"
 #include "net/gnrc/ipv6/netif.h"
 #include "net/gnrc/netif.h"
@@ -118,6 +120,11 @@ static void _del_usage(char *cmd_name)
 {
     printf("usage: %s <if_id> del <ipv6_addr>\n",
            cmd_name);
+}
+
+static void _stats_usage(char *cmd_name)
+{
+    printf("usage: %s <if_id> stats\n", cmd_name);
 }
 
 static void _print_netopt(netopt_t opt)
@@ -834,6 +841,18 @@ static int _netif_mtu(kernel_pid_t dev, char *mtu_str)
 #endif
 }
 
+static int _netif_stats(kernel_pid_t dev)
+{
+    netstats_t stats;
+    gnrc_netapi_get(dev, NETOPT_STATS, 0, &stats, sizeof(stats));
+    printf("Statistics for interface %" PRIkernel_pid ":\n", dev);
+    printf("\tUnicast packets sent: %u\n", (unsigned) stats.tx_unicast_count);
+    printf("\tMulticast packets sent: %u\n", (unsigned) stats.tx_mcast_count);
+    printf("\tSending failed: %u\n", (unsigned) stats.tx_failed);
+    printf("\tAcknowledgements received: %u\n", (unsigned) stats.acks_count);
+    printf("\tPackets received: %u\n", (unsigned) stats.rx_count);
+    return 0;
+}
 
 /* shell commands */
 int _netif_send(int argc, char **argv)
@@ -948,6 +967,9 @@ int _netif_config(int argc, char **argv)
 
                 return _netif_mtu((kernel_pid_t)dev, argv[3]);
             }
+            else if (strcmp(argv[2], "stats") == 0) {
+                return _netif_stats((kernel_pid_t)dev);
+            }
 #ifdef MODULE_GNRC_IPV6_NETIF
             else if (strcmp(argv[2], "hl") == 0) {
                 if (argc < 4) {
@@ -988,5 +1010,6 @@ int _netif_config(int argc, char **argv)
     _flag_usage(argv[0]);
     _add_usage(argv[0]);
     _del_usage(argv[0]);
+    _stats_usage(argv[0]);
     return 1;
 }
