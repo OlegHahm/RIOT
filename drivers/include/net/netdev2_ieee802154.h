@@ -70,6 +70,7 @@ typedef struct {
     const struct netdev2_driver *driver;    /**< ptr to that driver's interface. */
     netdev2_event_cb_t event_callback;      /**< callback for device events */
     void* isr_arg;                          /**< argument to pass on isr event */
+    netstats_t stats;
     /**
      * @brief IEEE 802.15.4 specific fields
      * @{

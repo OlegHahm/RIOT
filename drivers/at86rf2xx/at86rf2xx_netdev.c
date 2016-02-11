@@ -23,6 +23,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <string.h>
 
 #include "net/eui64.h"
 #include "net/ieee802154.h"
@@ -87,6 +88,7 @@ static int _init(netdev2_t *netdev)
         return -1;
     }
 
+    memset(&netdev->stats, 0, sizeof(netstats_t));
     /* reset device to default values and put it into RX state */
     at86rf2xx_reset(dev);
 
@@ -139,6 +141,7 @@ static int _recv(netdev2_t *netdev, char *buf, int len)
         at86rf2xx_fb_stop(dev);
         return pkt_len;
     }
+    netdev->stats.rx_count++;
     /* not enough space in buf */
     if (pkt_len > len) {
         at86rf2xx_fb_stop(dev);
