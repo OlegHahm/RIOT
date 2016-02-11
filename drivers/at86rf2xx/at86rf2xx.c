@@ -105,6 +105,7 @@ void at86rf2xx_reset(at86rf2xx_t *dev)
     at86rf2xx_set_option(dev, AT86RF2XX_OPT_CSMA, true);
     at86rf2xx_set_option(dev, AT86RF2XX_OPT_TELL_RX_START, false);
     at86rf2xx_set_option(dev, AT86RF2XX_OPT_TELL_RX_END, true);
+#ifdef MODULE_NETDEV_RETRANS
     at86rf2xx_set_option(dev, AT86RF2XX_OPT_TELL_TX_END, true);
     at86rf2xx_set_max_retries(dev, 0);
 #endif
