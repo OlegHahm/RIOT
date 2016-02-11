@@ -47,6 +47,7 @@ extern "C" {
 #include <sys/uio.h>
 
 #include "net/netopt.h"
+#include "net/netstats.h"
 
 enum {
     NETDEV2_TYPE_UNKNOWN,
@@ -106,6 +107,7 @@ struct netdev2 {
     const struct netdev2_driver *driver;    /**< ptr to that driver's interface. */
     netdev2_event_cb_t event_callback;      /**< callback for device events */
     void *isr_arg;                          /**< argument to pass on isr event */
+    netstats_t stats;
 };
 
 /**
@@ -192,6 +194,7 @@ typedef struct netdev2_driver {
      */
     int (*set)(netdev2_t *dev, netopt_t opt,
                void *value, size_t value_len);
+
 } netdev2_driver_t;
 
 #ifdef __cplusplus

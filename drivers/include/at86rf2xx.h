@@ -139,6 +139,7 @@ extern "C" {
  */
 typedef struct {
     netdev2_ieee802154_t netdev;            /**< netdev2 parent struct */
+    netstats_t stats;
     /**
      * @brief   device specific fields
      * @{

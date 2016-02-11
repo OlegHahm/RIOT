@@ -75,6 +75,14 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
 
                     break;
                 }
+            case NETDEV2_EVENT_TX_MEDIUM_BUSY:
+                dev->stats.tx_failed++;
+            case NETDEV2_EVENT_TX_NOACK:
+                /* XXX: we cannot distinguish between unicast and broadcast
+                 * here, hence, we will count all successfull transmissions as
+                 * being acknowledged */
+                dev->stats.acks_count++;
+                break;
             default:
                 DEBUG("gnrc_netdev2: warning: unhandled event %u.\n", event);
         }
