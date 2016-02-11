@@ -198,12 +198,14 @@ static int _send(gnrc_netdev2_t *gnrc_netdev2, gnrc_pktsnip_t *pkt)
     vector[0].iov_base = mhr;
     vector[0].iov_len = (size_t)res;
 
+#ifdef MODULE_NETSTATS
     if (flags & IEEE802154_BCAST) {
         gnrc_netdev2->dev->stats.tx_mcast_count++;
     }
     else {
         gnrc_netdev2->dev->stats.tx_unicast_count++;
     }
+#endif
     dev->driver->send((netdev2_t *)dev, vector, n);
     /* release old data */
     gnrc_pktbuf_release(pkt);
