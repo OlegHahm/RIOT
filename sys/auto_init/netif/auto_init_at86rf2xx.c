@@ -22,6 +22,7 @@
 #include "board.h"
 #include "net/gnrc/nomac.h"
 #include "net/gnrc.h"
+#include "net/netstats.h"
 
 #include "at86rf2xx.h"
 #include "at86rf2xx_params.h"
@@ -53,6 +54,9 @@ void auto_init_at86rf2xx(void)
                                  p->int_pin,
                                  p->sleep_pin,
                                  p->reset_pin);
+
+
+        memset(&(at86rf2xx_devs[i]->stats), 0, sizeof(netstats_t));
 
         if (res < 0) {
             DEBUG("Error initializing AT86RF2xx radio device!\n");

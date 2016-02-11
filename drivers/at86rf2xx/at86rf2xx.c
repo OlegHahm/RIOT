@@ -138,6 +138,7 @@ void at86rf2xx_reset(at86rf2xx_t *dev)
     at86rf2xx_set_option(dev, AT86RF2XX_OPT_CSMA, true);
     at86rf2xx_set_option(dev, AT86RF2XX_OPT_TELL_RX_START, false);
     at86rf2xx_set_option(dev, AT86RF2XX_OPT_TELL_RX_END, true);
+    at86rf2xx_set_option(dev, AT86RF2XX_OPT_TELL_TX_END, true);
     /* set default protocol */
 #ifdef MODULE_GNRC_SIXLOWPAN
     dev->proto = GNRC_NETTYPE_SIXLOWPAN;

@@ -180,6 +180,8 @@ struct gnrc_netdev {
     gnrc_netdev_driver_t const *driver; /**< pointer to the devices interface */
     gnrc_netdev_event_cb_t event_cb;    /**< netdev event callback */
     kernel_pid_t mac_pid;               /**< the driver's thread's PID */
+    netstats_t stats;                   /**< transceiver's statistics */
+
 };
 
 #ifdef __cplusplus
