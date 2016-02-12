@@ -16,6 +16,7 @@
 
 #include <stddef.h>
 
+#include "xtimer.h"
 #include "od.h"
 #include "net/gnrc.h"
 #include "net/gnrc/pktqueue.h"
@@ -31,7 +32,7 @@
 #define _RSSI_TAIL_POS  (3)
 
 #ifdef MODULE_NETDEV_RETRANS
-#define _RETRANS_QUEUE_LEN  (16)
+#define _RETRANS_QUEUE_LEN  (32)
 #define _RETRANS_COUNT      (3)
 
 static netdev2_retrans_queue_t _pkt_nodes[_RETRANS_QUEUE_LEN];
@@ -265,6 +266,7 @@ static int _send(gnrc_netdev2_t *gnrc_netdev2, gnrc_pktsnip_t *pkt)
     gnrc_pktbuf_hold(pkt, 1);
 #endif
     gnrc_pktbuf_release(iovec_pkt);
+    xtimer_usleep64(10000);
     return 0;
 }
 
