@@ -256,6 +256,7 @@ static int _send(gnrc_netdev2_t *gnrc_netdev2, gnrc_pktsnip_t *pkt)
         if (pkt_node == NULL) {
             DEBUG("_send_ieee802154: could not add packet to packet queue\n");
             gnrc_pktbuf_release(pkt);
+            return -ENOMEM;
         }
         else {
             gnrc_pktqueue_add((gnrc_pktqueue_t**) &(gnrc_netdev2->retrans_head), (gnrc_pktqueue_t*) pkt_node);
