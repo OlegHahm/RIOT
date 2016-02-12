@@ -24,6 +24,7 @@
  * The purpose of gnrc_netdev is to bring these two interfaces together.
  *
  * @author    Kaspar Schleiser <kaspar@schleiser.de>
+ * @author    Oliver Hahm <oliver.hahm@inria.fr>
  */
 
 #ifndef GNRC_NETDEV2_H
@@ -102,6 +103,7 @@ typedef struct gnrc_netdev2 {
      */
     kernel_pid_t pid;
 
+    netdev2_retrans_queue_t *retrans_head;
 #ifdef MODULE_GNRC_MAC
     /**
      * @brief general information for the MAC protocol
