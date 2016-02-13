@@ -76,7 +76,7 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
 
                     break;
                 }
-#ifdef MODULE_NETSTATS
+#ifdef MODULE_NETSTATS_L2
             case NETDEV2_EVENT_TX_MEDIUM_BUSY:
                 dev->stats.tx_failed++;
             case NETDEV2_EVENT_TX_NOACK:

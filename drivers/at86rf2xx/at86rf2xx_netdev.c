@@ -287,7 +287,7 @@ static void _receive_data(at86rf2xx_t *dev)
         return;
     }
 
-#ifdef MODULE_NETSTATS
+#ifdef MODULE_NETSTATS_L2
     netdev->stats.rx_count++;
 #endif
 
