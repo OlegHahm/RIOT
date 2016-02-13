@@ -107,6 +107,7 @@ typedef struct {
     gnrc_netdev_driver_t const *driver;   /**< Pointer to the devices interface */
     gnrc_netdev_event_cb_t event_cb;      /**< Netdev event callback */
     kernel_pid_t mac_pid;                 /**< The driver's thread's PID */
+    netstats_t stats;                     /**< transceiver's statistics */
     /* driver specific fields */
     uint8_t buf[KW2XRF_MAX_PKT_LENGTH];   /**< Buffer for incoming or outgoing packets */
     netopt_state_t state;                 /**< Variable to keep radio driver's state */

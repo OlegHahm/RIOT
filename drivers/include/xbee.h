@@ -111,6 +111,7 @@ typedef struct {
     gnrc_netdev_driver_t const *driver; /**< pointer to the devices interface */
     gnrc_netdev_event_cb_t event_cb;    /**< netdev event callback */
     kernel_pid_t mac_pid;               /**< the driver's thread's PID */
+    netstats_t stats;                   /**< transceiver's statistics */
     /* device driver specific fields */
     uart_t uart;                        /**< UART interfaced used */
     gpio_t reset_pin;                   /**< GPIO pin connected to RESET */

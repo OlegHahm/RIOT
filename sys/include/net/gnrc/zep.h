@@ -189,6 +189,7 @@ typedef struct {
     gnrc_netdev_driver_t *driver;   /**< pointer to the device's interface */
     gnrc_netdev_event_cb_t event_cb;/**< netdev event callback */
     kernel_pid_t mac_pid;           /**< the driver's thread's PID */
+    netstats_t stats;               /**< transceiver's statistics */
     /**
      * @brief @ref gnrc_zep_t specific members
      * @{
