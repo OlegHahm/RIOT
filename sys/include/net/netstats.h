@@ -33,8 +33,11 @@ typedef struct {
     uint32_t tx_mcast_count;    /**< packets sent via multicast
                                      (including broadcast */
     uint32_t tx_failed;         /**< failed sending operations */
-    uint32_t acks_count;        /**< received acknowledgements */
+    uint32_t tx_success;        /**< successful transmissions */
     uint32_t rx_count;          /**< received (data) packets */
+    uint32_t tx_bytes;          /**< sent bytes */
+    uint32_t rx_bytes;          /**< received bytes */
+
 } netstats_t;
 
 #ifdef __cplusplus
