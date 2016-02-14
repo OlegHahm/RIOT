@@ -124,7 +124,7 @@ static void _del_usage(char *cmd_name)
 
 static void _stats_usage(char *cmd_name)
 {
-    printf("usage: %s <if_id> stats\n", cmd_name);
+    printf("usage: %s <if_id> stats [layer]\n", cmd_name);
 }
 
 static void _print_netopt(netopt_t opt)
@@ -835,16 +835,27 @@ static int _netif_mtu(kernel_pid_t dev, char *mtu_str)
 #endif
 }
 
-static int _netif_stats(kernel_pid_t dev)
+static int _netif_stats(kernel_pid_t dev, unsigned layer)
 {
     netstats_t stats;
-    gnrc_netapi_get(dev, NETOPT_STATS, 0, &stats, sizeof(stats));
-    printf("Statistics for interface %" PRIkernel_pid ":\n", dev);
-    printf("\tUnicast packets sent: %u\n", (unsigned) stats.tx_unicast_count);
-    printf("\tMulticast packets sent: %u\n", (unsigned) stats.tx_mcast_count);
-    printf("\tSending failed: %u\n", (unsigned) stats.tx_failed);
-    printf("\tAcknowledgements received: %u\n", (unsigned) stats.acks_count);
-    printf("\tPackets received: %u\n", (unsigned) stats.rx_count);
+    if (layer & NETSTATS_LAYER2) {
+        gnrc_netapi_get(dev, NETOPT_STATS, 0, &stats, sizeof(stats));
+        printf("Statistics for layer 2 on interface %" PRIkernel_pid ":\n", dev);
+        printf("\tUnicast packets sent: %u\n", (unsigned) stats.tx_unicast_count);
+        printf("\tMulticast packets sent: %u\n", (unsigned) stats.tx_mcast_count);
+        printf("\tSending failed: %u\n", (unsigned) stats.tx_failed);
+        printf("\tAcknowledgements received: %u\n", (unsigned) stats.acks_count);
+        printf("\tPackets received: %u\n", (unsigned) stats.rx_count);
+    }
+    if (layer & NETSTATS_LAYER3) {
+        gnrc_netapi_get(dev, NETOPT_STATS, 0, &stats, sizeof(stats));
+        printf("Statistics for layer 3 on interface %" PRIkernel_pid ":\n", dev);
+        printf("\tUnicast packets sent: %u\n", (unsigned) stats.tx_unicast_count);
+        printf("\tMulticast packets sent: %u\n", (unsigned) stats.tx_mcast_count);
+        printf("\tSending failed: %u\n", (unsigned) stats.tx_failed);
+        printf("\tAcknowledgements received: %u\n", (unsigned) stats.acks_count);
+    }
+#endif
     return 0;
 }
 

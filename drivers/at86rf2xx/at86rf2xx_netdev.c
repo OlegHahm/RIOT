@@ -460,6 +460,16 @@ static int _get(gnrc_netdev_t *device, netopt_t opt, void *val, size_t max_len)
             }
             return sizeof(eui64_t);
 
+        case NETOPT_STATS:
+            if (max_len < sizeof(*uintptr_t)) {
+                res = -EOVERFLOW;
+                break;
+            }
+            value = (void*) &dev->stats;
+            res = sizeof(*uintptr_t);
+            break;
+
+
         case NETOPT_PROTO:
             if (max_len < sizeof(gnrc_nettype_t)) {
                 return -EOVERFLOW;
