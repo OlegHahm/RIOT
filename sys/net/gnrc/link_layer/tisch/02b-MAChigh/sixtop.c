@@ -8,7 +8,7 @@
 #include "otf.h"
 #include "packetfunctions.h"
 #include "openrandom.h"
-// #include "scheduler.h"
+#include "scheduler.h"
 #include "opentimers.h"
 // #include "debugpins.h"
 // #include "leds.h"
@@ -699,13 +699,13 @@ owerror_t sixtop_send_internal(
 
 void sixtop_maintenance_timer_cb(opentimer_id_t id) {
    (void) id;
-   // scheduler_push_task(timer_sixtop_management_fired,TASKPRIO_SIXTOP);
+   scheduler_push_task(timer_sixtop_management_fired,TASKPRIO_SIXTOP);
 }
 
 void sixtop_timeout_timer_cb(opentimer_id_t id) {
    (void) id;
-   // scheduler_push_task(timer_sixtop_management_fired,TASKPRIO_SIXTOP);
-   // scheduler_push_task(timer_sixtop_six2six_timeout_fired,TASKPRIO_SIXTOP_TIMEOUT);
+   scheduler_push_task(timer_sixtop_management_fired,TASKPRIO_SIXTOP);
+   scheduler_push_task(timer_sixtop_six2six_timeout_fired,TASKPRIO_SIXTOP_TIMEOUT);
 }
 
 //======= EB/KA task
@@ -1365,7 +1365,7 @@ void sixtop_addCellsByState(
       uint8_t      state
    ){
    (void) slotframeID;
-   // scheduler_push_task(timer_sixtop_management_fired,TASKPRIO_SIXTOP);
+   scheduler_push_task(timer_sixtop_management_fired,TASKPRIO_SIXTOP);
    uint8_t     i;
    uint8_t     j;
    open_addr_t temp_neighbor;
