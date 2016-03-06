@@ -2,7 +2,7 @@
 #include "otf.h"
 #include "neighbors.h"
 #include "sixtop.h"
-// #include "scheduler.h"
+#include "scheduler.h"
 
 //=========================== variables =======================================
 
@@ -17,11 +17,11 @@ void otf_init(void) {
 }
 
 void otf_notif_addedCell(void) {
-   // scheduler_push_task(otf_addCell_task,TASKPRIO_OTF);
+   scheduler_push_task(otf_addCell_task,TASKPRIO_OTF);
 }
 
 void otf_notif_removedCell(void) {
-   // scheduler_push_task(otf_removeCell_task,TASKPRIO_OTF);
+   scheduler_push_task(otf_removeCell_task,TASKPRIO_OTF);
 }
 
 //=========================== private =========================================

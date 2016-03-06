@@ -9,7 +9,7 @@
 // #include "openserial.h"
 #include "schedule.h"
 #include "packetfunctions.h"
-// #include "scheduler.h"
+ #include "scheduler.h"
 // #include "leds.h"
 #include "neighbors.h"
 // #include "debugpins.h"
@@ -2038,7 +2038,7 @@ void notif_sendDone(OpenQueueEntry_t* packetSent, owerror_t error) {
    // COMPONENT_IEEE802154E_TO_RES so RES can knows it's for it
    packetSent->owner              = COMPONENT_IEEE802154E_TO_SIXTOP;
    // post RES's sendDone task
-   // scheduler_push_task(task_sixtopNotifSendDone,TASKPRIO_SIXTOP_NOTIF_TXDONE);
+   scheduler_push_task(task_sixtopNotifSendDone,TASKPRIO_SIXTOP_NOTIF_TXDONE);
    // wake up the scheduler
    // SCHEDULER_WAKEUP();
 }
@@ -2057,7 +2057,7 @@ void notif_receive(OpenQueueEntry_t* packetReceived) {
    //                 (errorparameter_t)packetReceived->l2_timeCorrection);
 #endif
    // post RES's Receive task
-   // scheduler_push_task(task_sixtopNotifReceive,TASKPRIO_SIXTOP_NOTIF_RX);
+   scheduler_push_task(task_sixtopNotifReceive,TASKPRIO_SIXTOP_NOTIF_RX);
    // wake up the scheduler
    // SCHEDULER_WAKEUP();
 }
