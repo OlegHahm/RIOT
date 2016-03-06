@@ -1,4 +1,4 @@
-MODULE = gnrc_6tisch
+MODULE = gnrc_tisch
 
 DIRS += 02a-MAClow
 DIRS += 02b-MAChigh

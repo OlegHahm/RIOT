@@ -1,3 +1,3 @@
-MODULE = gnrc_6tisch
+MODULE = gnrc_tisch
 
 include $(RIOTBASE)/Makefile.base
