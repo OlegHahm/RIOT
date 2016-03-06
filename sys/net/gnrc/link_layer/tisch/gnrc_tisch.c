@@ -34,14 +34,63 @@
 #include "IEEE802154E.h"
 #include "sixtop.h"
 #include "neighbors.h"
+#include "scheduler.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
-#if ENABLE_DEBUG
 /* For PRIu16 etc. */
 #include <inttypes.h>
-#endif
+
+/* TODO: in order to use tisch on more than one device these variables need to
+ * moved to thread scope */
+scheduler_vars_t scheduler_vars;
+scheduler_dbg_t  scheduler_dbg;
+kernel_pid_t gnrc_tisch_scheduler_pid;
+
+void scheduler_push_task(task_cbt cb, task_prio_t prio)
+{
+    taskList_item_t*  taskContainer;
+    taskList_item_t** taskListWalker;
+    msg_t m;
+
+    unsigned state = disableIRQ();
+    /* find an empty task container */
+    taskContainer = &scheduler_vars.taskBuf[0];
+    while (taskContainer->cb!=NULL &&
+           taskContainer <= &scheduler_vars.taskBuf[TASK_LIST_DEPTH-1]) {
+        taskContainer++;
+    }
+    if (taskContainer>&scheduler_vars.taskBuf[TASK_LIST_DEPTH-1]) {
+        /* task list has overflown. This should never happpen! */
+
+        core_panic(PANIC_GENERAL_ERROR, "scheduler overflow");
+    }
+    /* fill that task container with this task */
+    taskContainer->cb              = cb;
+    taskContainer->prio            = prio;
+
+    /* find position in queue */
+    taskListWalker                 = &scheduler_vars.task_list;
+    while (*taskListWalker != NULL && (*taskListWalker)->prio < taskContainer->prio) {
+        taskListWalker              = (taskList_item_t**) &((*taskListWalker)->next);
+    }
+    /* insert at that position */
+    taskContainer->next            = *taskListWalker;
+    *taskListWalker                = taskContainer;
+    /* maintain debug stats */
+    scheduler_dbg.numTasksCur++;
+
+    if (scheduler_dbg.numTasksCur > scheduler_dbg.numTasksMax) {
+        scheduler_dbg.numTasksMax   = scheduler_dbg.numTasksCur;
+    }
+
+    restoreIRQ(state);
+    m.type         = GNRC_TISCH_NETAPI_MSG_TYPE;
+    m.content.ptr  = NULL;
+    msg_send(&m, gnrc_tisch_scheduler_pid);
+}
+
 
 /**
  * @brief   Function called by the device driver on device events
@@ -88,12 +137,35 @@ static void *_tisch_thread(void *args)
     /* register the event callback with the device driver */
     dev->driver->add_event_callback(dev, _event_cb);
 
+    taskList_item_t *pThisTask;
+
     /* start the event loop */
     while (1) {
         DEBUG("tisch: waiting for incoming messages\n");
         msg_receive(&msg);
+
         /* dispatch NETDEV and NETAPI messages */
         switch (msg.type) {
+            case GNRC_TISCH_NETAPI_MSG_TYPE:
+                while(scheduler_vars.task_list != NULL) {
+                    /* there is still at least one task in the linked-list of tasks */
+
+                    /* the task to execute is the one at the head of the queue */
+                    pThisTask                = scheduler_vars.task_list;
+
+                    /* shift the queue by one task */
+                    scheduler_vars.task_list = pThisTask->next;
+
+                    /* execute the current task */
+                    pThisTask->cb();
+
+                    /* free up this task container */
+                    pThisTask->cb            = NULL;
+                    pThisTask->prio          = TASKPRIO_NONE;
+                    pThisTask->next          = NULL;
+                    scheduler_dbg.numTasksCur--;
+                }
+                break;
             case GNRC_NETDEV_MSG_TYPE_EVENT:
                 DEBUG("tisch: GNRC_NETDEV_MSG_TYPE_EVENT received\n");
                 dev->driver->isr_event(dev, msg.content.value);
@@ -142,8 +214,6 @@ static void *_tisch_thread(void *args)
 kernel_pid_t gnrc_tisch_init(char *stack, int stacksize, char priority,
                              const char *name, gnrc_netdev_t *dev)
 {
-    kernel_pid_t res;
-
     /* check if given netdev device is defined and the driver is set */
     if (dev == NULL || dev->driver == NULL) {
         return -ENODEV;
@@ -164,10 +234,11 @@ kernel_pid_t gnrc_tisch_init(char *stack, int stacksize, char priority,
     neighbors_init();
 
     /* create new TISCH thread */
-    res = thread_create(stack, stacksize, priority, CREATE_STACKTEST,
-            _tisch_thread, (void *)dev, name);
-    if (res <= 0) {
+    gnrc_tisch_scheduler_pid = thread_create(stack, stacksize, priority,
+                                             CREATE_STACKTEST, _tisch_thread,
+                                             (void *)dev, name);
+    if (gnrc_tisch_scheduler_pid <= 0) {
         return -EINVAL;
     }
-    return res;
+    return gnrc_tisch_scheduler_pid;
 }
