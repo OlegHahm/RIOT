@@ -22,7 +22,7 @@
 #include "board.h"
 #include "net/gnrc/netdev2.h"
 #include "net/gnrc/netdev2/ieee802154.h"
-#include "net/gnrc/6tisch.h"
+#include "net/gnrc/tisch.h"
 #include "net/gnrc.h"
 
 #include "at86rf2xx.h"
@@ -61,8 +61,8 @@ void auto_init_at86rf2xx(void)
         else {
 #ifdef MODULE_GNRC_NOMAC
             gnrc_netdev2_init(
-#elif MODULE_GNRC_6TISCH
-            gnrc_6tisch_init(
+#elif MODULE_GNRC_TISCH
+            gnrc_tisch_init(
 #endif
                              (_at86rf2xx_stacks[i],
                               AT86RF2XX_MAC_STACKSIZE,
