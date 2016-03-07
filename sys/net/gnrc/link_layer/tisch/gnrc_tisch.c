@@ -26,6 +26,7 @@
 #include "net/gnrc/tisch.h"
 #include "net/gnrc.h"
 
+#include "radio.h"
 #include "idmanager.h"
 #include "openqueue.h"
 #include "openrandom.h"
@@ -147,6 +148,7 @@ static void *_tisch_thread(void *args)
         /* dispatch NETDEV and NETAPI messages */
         switch (msg.type) {
             case GNRC_TISCH_NETAPI_MSG_TYPE:
+                DEBUG("tisch: GNRC_TISCH_NETAPI_MSG_TYPE received.\n");
                 while(scheduler_vars.task_list != NULL) {
                     /* there is still at least one task in the linked-list of tasks */
 
@@ -218,6 +220,9 @@ kernel_pid_t gnrc_tisch_init(char *stack, int stacksize, char priority,
     if (dev == NULL || dev->driver == NULL) {
         return -ENODEV;
     }
+
+    radio_init(dev);
+    radiotimer_init();
 
     //===== stack
     //-- cross-layer
