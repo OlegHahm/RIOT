@@ -49,11 +49,12 @@ scheduler_vars_t scheduler_vars;
 scheduler_dbg_t  scheduler_dbg;
 kernel_pid_t gnrc_tisch_scheduler_pid;
 
+msg_t gnrc_tisch_msg = { .type = GNRC_TISCH_NETAPI_MSG_TYPE, .content.ptr = NULL};
+
 void scheduler_push_task(task_cbt cb, task_prio_t prio)
 {
     taskList_item_t*  taskContainer;
     taskList_item_t** taskListWalker;
-    msg_t m;
 
     unsigned state = disableIRQ();
     /* find an empty task container */
@@ -87,9 +88,6 @@ void scheduler_push_task(task_cbt cb, task_prio_t prio)
     }
 
     restoreIRQ(state);
-    m.type         = GNRC_TISCH_NETAPI_MSG_TYPE;
-    m.content.ptr  = NULL;
-    msg_send(&m, gnrc_tisch_scheduler_pid);
 }
 
 

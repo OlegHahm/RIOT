@@ -69,8 +69,6 @@ typedef enum {
 
 #define PORT_SIGNED_INT_WIDTH               int32_t
 #define PORT_TICS_PER_MS                    33
-#define SCHEDULER_WAKEUP()                  debugpins_isr_set();\
-                                            debugpins_isr_clr();
 #define SCHEDULER_ENABLE_INTERRUPT()
 
 //===== pinout

@@ -8,7 +8,14 @@
 \{
 */
 
+#include "kernel_types.h"
+#include "msg.h"
+
 #define GNRC_TISCH_NETAPI_MSG_TYPE        (0x0444)
+
+extern kernel_pid_t gnrc_tisch_scheduler_pid;
+extern msg_t gnrc_tisch_msg;
+#define SCHEDULER_WAKEUP()        msg_send(&gnrc_tisch_msg, gnrc_tisch_scheduler_pid);
 
 //=========================== define ==========================================
 
