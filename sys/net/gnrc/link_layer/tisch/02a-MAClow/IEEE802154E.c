@@ -2040,7 +2040,7 @@ void notif_sendDone(OpenQueueEntry_t* packetSent, owerror_t error) {
    // post RES's sendDone task
    scheduler_push_task(task_sixtopNotifSendDone,TASKPRIO_SIXTOP_NOTIF_TXDONE);
    // wake up the scheduler
-   // SCHEDULER_WAKEUP();
+   SCHEDULER_WAKEUP();
 }
 
 void notif_receive(OpenQueueEntry_t* packetReceived) {
@@ -2059,7 +2059,7 @@ void notif_receive(OpenQueueEntry_t* packetReceived) {
    // post RES's Receive task
    scheduler_push_task(task_sixtopNotifReceive,TASKPRIO_SIXTOP_NOTIF_RX);
    // wake up the scheduler
-   // SCHEDULER_WAKEUP();
+   SCHEDULER_WAKEUP();
 }
 
 //======= stats
