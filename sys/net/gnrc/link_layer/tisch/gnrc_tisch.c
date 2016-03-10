@@ -178,14 +178,10 @@ static void *_tisch_thread(void *args)
                 /* TODO: filter out MAC layer options -> for now forward
                          everything to the device driver */
                 DEBUG("tisch: GNRC_NETAPI_MSG_TYPE_SET received\n");
-                /* read incoming options */
-                opt = (gnrc_netapi_opt_t *)msg.content.ptr;
-                /* set option for device driver */
-                res = dev->driver->set(dev, opt->opt, opt->data, opt->data_len);
-                DEBUG("tisch: response of netdev->set: %i\n", res);
-                /* send reply to calling thread */
+
+                /* TODO: for now we don't support anything */
                 reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
-                reply.content.value = (uint32_t)res;
+                reply.content.value = -ENOTSUP;
                 msg_reply(&msg, &reply);
                 break;
             case GNRC_NETAPI_MSG_TYPE_GET:
@@ -193,13 +189,10 @@ static void *_tisch_thread(void *args)
                          everything to the device driver */
                 DEBUG("tisch: GNRC_NETAPI_MSG_TYPE_GET received\n");
                 /* read incoming options */
-                opt = (gnrc_netapi_opt_t *)msg.content.ptr;
-                /* get option from device driver */
-                res = dev->driver->get(dev, opt->opt, opt->data, opt->data_len);
-                DEBUG("tisch: response of netdev->get: %i\n", res);
-                /* send reply to calling thread */
+
+                /* TODO: for now we don't support anything */
                 reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
-                reply.content.value = (uint32_t)res;
+                reply.content.value = -ENOTSUP;
                 msg_reply(&msg, &reply);
                 break;
             default:
