@@ -19,7 +19,6 @@
 #include <errno.h>
 
 #include "irq.h"
-#include "kernel.h"
 #include "msg.h"
 #include "thread.h"
 
@@ -90,7 +89,7 @@ void scheduler_push_task(task_cbt cb, task_prio_t prio)
     restoreIRQ(state);
 }
 
-void _tsch_send(gnrc_pktsnip_t *pkt)
+void _tsch_send(gnrc_pktsnip_t *snip)
 {
     /* XXX: convert packet */
 
@@ -261,8 +260,8 @@ kernel_pid_t gnrc_tisch_init(char *stack, int stacksize, char priority,
 
     /* create new TISCH thread */
     gnrc_tisch_scheduler_pid = thread_create(stack, stacksize, priority,
-                                             CREATE_STACKTEST, _tisch_thread,
                                              (void *)dev, name);
+                                             THREAD_CREATE_STACKTEST, _tisch_thread,
     if (gnrc_tisch_scheduler_pid <= 0) {
         return -EINVAL;
     }

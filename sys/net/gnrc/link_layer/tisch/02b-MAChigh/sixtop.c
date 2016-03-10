@@ -17,6 +17,7 @@
 #include "IEEE802154_security.h"
 #include "idmanager.h"
 #include "schedule.h"
+#include "net/gnrc/tisch.h"
 
 //=========================== variables =======================================
 
