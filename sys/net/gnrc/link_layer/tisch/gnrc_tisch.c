@@ -92,6 +92,8 @@ void scheduler_push_task(task_cbt cb, task_prio_t prio)
 void _tsch_send(gnrc_pktsnip_t *snip)
 {
     /* XXX: convert packet */
+    gnrc_netif_hdr_t *netif_hdr = snip->data;
+    uint8_t *addr = gnrc_netif_hdr_get_dst_addr(netif_hdr);
 
     /* first create openqueue entry */
     OpenQueueEntry_t* pkt;
@@ -106,6 +108,17 @@ void _tsch_send(gnrc_pktsnip_t *snip)
 
     /* TODO: support short addresses */
     pkt->l2_nextORpreviousHop.type = ADDR_64B;
+    memcpy(&pkt->l2_nextORpreviousHop, addr, LENGTH_ADDR64b);
+
+    /* copy everything after netif_hdr into payload */
+    snip = snip->next;
+    size_t offset = 0;
+    while (snip != NULL) {
+        memcpy(&pkt->payload + 0, snip->data, snip->size);
+        snip = snip->next;
+        offset += snip->size;
+    }
+
 
     /* call TSCH sending function */
     sixtop_send(pkt);
