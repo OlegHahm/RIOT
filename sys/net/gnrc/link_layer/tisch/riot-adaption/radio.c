@@ -1,3 +1,4 @@
+#include <sys/uio.h>
 #include "board_info.h"
 #include "radio.h"
 #include "board.h"
@@ -18,7 +19,7 @@ typedef struct {
    radiotimer_capture_cbt    startFrame_cb;
    radiotimer_capture_cbt    endFrame_cb;
    radio_state_t             state;
-   gnrc_netdev_t             *dev;
+   netdev2_t                 *dev;
 } radio_vars_t;
 
 radio_vars_t radio_vars;
@@ -34,15 +35,14 @@ static void event_cb(gnrc_netdev_event_t event, void *data);
  * Radio already initialised by RIOT's auto_init process, using at86rf2xx_init.
  */
 
-void radio_init(gnrc_netdev_t *dev_par) {
+void radio_init(gnrc_netdev2_t *dev_par) {
    DEBUG("%s\n", __PRETTY_FUNCTION__);
    // clear variables
    memset(&radio_vars,0,sizeof(radio_vars_t));
    radio_vars.state = RADIOSTATE_STOPPED;
-   radio_vars.dev = dev_par;
+   radio_vars.dev = dev_par->dev;
 
    netopt_enable_t enable;
-   radio_vars.dev->driver->add_event_callback(radio_vars.dev, event_cb);
    enable = NETOPT_ENABLE;
    radio_vars.dev->driver->set(radio_vars.dev, NETOPT_PROMISCUOUSMODE, &(enable), sizeof(netopt_enable_t));
    enable = NETOPT_ENABLE;
@@ -133,10 +133,11 @@ void radio_loadPacket(uint8_t* packet, uint8_t len) {
    radio_vars.state = RADIOSTATE_LOADING_PACKET;
 
    /* wrap data into pktsnip */
-   gnrc_pktsnip_t *pkt;
-   pkt = gnrc_pktbuf_add(NULL, packet, len, GNRC_NETTYPE_UNDEF);
+   struct iovec vector;
+   vector.iov_base = packet;
+   vector.iov_len = len;
    // load packet in TXFIFO
-   radio_vars.dev->driver->send_data(radio_vars.dev, pkt);
+   radio_vars.dev->driver->send(radio_vars.dev, &vector, 1);
 
    // change state
    radio_vars.state = RADIOSTATE_PACKET_LOADED;

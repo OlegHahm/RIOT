@@ -125,7 +125,7 @@ void iphc_receive(OpenQueueEntry_t *msg)
  * @param[in] event         type of event
  * @param[in] data          optional parameter
  */
-static void _event_cb(gnrc_netdev_event_t event, void *data)
+static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
 {
     DEBUG("tisch: event triggered -> %i\n", event);
     /* TISCH only understands the RX_COMPLETE event... */
@@ -151,7 +151,8 @@ static void _event_cb(gnrc_netdev_event_t event, void *data)
  */
 static void *_tisch_thread(void *args)
 {
-    gnrc_netdev_t *dev = (gnrc_netdev_t *)args;
+    gnrc_netdev2_t *gnrc_netdev2 = (gnrc_netdev2_t *)args;
+    netdev2_t *dev = gnrc_netdev2->dev;
     gnrc_netapi_opt_t *opt;
     int res;
     msg_t msg, reply, msg_queue[GNRC_TISCH_MSG_QUEUE_SIZE];
@@ -159,10 +160,14 @@ static void *_tisch_thread(void *args)
     /* setup the MAC layers message queue */
     msg_init_queue(msg_queue, GNRC_TISCH_MSG_QUEUE_SIZE);
     /* save the PID to the device descriptor and register the device */
-    dev->mac_pid = thread_getpid();
-    gnrc_netif_add(dev->mac_pid);
+    gnrc_netdev2->pid = thread_getpid();
+
     /* register the event callback with the device driver */
-    dev->driver->add_event_callback(dev, _event_cb);
+    dev->event_callback = _event_cb;
+    dev->isr_arg = (void*) gnrc_netdev2;
+
+    /* register the device to the network stack*/
+    gnrc_netif_add(thread_getpid());
 
     taskList_item_t *pThisTask;
 
@@ -196,7 +201,7 @@ static void *_tisch_thread(void *args)
                 break;
             case GNRC_NETDEV_MSG_TYPE_EVENT:
                 DEBUG("tisch: GNRC_NETDEV_MSG_TYPE_EVENT received\n");
-                dev->driver->isr_event(dev, msg.content.value);
+                dev->driver->isr(dev);
                 break;
             case GNRC_NETAPI_MSG_TYPE_SND:
                 DEBUG("tisch: GNRC_NETAPI_MSG_TYPE_SND received\n");
@@ -234,14 +239,14 @@ static void *_tisch_thread(void *args)
 }
 
 kernel_pid_t gnrc_tisch_init(char *stack, int stacksize, char priority,
-                             const char *name, gnrc_netdev_t *dev)
+                             const char *name, gnrc_netdev2_t *gnrc_netdev2)
 {
     /* check if given netdev device is defined and the driver is set */
-    if (dev == NULL || dev->driver == NULL) {
+    if (gnrc_netdev2 == NULL || gnrc_netdev2->dev == NULL) {
         return -ENODEV;
     }
 
-    radio_init(dev);
+    radio_init(gnrc_netdev2);
     radiotimer_init();
 
     //===== stack
@@ -260,8 +265,8 @@ kernel_pid_t gnrc_tisch_init(char *stack, int stacksize, char priority,
 
     /* create new TISCH thread */
     gnrc_tisch_scheduler_pid = thread_create(stack, stacksize, priority,
-                                             (void *)dev, name);
                                              THREAD_CREATE_STACKTEST, _tisch_thread,
+                                             (void *)gnrc_netdev2, name);
     if (gnrc_tisch_scheduler_pid <= 0) {
         return -EINVAL;
     }
