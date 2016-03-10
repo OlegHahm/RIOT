@@ -13,7 +13,7 @@
 */
 
 #include "radiotimer.h"
-#include "net/gnrc/netdev.h"
+#include "net/gnrc/netdev2.h"
 
 //=========================== define ==========================================
 
@@ -50,7 +50,7 @@ typedef enum {
 //=========================== prototypes ======================================
 
 // admin
-void     radio_init(gnrc_netdev_t *dev_par);
+void     radio_init(gnrc_netdev2_t *dev_par);
 void     radio_setOverflowCb(radiotimer_compare_cbt cb);
 void     radio_setCompareCb(radiotimer_compare_cbt cb);
 void     radio_setStartFrameCb(radiotimer_capture_cbt cb);
