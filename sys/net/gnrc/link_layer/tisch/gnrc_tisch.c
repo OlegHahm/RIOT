@@ -90,6 +90,35 @@ void scheduler_push_task(task_cbt cb, task_prio_t prio)
     restoreIRQ(state);
 }
 
+void _tsch_send(gnrc_pktsnip_t *pkt)
+{
+    /* XXX: convert packet */
+
+    /* first create openqueue entry */
+    OpenQueueEntry_t* pkt;
+    pkt = openqueue_getFreePacketBuffer(COMPONENT_RIOT);
+    if (pkt==NULL) {
+        DEBUG("tisch: error getting free packet buffer entry\n");
+        return;
+    }
+
+    pkt->creator                   = COMPONENT_RIOT;
+    pkt->owner                     = COMPONENT_RIOT;
+
+    /* TODO: support short addresses */
+    pkt->l2_nextORpreviousHop.type = ADDR_64B;
+
+    /* call TSCH sending function */
+    sixtop_send(pkt);
+}
+
+void iphc_receive(OpenQueueEntry_t *msg)
+{
+    DEBUG("tisch: received packet\n");
+    /* TODO: convert OpenQueueEntry to pktsnip */
+    /* TODO: pass packet up */
+    openqueue_freePacketBuffer(msg);
+}
 
 /**
  * @brief   Function called by the device driver on device events
@@ -172,7 +201,8 @@ static void *_tisch_thread(void *args)
                 break;
             case GNRC_NETAPI_MSG_TYPE_SND:
                 DEBUG("tisch: GNRC_NETAPI_MSG_TYPE_SND received\n");
-                dev->driver->send_data(dev, (gnrc_pktsnip_t *)msg.content.ptr);
+                _tsch_send((gnrc_pktsnip_t *)msg.content.ptr);
+
                 break;
             case GNRC_NETAPI_MSG_TYPE_SET:
                 /* TODO: filter out MAC layer options -> for now forward
