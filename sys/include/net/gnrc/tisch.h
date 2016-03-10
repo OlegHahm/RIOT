@@ -22,8 +22,8 @@
 #ifndef GNRC_TISCH_H_
 #define GNRC_TISCH_H_
 
-#include "kernel.h"
 #include "net/gnrc/netdev.h"
+#include "opendefs.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,6 +55,7 @@ extern "C" {
 kernel_pid_t gnrc_tisch_init(char *stack, int stacksize, char priority,
                              const char *name, gnrc_netdev_t *dev);
 
+void iphc_receive(OpenQueueEntry_t *msg);
 #ifdef __cplusplus
 }
 #endif

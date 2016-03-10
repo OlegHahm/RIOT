@@ -64,7 +64,7 @@ void auto_init_at86rf2xx(void)
 #elif MODULE_GNRC_TISCH
             gnrc_tisch_init(
 #endif
-                             (_at86rf2xx_stacks[i],
+                             _at86rf2xx_stacks[i],
                               AT86RF2XX_MAC_STACKSIZE,
                               AT86RF2XX_MAC_PRIO,
                               "at86rf2xx",
