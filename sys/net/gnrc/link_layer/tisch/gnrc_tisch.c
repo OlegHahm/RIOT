@@ -140,9 +140,10 @@ void iphc_receive(OpenQueueEntry_t *msg)
  */
 static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
 {
+    (void) dev;
     DEBUG("tisch: event triggered -> %i\n", event);
     /* TISCH only understands the RX_COMPLETE event... */
-    if (event == NETDEV_EVENT_RX_COMPLETE) {
+    if (event == (netdev2_event_t) NETDEV_EVENT_RX_COMPLETE) {
         gnrc_pktsnip_t *pkt;
 
         /* get pointer to the received packet */
@@ -166,8 +167,6 @@ static void *_tisch_thread(void *args)
 {
     gnrc_netdev2_t *gnrc_netdev2 = (gnrc_netdev2_t *)args;
     netdev2_t *dev = gnrc_netdev2->dev;
-    gnrc_netapi_opt_t *opt;
-    int res;
     msg_t msg, reply, msg_queue[GNRC_TISCH_MSG_QUEUE_SIZE];
 
     /* setup the MAC layers message queue */
