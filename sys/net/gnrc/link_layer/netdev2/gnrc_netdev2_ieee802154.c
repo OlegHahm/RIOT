@@ -37,7 +37,7 @@ int gnrc_netdev2_ieee802154_init(gnrc_netdev2_t *gnrc_netdev2,
     return 0;
 }
 
-static gnrc_pktsnip_t *_make_netif_hdr(uint8_t *mhr)
+gnrc_pktsnip_t *gnrc_netdev2_ieee802154_make_netif_hdr(uint8_t *mhr)
 {
     gnrc_pktsnip_t *snip;
     uint8_t src[IEEE802154_LONG_ADDRESS_LEN], dst[IEEE802154_LONG_ADDRESS_LEN];
@@ -106,7 +106,7 @@ static gnrc_pktsnip_t *_recv(gnrc_netdev2_t *gnrc_netdev2)
                 gnrc_pktbuf_release(pkt);
                 return NULL;
             }
-            netif_hdr = _make_netif_hdr(ieee802154_hdr->data);
+            netif_hdr = gnrc_netdev2_ieee802154_make_netif_hdr(ieee802154_hdr->data);
             if (netif_hdr == NULL) {
                 DEBUG("_recv_ieee802154: no space left in packet buffer\n");
                 gnrc_pktbuf_release(pkt);
