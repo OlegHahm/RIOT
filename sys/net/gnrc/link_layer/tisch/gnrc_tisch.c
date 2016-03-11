@@ -120,7 +120,7 @@ void _tsch_send(gnrc_pktsnip_t *snip)
         offset += snip->size;
         snip = snip->next;
     }
-
+    gnrc_pktbuf_release(snip);
 
     /* call TSCH sending function */
     sixtop_send(pkt);
