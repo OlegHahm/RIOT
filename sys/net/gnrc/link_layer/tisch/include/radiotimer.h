@@ -44,7 +44,8 @@ void     radiotimer_cancel(void);
 PORT_RADIOTIMER_WIDTH radiotimer_getCapturedTime(void);
 
 // interrupt handlers
-void   radiotimer_isr(void*);
+void   radiotimer_isr_s(void*);
+void   radiotimer_isr_p(void*);
 
 /**
 \}

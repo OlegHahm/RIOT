@@ -33,7 +33,8 @@ radiotimer_vars_t radiotimer_vars;
 void radiotimer_init(void) {
    // clear local variables
    memset((void*)&radiotimer_vars,0,sizeof(radiotimer_vars_t));
-   radiotimer_vars.p_timer.callback = &radiotimer_isr;
+   radiotimer_vars.p_timer.callback = &radiotimer_isr_p;
+   radiotimer_vars.s_timer.callback = &radiotimer_isr_s;
 }
 
 void radiotimer_setOverflowCb(radiotimer_compare_cbt cb) {
@@ -94,10 +95,18 @@ inline PORT_RADIOTIMER_WIDTH radiotimer_getCapturedTime(void) {
 //=========================== private =========================================
 
 //=========================== interrupt handlers ==============================
-void radiotimer_isr(void* arg) {
+void radiotimer_isr_s(void* arg) {
     (void) arg;
     DEBUG("%s cmp\n", __PRETTY_FUNCTION__);
     if (radiotimer_vars.compare_cb!=NULL) {
         radiotimer_vars.compare_cb();
+    }
+}
+
+void radiotimer_isr_p(void* arg) {
+    (void) arg;
+    DEBUG("%s cmp\n", __PRETTY_FUNCTION__);
+    if (radiotimer_vars.overflow_cb != NULL) {
+        radiotimer_vars.overflow_cb();
     }
 }
