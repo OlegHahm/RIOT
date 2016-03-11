@@ -284,6 +284,15 @@ void radio_init(gnrc_netdev2_t *dev_par) {
     radio_vars.dev = dev_par->dev;
     at86rf2xx_t *dev = (at86rf2xx_t*) radio_vars.dev;
 
+    /* initialise GPIOs */
+    gpio_init(dev->cs_pin, GPIO_DIR_OUT, GPIO_NOPULL);
+    gpio_set(dev->cs_pin);
+    gpio_init(dev->sleep_pin, GPIO_DIR_OUT, GPIO_NOPULL);
+    gpio_clear(dev->sleep_pin);
+    gpio_init(dev->reset_pin, GPIO_DIR_OUT, GPIO_NOPULL);
+    gpio_set(dev->reset_pin);
+    gpio_init_int(dev->int_pin, GPIO_NOPULL, GPIO_RISING, radio_isr, dev);
+
     // configure the radio
     at86rf2xx_reg_write(dev, AT86RF2XX_REG__TRX_STATE, AT86RF2XX_TRX_STATE__FORCE_TRX_OFF);    // turn radio off
 
