@@ -705,7 +705,6 @@ void sixtop_maintenance_timer_cb(opentimer_id_t id) {
 
 void sixtop_timeout_timer_cb(opentimer_id_t id) {
    (void) id;
-   scheduler_push_task(timer_sixtop_management_fired,TASKPRIO_SIXTOP);
    scheduler_push_task(timer_sixtop_six2six_timeout_fired,TASKPRIO_SIXTOP_TIMEOUT);
 }
 
