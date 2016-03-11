@@ -60,14 +60,16 @@ void auto_init_at86rf2xx(void)
         }
         else {
 #ifdef MODULE_GNRC_NOMAC
+            const char *thread_name = "at86rf2xx";
             gnrc_netdev2_init(
 #elif MODULE_GNRC_TISCH
+            const char *thread_name = "tisch";
             gnrc_tisch_init(
 #endif
                              _at86rf2xx_stacks[i],
                               AT86RF2XX_MAC_STACKSIZE,
                               AT86RF2XX_MAC_PRIO,
-                              "at86rf2xx",
+                              thread_name,
                               &gnrc_adpt[i]);
         }
     }
