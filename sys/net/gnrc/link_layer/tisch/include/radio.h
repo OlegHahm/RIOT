@@ -81,7 +81,7 @@ void     radio_getReceivedFrame(uint8_t* bufRead,
                                    bool* crc);
 
 // interrupt handlers
-kick_scheduler_t   radio_isr(void);
+void radio_isr(void *unused);
 
 /**
 \}
