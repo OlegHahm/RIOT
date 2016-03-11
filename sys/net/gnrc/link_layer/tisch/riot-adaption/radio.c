@@ -27,7 +27,7 @@ radio_vars_t radio_vars;
 
 #ifndef MODULE_AT86RF2XX
 //=========================== prototypes ======================================
-static void event_cb(gnrc_netdev_event_t event, void *data);
+// static void event_cb(gnrc_netdev_event_t event, void *data);
 
 //=========================== public ==========================================
 
@@ -216,7 +216,7 @@ void radio_getReceivedFrame(uint8_t* pBufRead,
 //=========================== callbacks =======================================
 
 //=========================== interrupt handlers ==============================
-
+#if 0
 static void event_cb(gnrc_netdev_event_t type, void *data)
 {
    // capture the time
@@ -259,6 +259,7 @@ static void event_cb(gnrc_netdev_event_t type, void *data)
       }
    }
 }
+#endif
 
 #else
 
