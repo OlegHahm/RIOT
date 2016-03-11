@@ -88,6 +88,7 @@ void scheduler_push_task(task_cbt cb, task_prio_t prio)
     }
 
     restoreIRQ(state);
+    SCHEDULER_WAKEUP();
 }
 
 void _tsch_send(gnrc_pktsnip_t *snip)
