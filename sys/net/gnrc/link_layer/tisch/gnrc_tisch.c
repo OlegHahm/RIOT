@@ -17,13 +17,17 @@
  */
 
 #include <errno.h>
+#include <string.h>
 
 #include "irq.h"
 #include "msg.h"
 #include "thread.h"
 
+#include "net/ieee802154.h"
+#include "net/gnrc/netdev2/ieee802154.h"
 #include "net/gnrc/tisch.h"
 #include "net/gnrc.h"
+#include "net/gnrc/nettype.h"
 
 #include "radio.h"
 #include "idmanager.h"
@@ -126,11 +130,86 @@ void _tsch_send(gnrc_pktsnip_t *snip)
     sixtop_send(pkt);
 }
 
+static void _pass_on_packet(gnrc_pktsnip_t *pkt)
+{
+    /* throw away packet if no one is interested */
+    if (!gnrc_netapi_dispatch_receive(pkt->type, GNRC_NETREG_DEMUX_CTX_ALL, pkt)) {
+        DEBUG("gnrc_netdev2: unable to forward packet of type %i\n", pkt->type);
+        gnrc_pktbuf_release(pkt);
+        return;
+    }
+}
+
 void iphc_receive(OpenQueueEntry_t *msg)
 {
+    size_t nread = msg->length;
+
     DEBUG("tisch: received packet\n");
-    /* TODO: convert OpenQueueEntry to pktsnip */
+    /* convert OpenQueueEntry to pktsnip */
+    gnrc_pktsnip_t *pkt = gnrc_pktbuf_add(NULL, NULL, nread, GNRC_NETTYPE_UNDEF);
+
+    if (pkt == NULL) {
+        DEBUG("tisch iphc_receive: cannot allocate pktsnip.\n");
+        return;
+    }
+
+    memcpy(pkt->data, msg->packet, msg->length);
+
+    gnrc_pktsnip_t *ieee802154_hdr, *netif_hdr;
+    gnrc_netif_hdr_t *hdr;
+#if ENABLE_DEBUG
+    char src_str[GNRC_NETIF_HDR_L2ADDR_MAX_LEN];
+#endif
+    size_t mhr_len = ieee802154_get_frame_hdr_len(pkt->data);
+
+    if (mhr_len == 0) {
+        DEBUG("tisch iphc_receive: illegally formatted frame received\n");
+        gnrc_pktbuf_release(pkt);
+        return;
+    }
+    nread -= mhr_len;
+    /* mark IEEE 802.15.4 header */
+    ieee802154_hdr = gnrc_pktbuf_mark(pkt, mhr_len, GNRC_NETTYPE_UNDEF);
+    if (ieee802154_hdr == NULL) {
+        DEBUG("tisch iphc_receive: no space left in packet buffer\n");
+        gnrc_pktbuf_release(pkt);
+        return;
+    }
+    netif_hdr = gnrc_netdev2_ieee802154_make_netif_hdr(ieee802154_hdr->data);
+    if (netif_hdr == NULL) {
+        DEBUG("tisch iphc_receive: no space left in packet buffer\n");
+        gnrc_pktbuf_release(pkt);
+        return;
+    }
+    hdr = netif_hdr->data;
+    hdr->lqi = msg->l1_lqi;
+    hdr->rssi = msg->l1_rssi;
+    hdr->if_pid = thread_getpid();
+    /* XXX */
+#ifdef MODULE_SIXLOWPAN
+    pkt->type = GNRC_NETTYPE_SIXLOWPAN;
+#elif MODULE_CCN_LITE
+    pkt->type = GNRC_NETTYPE_CCN;
+#else
+    pkt->type = GNRC_NETTYPE_UNDEF;
+#endif
+
+#if ENABLE_DEBUG
+    DEBUG("tisch iphc_receive: received packet from %s of length %u\n",
+          gnrc_netif_addr_to_str(src_str, sizeof(src_str),
+                                 gnrc_netif_hdr_get_src_addr(hdr),
+                                 hdr->src_l2addr_len),
+          nread);
+#if defined(MODULE_OD)
+    od_hex_dump(pkt->data, nread, OD_WIDTH_DEFAULT);
+#endif
+#endif
+    gnrc_pktbuf_remove_snip(pkt, ieee802154_hdr);
+    LL_APPEND(pkt, netif_hdr);
+
     /* TODO: pass packet up */
+    _pass_on_packet(pkt);
+
     openqueue_freePacketBuffer(msg);
 }
 
@@ -142,18 +221,21 @@ void iphc_receive(OpenQueueEntry_t *msg)
  */
 static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
 {
-    (void) dev;
-    DEBUG("tisch: event triggered -> %i\n", event);
-    /* TISCH only understands the RX_COMPLETE event... */
-    if (event == (netdev2_event_t) NETDEV_EVENT_RX_COMPLETE) {
-        gnrc_pktsnip_t *pkt;
+    (void) data;
+    gnrc_netdev2_t *gnrc_netdev2 = (gnrc_netdev2_t*) dev->isr_arg;
+    (void) gnrc_netdev2;
 
-        /* get pointer to the received packet */
-        pkt = (gnrc_pktsnip_t *)data;
-        /* send the packet to everyone interested in it's type */
-        if (!gnrc_netapi_dispatch_receive(pkt->type, GNRC_NETREG_DEMUX_CTX_ALL, pkt)) {
-            DEBUG("tisch: unable to forward packet of type %i\n", pkt->type);
-            gnrc_pktbuf_release(pkt);
+    if (event == NETDEV2_EVENT_ISR) {
+        /* TODO: pipe this into 802154 from TISCH */
+    }
+    else {
+        DEBUG("tisch: event triggered -> %i\n", event);
+        switch(event) {
+            case NETDEV2_EVENT_RX_COMPLETE:
+                DEBUG("tisch: received RX complete - this should not have happened!\n");
+                break;
+            default:
+                DEBUG("tisch: warning: unhandled event %u.\n", event);
         }
     }
 }

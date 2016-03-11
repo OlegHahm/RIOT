@@ -38,6 +38,8 @@ extern "C" {
 int gnrc_netdev2_ieee802154_init(gnrc_netdev2_t *gnrc_netdev2,
                                  netdev2_ieee802154_t *dev);
 
+gnrc_pktsnip_t *gnrc_netdev2_ieee802154_make_netif_hdr(uint8_t *mhr);
+
 #ifdef __cplusplus
 }
 #endif
