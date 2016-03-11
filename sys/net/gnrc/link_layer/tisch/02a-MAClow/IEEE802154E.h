@@ -25,8 +25,8 @@ static const uint8_t chTemplate_default[] = {
 #define SYNCHRONIZING_CHANNEL       20 // channel the mote listens on to synchronize
 #define TXRETRIES                    3 // number of MAC retries before declaring failed
 #define TX_POWER                    31 // 1=-25dBm, 31=0dBm (max value)
-#define RESYNCHRONIZATIONGUARD       5 // in 32kHz ticks. min distance to the end of the slot to successfully synchronize
-#define US_PER_TICK                 30 // number of us per 32kHz clock tick
+#define RESYNCHRONIZATIONGUARD     150 // in 32kHz ticks. min distance to the end of the slot to successfully synchronize
+#define US_PER_TICK                  1 // number of us per 32kHz clock tick
 #define EBPERIOD                    30 // in seconds: sending EB every 30 seconds
 #define MAXKAPERIOD               2000 // in slots: @15ms per slot -> ~30 seconds. Max value used by adaptive synchronization.
 #define DESYNCTIMEOUT             2333 // in slots: @15ms per slot -> ~35 seconds. A larger DESYNCTIMEOUT is needed if using a larger KATIMEOUT.
@@ -144,10 +144,10 @@ enum ieee154e_atomicdurations_enum {
    TsTxAckDelay              =   33,                  //  1000us
    TsShortGT                 =    7,                  //   500us
 #else
-   TsTxOffset                =  131,                  //  4000us
-   TsLongGT                  =   43,                  //  1300us
-   TsTxAckDelay              =  151,                  //  4606us
-   TsShortGT                 =   16,                  //   500us
+   TsTxOffset                =  4000,                  //  4000us
+   TsLongGT                  =  1300,                  //  1300us
+   TsTxAckDelay              =  4606,                  //  4606us
+   TsShortGT                 =   500,                  //   500us
 #endif
    TsSlotDuration            =  PORT_TsSlotDuration,  // 10000us
    // execution speed related
@@ -164,9 +164,9 @@ enum ieee154e_atomicdurations_enum {
    wdDataDuration            =  164,                  //  5000us (measured 4280us with max payload)
    wdAckDuration             =   80,                  //  2400us (measured 1000us)
 #else
-   wdRadioTx                 =   33,                  //  1000us (needs to be >delayTx)
-   wdDataDuration            =  164,                  //  5000us (measured 4280us with max payload)
-   wdAckDuration             =   98,                  //  3000us (measured 1000us)
+   wdRadioTx                 =  1000,                  //  1000us (needs to be >delayTx)
+   wdDataDuration            =  5000,                  //  5000us (measured 4280us with max payload)
+   wdAckDuration             =  3000,                  //  3000us (measured 1000us)
 #endif
 };
 

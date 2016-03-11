@@ -68,7 +68,7 @@ typedef enum {
 #define PORT_RADIOTIMER_WIDTH               uint32_t
 
 #define PORT_SIGNED_INT_WIDTH               int32_t
-#define PORT_TICS_PER_MS                    33
+#define PORT_TICS_PER_MS                    1
 #define SCHEDULER_ENABLE_INTERRUPT()
 
 //===== pinout
@@ -81,15 +81,15 @@ typedef enum {
 
 //===== IEEE802154E timing
 // time-slot related
-#define PORT_TsSlotDuration                 491
-#define PORT_maxTxDataPrepare               66//33//66
-#define PORT_maxRxAckPrepare                20//10
-#define PORT_maxRxDataPrepare               33//33
-#define PORT_maxTxAckPrepare                30//22
-#define PORT_delayTx                        20//15
+#define PORT_TsSlotDuration                 14730
+#define PORT_maxTxDataPrepare               2014//33//66
+#define PORT_maxRxAckPrepare                305//10
+#define PORT_maxRxDataPrepare               1007//33
+#define PORT_maxTxAckPrepare                305//22
+#define PORT_delayTx                        214//15
 #define PORT_delayRx                        0
 
-#define SYNC_ACCURACY                       1     // ticks
+#define SYNC_ACCURACY                       2     // ticks
 
 //=========================== typedef  ========================================
 
