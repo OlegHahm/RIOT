@@ -56,6 +56,7 @@ void scheduler_push_task(task_cbt cb, task_prio_t prio)
     taskList_item_t** taskListWalker;
 
     unsigned state = disableIRQ();
+    DEBUG("tisch: push task\n");
     /* find an empty task container */
     taskContainer = &scheduler_vars.taskBuf[0];
     while (taskContainer->cb!=NULL &&
@@ -65,7 +66,7 @@ void scheduler_push_task(task_cbt cb, task_prio_t prio)
     if (taskContainer>&scheduler_vars.taskBuf[TASK_LIST_DEPTH-1]) {
         /* task list has overflown. This should never happpen! */
 
-        core_panic(PANIC_GENERAL_ERROR, "scheduler overflow");
+        core_panic(PANIC_GENERAL_ERROR, "tisch scheduler overflow");
     }
     /* fill that task container with this task */
     taskContainer->cb              = cb;
