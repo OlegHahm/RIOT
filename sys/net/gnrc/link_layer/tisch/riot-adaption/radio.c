@@ -44,6 +44,7 @@ void radio_init(gnrc_netdev2_t *dev_par) {
    radio_vars.state = RADIOSTATE_STOPPED;
    radio_vars.dev = dev_par->dev;
 
+   radio_vars.dev->driver->init(radio_vars.dev);
    netopt_enable_t enable;
    enable = NETOPT_ENABLE;
    radio_vars.dev->driver->set(radio_vars.dev, NETOPT_PROMISCUOUSMODE, &(enable), sizeof(netopt_enable_t));
