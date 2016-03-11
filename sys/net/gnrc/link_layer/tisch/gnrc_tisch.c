@@ -116,9 +116,9 @@ void _tsch_send(gnrc_pktsnip_t *snip)
     snip = snip->next;
     size_t offset = 0;
     while (snip != NULL) {
-        memcpy(&pkt->payload + 0, snip->data, snip->size);
-        snip = snip->next;
+        memcpy(pkt->payload + offset, snip->data, snip->size);
         offset += snip->size;
+        snip = snip->next;
     }
 
 
