@@ -24,6 +24,7 @@
 
 #include "netdev2_tap.h"
 #include "net/gnrc/netdev2/eth.h"
+#include "net/gnrc/tisch.h"
 
 extern netdev2_tap_t netdev2_tap;
 
@@ -44,8 +45,13 @@ void auto_init_netdev2_tap(void)
 {
     gnrc_netdev2_eth_init(&_gnrc_netdev2_tap, (netdev2_t*)&netdev2_tap);
 
-    gnrc_netdev2_init(_netdev2_eth_stack, TAP_MAC_STACKSIZE,
-            TAP_MAC_PRIO, "gnrc_netdev2_tap", &_gnrc_netdev2_tap);
+#ifdef MODULE_GNRC_NOMAC
+            gnrc_netdev2_init(
+#elif MODULE_GNRC_TISCH
+            gnrc_tisch_init(
+#endif
+                _netdev2_eth_stack, TAP_MAC_STACKSIZE,
+                TAP_MAC_PRIO, "gnrc_netdev2_tap", &_gnrc_netdev2_tap);
 }
 
 #else
