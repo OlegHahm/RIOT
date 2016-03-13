@@ -122,6 +122,10 @@ extern int _gnrc_6ctx(int argc, char **argv);
 #endif
 #endif
 
+#ifdef MODULE_GNRC_TISCH
+extern int _gnrc_tisch_root(int argc, char **argv);
+#endif
+
 #ifdef MODULE_CCN_LITE_UTILS
 extern int _ccnl_open(int argc, char **argv);
 extern int _ccnl_content(int argc, char **argv);
@@ -204,6 +208,9 @@ const shell_command_t _shell_command_list[] = {
 #ifdef MODULE_GNRC_SIXLOWPAN_ND_BORDER_ROUTER
     {"6ctx", "6LoWPAN context configuration tool", _gnrc_6ctx },
 #endif
+#endif
+#ifdef MODULE_GNRC_TISCH
+    {"tisch_root", "Set or unset root status of a node", _gnrc_tisch_root },
 #endif
 #ifdef MODULE_SAUL_REG
     {"saul", "interact with sensors and actuators using SAUL", _saul },
