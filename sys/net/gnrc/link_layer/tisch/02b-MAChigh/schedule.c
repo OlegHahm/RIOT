@@ -326,6 +326,12 @@ owerror_t schedule_addActiveSlot(
       previousSlotWalker                    = schedule_vars.currentScheduleEntry;
       while (1) {
          nextSlotWalker                     = previousSlotWalker->next;
+         if ((slotContainer->slotOffset == previousSlotWalker->slotOffset) ||
+             (slotContainer->slotOffset == nextSlotWalker->slotOffset)) {
+             // reset removed schedule entry
+             schedule_resetEntry(slotContainer);
+             break;
+         }
          if (
                (
                      (previousSlotWalker->slotOffset <  slotContainer->slotOffset) &&
