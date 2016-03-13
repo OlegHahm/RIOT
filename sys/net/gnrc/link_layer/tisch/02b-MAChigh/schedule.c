@@ -78,13 +78,15 @@ void schedule_startDAGroot(void) {
    memset(&temp_neighbor,0,sizeof(temp_neighbor));
    temp_neighbor.type             = ADDR_ANYCAST;
    for (running_slotOffset=start_slotOffset;running_slotOffset<start_slotOffset+SCHEDULE_MINIMAL_6TISCH_ACTIVE_CELLS;running_slotOffset++) {
-      schedule_addActiveSlot(
-         running_slotOffset,                 // slot offset
-         CELLTYPE_TXRX,                      // type of slot
-         TRUE,                               // shared?
-         SCHEDULE_MINIMAL_6TISCH_CHANNELOFFSET,    // channel offset
-         &temp_neighbor                      // neighbor
-      );
+       if (schedule_isSlotOffsetAvailable(running_slotOffset)) {
+           schedule_addActiveSlot(
+                                  running_slotOffset,                 // slot offset
+                                  CELLTYPE_TXRX,                      // type of slot
+                                  TRUE,                               // shared?
+                                  SCHEDULE_MINIMAL_6TISCH_CHANNELOFFSET,    // channel offset
+                                  &temp_neighbor                      // neighbor
+                                 );
+       }
    }
 }
 
