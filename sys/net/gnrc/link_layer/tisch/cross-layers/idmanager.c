@@ -91,7 +91,9 @@ void idmanager_setIsDAGroot(bool newRole) {
    DISABLE_INTERRUPTS();
    idmanager_vars.isDAGroot = newRole;
    neighbors_updateMyDAGrankAndNeighborPreference();
-   schedule_startDAGroot();
+   if (newRole) {
+       schedule_startDAGroot();
+   }
    ENABLE_INTERRUPTS();
 }
 
