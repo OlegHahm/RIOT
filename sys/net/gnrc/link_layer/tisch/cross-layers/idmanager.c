@@ -1,3 +1,4 @@
+#include "periph/cpuid.h"
 #include "opendefs.h"
 #include "idmanager.h"
 // #include "eui64.h"
@@ -48,7 +49,28 @@ void idmanager_init(void) {
 
    // my64bID
    idmanager_vars.my64bID.type         = ADDR_64B;
-   // eui64_get(idmanager_vars.my64bID.addr.addr_64b);
+
+   /* XXX: replace by netapi call */
+#if CPUID_LEN
+    uint8_t cpuid[CPUID_LEN];
+    cpuid_get(cpuid);
+
+#if CPUID_LEN < 8
+    /* in case CPUID_LEN < 8, fill missing bytes with zeros */
+    for (int i = CPUID_LEN; i < 8; i++) {
+        cpuid[i] = 0;
+    }
+#else
+    for (int i = 8; i < CPUID_LEN; i++) {
+        cpuid[i & 0x07] ^= cpuid[i];
+    }
+#endif
+    /* make sure we mark the address as non-multicast and not globally unique */
+    cpuid[0] &= ~(0x01);
+    cpuid[0] |= 0x02;
+    /* copy and set long address */
+    memcpy(&idmanager_vars.my64bID.addr.addr_64b, cpuid, 8);
+#endif
 
    // my16bID
    packetfunctions_mac64bToMac16b(&idmanager_vars.my64bID,&idmanager_vars.my16bID);
