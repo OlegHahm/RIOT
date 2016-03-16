@@ -16,6 +16,7 @@
 #include "sixtop.h"
 #include "adaptive_sync.h"
 #include "processIE.h"
+#include "led.h"
 
 //=========================== variables =======================================
 
@@ -2019,10 +2020,10 @@ void changeIsSync(bool newIsSync) {
    ieee154e_vars.isSync = newIsSync;
 
    if (ieee154e_vars.isSync==TRUE) {
-      LED_GREEN_ON;
+      LED0_ON;
       resetStats();
    } else {
-      LED_GREEN_OFF;
+      LED0_OFF;
       schedule_resetBackoff();
    }
 }

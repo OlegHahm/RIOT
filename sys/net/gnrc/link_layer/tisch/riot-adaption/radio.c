@@ -6,6 +6,7 @@
 #include "net/gnrc/pktbuf.h"
 #include "net/gnrc/netapi.h"
 #include "net/gnrc/netreg.h"
+#include "led.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
@@ -377,7 +378,7 @@ void radio_rfOff(void) {
     //at86rf2xx_reg_write(dev, AT86RF2XX_REG__TRX_STATE, CMD_TRX_OFF);
     while((at86rf2xx_reg_read(dev, AT86RF2XX_REG__TRX_STATUS) & 0x1F) != AT86RF2XX_STATE_TRX_OFF); // busy wait until done
 
-    LED_RED_OFF;
+    LED1_OFF;
 
     // change state
     radio_vars.state = RADIOSTATE_RFOFF;
@@ -403,7 +404,7 @@ void radio_txEnable(void) {
     radio_vars.state = RADIOSTATE_ENABLING_TX;
 
     // wiggle debug pin
-    LED_RED_ON;
+    LED1_ON;
 
     // turn on radio's PLL
     at86rf2xx_reg_write(dev, AT86RF2XX_REG__TRX_STATE, AT86RF2XX_TRX_STATE__PLL_ON);
@@ -448,7 +449,7 @@ void radio_rxEnable(void) {
     at86rf2xx_reg_write(dev, AT86RF2XX_REG__TRX_STATE, AT86RF2XX_TRX_STATE__RX_ON);
 
     // wiggle debug pin
-    LED_RED_ON;
+    LED1_ON;
 
     // busy wait until radio really listening
     while((at86rf2xx_reg_read(dev, AT86RF2XX_REG__TRX_STATUS) & 0x1F) != AT86RF2XX_TRX_STATUS__RX_ON);
