@@ -22,7 +22,9 @@
 #include "board.h"
 #include "net/gnrc/netdev2.h"
 #include "net/gnrc/netdev2/ieee802154.h"
+#ifdef MODULE_GNRC_TISCH
 #include "net/gnrc/tisch.h"
+#endif
 #include "net/gnrc.h"
 
 #include "at86rf2xx.h"
