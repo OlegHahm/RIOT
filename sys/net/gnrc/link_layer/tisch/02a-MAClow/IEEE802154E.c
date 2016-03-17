@@ -888,6 +888,7 @@ port_INLINE void activity_ti1ORri1(void) {
 
    // check the schedule to see what type of slot this is
    cellType = schedule_getType();
+   printf("cellType: %i\n", cellType);
    switch (cellType) {
       case CELLTYPE_TXRX:
       case CELLTYPE_TX:
@@ -924,6 +925,7 @@ port_INLINE void activity_ti1ORri1(void) {
                ieee154e_getAsn(sync_IE.asn);
                sync_IE.join_priority = (neighbors_getMyDAGrank()/MINHOPRANKINCREASE)-1; //poipoi -- use dagrank(rank)-1
                memcpy(ieee154e_vars.dataToSend->l2_ASNpayload,&sync_IE,sizeof(sync_IE_ht));
+               puts("EB");
             }
             // record that I attempt to transmit this packet
             ieee154e_vars.dataToSend->l2_numTxAttempts++;
@@ -1037,6 +1039,7 @@ port_INLINE void activity_ti3(void) {
    radiotimer_schedule(DURATION_tt3);
 
    // give the 'go' to transmit
+   puts("->");
    radio_txNow();
 }
 
@@ -1802,6 +1805,7 @@ port_INLINE void incrementAsnOffset(void) {
       ieee154e_vars.slotOffset  = (ieee154e_vars.slotOffset+1)%frameLength;
    }
    ieee154e_vars.asnOffset   = (ieee154e_vars.asnOffset+1)%16;
+   printf("ASN: %i\n", ieee154e_vars.asnOffset);
 }
 
 //from upper layer that want to send the ASN to compute timing or latency
