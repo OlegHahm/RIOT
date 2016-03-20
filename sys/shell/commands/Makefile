@@ -62,9 +62,9 @@ ifneq (,$(filter gnrc_sixlowpan_ctx,$(USEMODULE)))
 ifneq (,$(filter gnrc_sixlowpan_nd_border_router,$(USEMODULE)))
     SRC += sc_gnrc_6ctx.c
 endif
+endif
 ifneq (,$(filter gnrc_tisch,$(USEMODULE)))
     SRC += sc_gnrc_tisch.c
-endif
 endif
 ifneq (,$(filter saul_reg,$(USEMODULE)))
   SRC += sc_saul_reg.c
