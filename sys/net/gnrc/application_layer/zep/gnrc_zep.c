@@ -21,7 +21,6 @@
 
 #include "ringbuffer.h"
 #include "hashes.h"
-#include "kernel.h"
 #include "msg.h"
 #include "net/ieee802154.h"
 #include "net/ipv6/addr.h"
@@ -154,7 +153,7 @@ kernel_pid_t gnrc_zep_init(gnrc_zep_t *dev, uint16_t src_port, ipv6_addr_t *dst,
     dev->proto = GNRC_NETTYPE_UNDEF;
 #endif
 
-    dev->seq = genrand_uint32();
+    dev->seq = random_uint32();
     dev->src_port = src_port;
     dev->dst.u64[0] = dst->u64[0];
     dev->dst.u64[1] = dst->u64[1];
@@ -193,11 +192,6 @@ static inline void _set_flag_ptr(netopt_enable_t *enable,
 }
 
 static inline uint16_t *_get_uint16_ptr(void *ptr)
-{
-    return ptr;
-}
-
-static inline uint64_t *_get_uint64_ptr(void *ptr)
 {
     return ptr;
 }

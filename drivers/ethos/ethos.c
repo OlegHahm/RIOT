@@ -40,7 +40,7 @@
 #include "debug.h"
 
 static void _get_mac_addr(netdev2_t *dev, uint8_t* buf);
-static void ethos_isr(void *arg, char c);
+static void ethos_isr(void *arg, uint8_t c);
 const static netdev2_driver_t netdev2_driver_ethos;
 
 static const uint8_t _esc_esc[] = {ETHOS_ESC_CHAR, (ETHOS_ESC_CHAR ^ 0x20)};
@@ -59,9 +59,9 @@ void ethos_setup(ethos_t *dev, uart_t uart, uint32_t baudrate, uint8_t *buf, siz
     tsrb_init(&dev->inbuf, (char*)buf, bufsize);
     mutex_init(&dev->out_mutex);
 
-    uint32_t a = genrand_uint32();
+    uint32_t a = random_uint32();
     memcpy(dev->mac_addr, (char*)&a, 4);
-    a = genrand_uint32();
+    a = random_uint32();
     memcpy(dev->mac_addr+4, (char*)&a, 2);
 
     dev->mac_addr[0] &= (0x2);      /* unset globally unique bit */
@@ -110,7 +110,7 @@ static void _end_of_frame(ethos_t *dev)
         case ETHOS_FRAME_TYPE_DATA:
             if (dev->framesize) {
                 dev->last_framesize = dev->framesize;
-                dev->netdev.event_callback((netdev2_t*) dev, NETDEV2_EVENT_ISR, NULL);
+                dev->netdev.event_callback((netdev2_t*) dev, NETDEV2_EVENT_ISR, dev->netdev.isr_arg);
             }
             break;
         case ETHOS_FRAME_TYPE_HELLO:
@@ -126,7 +126,7 @@ static void _end_of_frame(ethos_t *dev)
     _reset_state(dev);
 }
 
-static void ethos_isr(void *arg, char c)
+static void ethos_isr(void *arg, uint8_t c)
 {
     ethos_t *dev = (ethos_t *) arg;
 
@@ -291,8 +291,9 @@ static void _get_mac_addr(netdev2_t *encdev, uint8_t* buf)
     memcpy(buf, dev->mac_addr, 6);
 }
 
-static int _recv(netdev2_t *netdev, char* buf, int len)
+static int _recv(netdev2_t *netdev, char* buf, int len, void* info)
 {
+    (void) info;
     ethos_t * dev = (ethos_t *) netdev;
 
     if (buf) {

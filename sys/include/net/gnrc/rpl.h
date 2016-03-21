@@ -12,6 +12,33 @@
  * @defgroup    net_gnrc_rpl  RPL
  * @ingroup     net_gnrc
  * @brief       RPL implementation for GNRC
+ *
+ * Configuration
+ * =============
+ *
+ * USEMODULE
+ * ---------
+ *
+ * - RPL (Storing Mode)
+ *   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.mk}
+ *   USEMODULE += gnrc_rpl
+ *   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * CFLAGS
+ * ------
+ *
+ *  - Exclude Prefix Information Options from DIOs
+ *   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.mk}
+ *   CFLAGS += -DGNRC_RPL_WITHOUT_PIO
+ *   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ *  - Modify trickle parameters
+ *   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.mk}
+ *   CFLAGS += -DGNRC_RPL_DEFAULT_DIO_INTERVAL_DOUBLINGS=20
+ *   CFLAGS += -DGNRC_RPL_DEFAULT_DIO_INTERVAL_MIN=3
+ *   CFLAGS += -DGNRC_RPL_DEFAULT_DIO_REDUNDANCY_CONSTANT=10
+ *   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
  * @{
  *
  * @file
@@ -191,9 +218,17 @@ static inline bool GNRC_RPL_COUNTER_GREATER_THAN(uint8_t A, uint8_t B)
  *      </a>
  * @{
  */
+#ifndef GNRC_RPL_DEFAULT_DIO_INTERVAL_DOUBLINGS
 #define GNRC_RPL_DEFAULT_DIO_INTERVAL_DOUBLINGS (20)
+#endif
+
+#ifndef GNRC_RPL_DEFAULT_DIO_INTERVAL_MIN
 #define GNRC_RPL_DEFAULT_DIO_INTERVAL_MIN (3)
+#endif
+
+#ifndef GNRC_RPL_DEFAULT_DIO_REDUNDANCY_CONSTANT
 #define GNRC_RPL_DEFAULT_DIO_REDUNDANCY_CONSTANT (10)
+#endif
 /** @} */
 
 /**
@@ -482,6 +517,22 @@ void gnrc_rpl_send(gnrc_pktsnip_t *pkt, ipv6_addr_t *src, ipv6_addr_t *dst, ipv6
  * @return  Global instance id, otherwise.
  */
 uint8_t gnrc_rpl_gen_instance_id(bool local);
+
+#ifndef GNRC_RPL_WITHOUT_PIO
+/**
+ * @brief (De-)Activate the transmission of Prefix Information Options within DIOs
+ *        for a particular DODAG
+ *
+ * @param[in] dodag             Pointer to the DODAG
+ * @param[in] status            true for activating PIOs and false for deactivating them
+ */
+static inline void gnrc_rpl_config_pio(gnrc_rpl_dodag_t *dodag, bool status)
+{
+    dodag->dio_opts = (dodag->dio_opts & ~GNRC_RPL_REQ_DIO_OPT_PREFIX_INFO) |
+                      (status << GNRC_RPL_REQ_DIO_OPT_PREFIX_INFO_SHIFT);
+}
+#endif
+
 #ifdef __cplusplus
 }
 #endif

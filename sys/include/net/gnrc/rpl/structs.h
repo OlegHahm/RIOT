@@ -32,6 +32,17 @@ extern "C" {
 #include "trickle.h"
 
 /**
+ * @anchor GNRC_RPL_REQ_DIO_OPTS
+ * @name DIO Options for gnrc_rpl_dodag_t::dio_opts
+ * @{
+ */
+#define GNRC_RPL_REQ_DIO_OPT_DODAG_CONF_SHIFT       (0)
+#define GNRC_RPL_REQ_DIO_OPT_DODAG_CONF             (1 << GNRC_RPL_REQ_DIO_OPT_DODAG_CONF_SHIFT)
+#define GNRC_RPL_REQ_DIO_OPT_PREFIX_INFO_SHIFT      (1)
+#define GNRC_RPL_REQ_DIO_OPT_PREFIX_INFO            (1 << GNRC_RPL_REQ_DIO_OPT_PREFIX_INFO_SHIFT)
+/** @} */
+
+/**
  * @brief RPL-Option Generic Format
  * @see <a href="https://tools.ietf.org/html/rfc6550#section-6.7.1">
  *          RFC6550, section 6.7.1, RPL Control Message Option Generic Format
@@ -220,8 +231,8 @@ struct gnrc_rpl_dodag {
     uint8_t dao_seq;                /**< dao sequence number */
     uint8_t dao_counter;            /**< amount of retried DAOs */
     bool dao_ack_received;          /**< flag to check for DAO-ACK */
-    bool dodag_conf_requested;      /**< flag to send DODAG_CONF options */
-    bool prefix_info_requested;     /**< flag to send PREFIX_INFO options */
+    uint8_t dio_opts;               /**< options in the next DIO
+                                         (see @ref GNRC_RPL_REQ_DIO_OPTS "DIO Options") */
     uint8_t dao_time;               /**< time to schedule a DAO in seconds */
     trickle_t trickle;              /**< trickle representation */
 };
