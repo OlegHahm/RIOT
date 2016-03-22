@@ -11,6 +11,7 @@ ifneq (,$(filter fib,$(USEMODULE)))
 endif
 ifneq (,$(filter gnrc_tisch,$(USEMODULE)))
     USEMODULE_INCLUDES += $(RIOTBASE)/sys/net/gnrc/link_layer/tisch/include
+    USEMODULE_INCLUDES += $(RIOTBASE)/sys/net/gnrc/link_layer/tisch
 endif
 ifneq (,$(filter posix,$(USEMODULE)))
     USEMODULE_INCLUDES += $(RIOTBASE)/sys/posix/include
