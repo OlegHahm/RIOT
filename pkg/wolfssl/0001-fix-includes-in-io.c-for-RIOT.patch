@@ -1,0 +1,35 @@
+From b324593b3fcb0f4f1437231d75baed87417c06ab Mon Sep 17 00:00:00 2001
+From: Oleg Hahm <oleg@hobbykeller.org>
+Date: Tue, 22 Mar 2016 18:36:30 +0100
+Subject: fix includes in io.c for RIOT
+
+---
+ src/io.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/src/io.c b/src/io.c
+index c971951..e6bae05 100644
+--- a/src/io.c
++++ b/src/io.c
+@@ -97,11 +97,13 @@
+             #include <sys/socket.h>
+             #include <arpa/inet.h>
+             #include <netinet/in.h>
+-            #include <netdb.h>
+-            #ifdef __PPU
+-                #include <netex/errno.h>
+-            #else
+-                #include <sys/ioctl.h>
++            #if !defined(RIOT_VERSION)
++                #include <netdb.h>
++                #ifdef __PPU
++                    #include <netex/errno.h>
++                #else
++                    #include <sys/ioctl.h>
++                #endif
+             #endif
+         #endif
+     #endif
+-- 
+2.7.4
+

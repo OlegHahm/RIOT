@@ -1,0 +1,23 @@
+From f3917fd51cbe9994d5fcd33c255ff2cf29656407 Mon Sep 17 00:00:00 2001
+From: Oleg Hahm <oleg@hobbykeller.org>
+Date: Tue, 22 Mar 2016 18:36:48 +0100
+Subject: add Makefile for RIOT
+
+---
+ src/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
+ create mode 100644 src/Makefile
+
+diff --git a/src/Makefile b/src/Makefile
+new file mode 100644
+index 0000000..2b05d35
+--- /dev/null
++++ b/src/Makefile
+@@ -0,0 +1,4 @@
++MODULE := wolfssl
++CFLAGS += -Wno-unused -Wno-unused-parameter -Wno-newline-eof \
++		  -Wno-empty-translation-unit -DNO_FILESYSTEM -DWOLFSSL_LEANPSK
++include $(RIOTBASE)/Makefile.base
+-- 
+2.7.4
+
