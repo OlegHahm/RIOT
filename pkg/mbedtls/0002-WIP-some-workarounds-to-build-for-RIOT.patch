@@ -1,0 +1,68 @@
+From 3d07cf2c693776bb93e9b64426a48d93270a56de Mon Sep 17 00:00:00 2001
+From: Oleg Hahm <oleg@hobbykeller.org>
+Date: Tue, 22 Mar 2016 19:13:14 +0100
+Subject: WIP: some workarounds to build for RIOT
+
+---
+ library/net.c      | 6 ------
+ library/x509.c     | 2 ++
+ library/x509_crt.c | 2 ++
+ 3 files changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/library/net.c b/library/net.c
+index 3b78b6b..74a9bf4 100644
+--- a/library/net.c
++++ b/library/net.c
+@@ -27,11 +27,6 @@
+ 
+ #if defined(MBEDTLS_NET_C)
+ 
+-#if !defined(unix) && !defined(__unix__) && !defined(__unix) && \
+-    !defined(__APPLE__) && !defined(_WIN32)
+-#error "This module only works on Unix and Windows, see MBEDTLS_NET_C in config.h"
+-#endif
+-
+ #include "mbedtls/net.h"
+ 
+ #include <string.h>
+@@ -73,7 +68,6 @@ static int wsa_init_done = 0;
+ #include <unistd.h>
+ #include <signal.h>
+ #include <fcntl.h>
+-#include <netdb.h>
+ #include <errno.h>
+ 
+ #endif /* ( _WIN32 || _WIN32_WCE ) && !EFIX64 && !EFI32 */
+diff --git a/library/x509.c b/library/x509.c
+index ffc3d6c..8b7f4bb 100644
+--- a/library/x509.c
++++ b/library/x509.c
+@@ -70,9 +70,11 @@
+ #if !defined(_WIN32)
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#ifdef RIOT_VERSION
+ #include <dirent.h>
+ #endif
+ #endif
++#endif
+ 
+ #define CHECK(code) if( ( ret = code ) != 0 ){ return( ret ); }
+ 
+diff --git a/library/x509_crt.c b/library/x509_crt.c
+index c3adf7c..444f3f3 100644
+--- a/library/x509_crt.c
++++ b/library/x509_crt.c
+@@ -71,7 +71,9 @@
+ #if !defined(_WIN32) || defined(EFIX64) || defined(EFI32)
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#ifdef RIOT_VERSION
+ #include <dirent.h>
++#endif
+ #endif /* !_WIN32 || EFIX64 || EFI32 */
+ #endif
+ 
+-- 
+2.7.4
+

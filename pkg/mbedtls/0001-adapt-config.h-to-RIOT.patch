@@ -1,0 +1,34 @@
+From c59db00159392a5c5722e641fad58e8041dcc622 Mon Sep 17 00:00:00 2001
+From: Oleg Hahm <oleg@hobbykeller.org>
+Date: Tue, 22 Mar 2016 19:12:46 +0100
+Subject: adapt config.h to RIOT
+
+---
+ include/mbedtls/config.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/mbedtls/config.h b/include/mbedtls/config.h
+index a617d06..8f3edc4 100644
+--- a/include/mbedtls/config.h
++++ b/include/mbedtls/config.h
+@@ -756,7 +756,7 @@
+  *
+  * Enable functions that use the filesystem.
+  */
+-#define MBEDTLS_FS_IO
++//#define MBEDTLS_FS_IO
+ 
+ /**
+  * \def MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES
+@@ -2291,7 +2291,7 @@
+  *
+  * This module is used by the HAVEGE random number generator.
+  */
+-#define MBEDTLS_TIMING_C
++//#define MBEDTLS_TIMING_C
+ 
+ /**
+  * \def MBEDTLS_VERSION_C
+-- 
+2.7.4
+
