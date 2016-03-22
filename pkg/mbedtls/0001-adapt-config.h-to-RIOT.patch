@@ -1,4 +1,4 @@
-From c59db00159392a5c5722e641fad58e8041dcc622 Mon Sep 17 00:00:00 2001
+From e36620694b11f6bdf42579223bc0e96cbbebf54e Mon Sep 17 00:00:00 2001
 From: Oleg Hahm <oleg@hobbykeller.org>
 Date: Tue, 22 Mar 2016 19:12:46 +0100
 Subject: adapt config.h to RIOT
@@ -8,7 +8,7 @@ Subject: adapt config.h to RIOT
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/include/mbedtls/config.h b/include/mbedtls/config.h
-index a617d06..8f3edc4 100644
+index d1db0d8..569428d 100644
 --- a/include/mbedtls/config.h
 +++ b/include/mbedtls/config.h
 @@ -756,7 +756,7 @@
@@ -20,7 +20,7 @@ index a617d06..8f3edc4 100644
  
  /**
   * \def MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES
-@@ -2291,7 +2291,7 @@
+@@ -2271,7 +2271,7 @@
   *
   * This module is used by the HAVEGE random number generator.
   */
