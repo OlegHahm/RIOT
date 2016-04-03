@@ -381,11 +381,6 @@ status information about several modules in the OpenWSN stack.
 \returns TRUE if this function printed something, FALSE otherwise.
 */
 bool debugPrint_asn(void) {
-   asn_t output;
-   output.byte4         =  ieee154e_vars.asn.byte4;
-   output.bytes2and3    =  ieee154e_vars.asn.bytes2and3;
-   output.bytes0and1    =  ieee154e_vars.asn.bytes0and1;
-   printf("ieee154e: status ASN: %i, %i\n",(uint8_t*)&output,sizeof(output));
    // openserial_printStatus(STATUS_ASN,(uint8_t*)&output,sizeof(output));
    return TRUE;
 }
@@ -399,9 +394,6 @@ status information about several modules in the OpenWSN stack.
 \returns TRUE if this function printed something, FALSE otherwise.
 */
 bool debugPrint_isSync(void) {
-   uint8_t output=0;
-   output = ieee154e_vars.isSync;
-   printf("ieee154e: status isSync: %i, %i\n",(uint8_t*)&output,sizeof(output));
    // openserial_printStatus(STATUS_ISSYNC,(uint8_t*)&output,sizeof(uint8_t));
    return TRUE;
 }
@@ -417,7 +409,6 @@ status information about several modules in the OpenWSN stack.
 bool debugPrint_macStats(void) {
    // send current stats over serial
    // openserial_printStatus(STATUS_MACSTATS,(uint8_t*)&ieee154e_stats,sizeof(ieee154e_stats_t));
-   printf("ieee154e: status ASN: %i, %i\n",(uint8_t*)&ieee154e_stats,sizeof(ieee154e_stats_t));
    return TRUE;
 }
 
