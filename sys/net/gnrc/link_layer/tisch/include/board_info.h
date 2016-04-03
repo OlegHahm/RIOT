@@ -59,8 +59,8 @@ typedef enum {
 
 #define INTERRUPT_DECLARATION() unsigned irq_flags;//no declaration
 
-#define DISABLE_INTERRUPTS()    irq_flags = disableIRQ();
-#define ENABLE_INTERRUPTS()     restoreIRQ(irq_flags);
+#define DISABLE_INTERRUPTS()    irq_flags = irq_disable();
+#define ENABLE_INTERRUPTS()     irq_restore(irq_flags);
 
 //===== timer
 

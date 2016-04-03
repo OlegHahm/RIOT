@@ -59,7 +59,7 @@ void scheduler_push_task(task_cbt cb, task_prio_t prio)
     taskList_item_t*  taskContainer;
     taskList_item_t** taskListWalker;
 
-    unsigned state = disableIRQ();
+    unsigned state = irq_disable();
     DEBUG("tisch: push task\n");
     /* find an empty task container */
     taskContainer = &scheduler_vars.taskBuf[0];
@@ -91,7 +91,7 @@ void scheduler_push_task(task_cbt cb, task_prio_t prio)
         scheduler_dbg.numTasksMax   = scheduler_dbg.numTasksCur;
     }
 
-    restoreIRQ(state);
+    irq_restore(state);
     SCHEDULER_WAKEUP();
 }
 
