@@ -12,6 +12,8 @@
  * @file
  */
 
+#include <stdio.h>
+
 #include "idmanager.h"
 
 int _gnrc_tisch_root(int argc, char **argv)
