@@ -1,6 +1,7 @@
 #include "periph/cpuid.h"
 #include "opendefs.h"
 #include "idmanager.h"
+#include "net/ieee802154.h"
 // #include "eui64.h"
 #include "packetfunctions.h"
 // #include "openserial.h"
@@ -52,16 +53,20 @@ void idmanager_init(void) {
 
    /* XXX: replace by netapi call */
 #if CPUID_LEN
+#   if CPUID_LEN < IEEE802154_LONG_ADDRESS_LEN
+    uint8_t cpuid[IEEE802154_LONG_ADDRESS_LEN];
+#   else
     uint8_t cpuid[CPUID_LEN];
+#   endif
     cpuid_get(cpuid);
 
-#if CPUID_LEN < 8
+#if CPUID_LEN < IEEE802154_LONG_ADDRESS_LEN
     /* in case CPUID_LEN < 8, fill missing bytes with zeros */
-    for (int i = CPUID_LEN; i < 8; i++) {
+    for (unsigned i = CPUID_LEN; i < IEEE802154_LONG_ADDRESS_LEN; i++) {
         cpuid[i] = 0;
     }
 #else
-    for (int i = 8; i < CPUID_LEN; i++) {
+    for (int i = IEEE802154_LONG_ADDRESS_LEN; i < CPUID_LEN; i++) {
         cpuid[i & 0x07] ^= cpuid[i];
     }
 #endif
@@ -69,7 +74,7 @@ void idmanager_init(void) {
     cpuid[0] &= ~(0x01);
     cpuid[0] |= 0x02;
     /* copy and set long address */
-    memcpy(&idmanager_vars.my64bID.addr.addr_64b, cpuid, 8);
+    memcpy(&idmanager_vars.my64bID.addr.addr_64b, cpuid, IEEE802154_LONG_ADDRESS_LEN);
 #endif
 
    // my16bID
