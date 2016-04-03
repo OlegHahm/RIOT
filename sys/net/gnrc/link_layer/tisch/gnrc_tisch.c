@@ -240,6 +240,36 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
     }
 }
 
+static int _tisch_init(gnrc_netdev2_t *gnrc_netdev2)
+{
+    /* check if given netdev device is defined and the driver is set */
+    if (gnrc_netdev2 == NULL || gnrc_netdev2->dev == NULL) {
+        return -ENODEV;
+    }
+
+    //-- cross-layer
+    idmanager_init();    // call first since initializes EUI64 and isDAGroot
+    puts("foo");
+    radio_init(gnrc_netdev2);
+    radiotimer_init();
+
+    //===== stack
+    openqueue_init();
+    openrandom_init();
+    opentimers_init();
+    //-- 02a-TSCH
+    adaptive_sync_init();
+    ieee154e_init();
+    //-- 02b-RES
+    schedule_init();
+    sixtop_init();
+    neighbors_init();
+
+    return 0;
+}
+
+
+
 /**
  * @brief   Startup code and event loop of the TISCH layer
  *
@@ -257,6 +287,8 @@ static void *_tisch_thread(void *args)
     msg_init_queue(msg_queue, GNRC_TISCH_MSG_QUEUE_SIZE);
     /* save the PID to the device descriptor and register the device */
     gnrc_netdev2->pid = thread_getpid();
+
+    _tisch_init(gnrc_netdev2);
 
     /* register the event callback with the device driver */
     dev->event_callback = _event_cb;
@@ -337,28 +369,6 @@ static void *_tisch_thread(void *args)
 kernel_pid_t gnrc_tisch_init(char *stack, int stacksize, char priority,
                              const char *name, gnrc_netdev2_t *gnrc_netdev2)
 {
-    /* check if given netdev device is defined and the driver is set */
-    if (gnrc_netdev2 == NULL || gnrc_netdev2->dev == NULL) {
-        return -ENODEV;
-    }
-
-    radio_init(gnrc_netdev2);
-    radiotimer_init();
-
-    //===== stack
-    //-- cross-layer
-    idmanager_init();    // call first since initializes EUI64 and isDAGroot
-    openqueue_init();
-    openrandom_init();
-    opentimers_init();
-    //-- 02a-TSCH
-    adaptive_sync_init();
-    ieee154e_init();
-    //-- 02b-RES
-    schedule_init();
-    sixtop_init();
-    neighbors_init();
-
     /* create new TISCH thread */
     gnrc_tisch_scheduler_pid = thread_create(stack, stacksize, priority,
                                              THREAD_CREATE_STACKTEST, _tisch_thread,
