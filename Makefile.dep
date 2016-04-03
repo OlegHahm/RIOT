@@ -552,3 +552,8 @@ ifneq (,$(filter random,$(USEMODULE)))
         USEMODULE += tinymt32
     endif
 endif
+
+ifneq (,$(filter gnrc_tisch,$(USEMODULE)))
+    USEMODULE += xtimer
+    USEMODULE += ieee802154
+endif
