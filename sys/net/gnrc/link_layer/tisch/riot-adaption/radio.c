@@ -286,13 +286,13 @@ void radio_init(gnrc_netdev2_t *dev_par) {
     at86rf2xx_t *dev = (at86rf2xx_t*) radio_vars.dev;
 
     /* initialise GPIOs */
-    gpio_init(dev->cs_pin, GPIO_DIR_OUT, GPIO_NOPULL);
-    gpio_set(dev->cs_pin);
-    gpio_init(dev->sleep_pin, GPIO_DIR_OUT, GPIO_NOPULL);
-    gpio_clear(dev->sleep_pin);
-    gpio_init(dev->reset_pin, GPIO_DIR_OUT, GPIO_NOPULL);
-    gpio_set(dev->reset_pin);
-    gpio_init_int(dev->int_pin, GPIO_NOPULL, GPIO_RISING, radio_isr, dev);
+    gpio_init(dev->params.cs_pin, GPIO_OUT);
+    gpio_set(dev->params.cs_pin);
+    gpio_init(dev->params.sleep_pin, GPIO_OUT);
+    gpio_clear(dev->params.sleep_pin);
+    gpio_init(dev->params.reset_pin, GPIO_OUT);
+    gpio_set(dev->params.reset_pin);
+    gpio_init_int(dev->params.int_pin, GPIO_IN, GPIO_RISING, radio_isr, dev);
 
     // configure the radio
     at86rf2xx_reg_write(dev, AT86RF2XX_REG__TRX_STATE, AT86RF2XX_TRX_STATE__FORCE_TRX_OFF);    // turn radio off
@@ -506,10 +506,10 @@ void radio_spiReadRxFifo(uint8_t* pBufRead,
 
     spi_tx_buffer[0] = 0x20;
 
-    spi_acquire(dev->spi);
-    gpio_clear(dev->cs_pin);
+    spi_acquire(dev->params.spi);
+    gpio_clear(dev->params.cs_pin);
     // 2 first bytes
-    spi_transfer_bytes(dev->spi,
+    spi_transfer_bytes(dev->params.spi,
                        spi_tx_buffer,
                        spi_rx_buffer,
                        2
@@ -521,14 +521,14 @@ void radio_spiReadRxFifo(uint8_t* pBufRead,
         // valid length
 
         //read packet
-        spi_transfer_bytes(dev->spi,
+        spi_transfer_bytes(dev->params.spi,
                            spi_tx_buffer,
                            pBufRead,
                            *pLenRead
                           );
 
         // CRC (2B) and LQI (1B)
-        spi_transfer_bytes(dev->spi,
+        spi_transfer_bytes(dev->params.spi,
                            spi_tx_buffer,
                            spi_rx_buffer,
                            2+1
@@ -540,14 +540,14 @@ void radio_spiReadRxFifo(uint8_t* pBufRead,
         // invalid length
 
         // read a just byte to close spi
-        spi_transfer_bytes(dev->spi,
+        spi_transfer_bytes(dev->params.spi,
                            spi_tx_buffer,
                            spi_rx_buffer,
                            1
                           );
     }
-    gpio_set(dev->cs_pin);
-    spi_release(dev->spi);
+    gpio_set(dev->params.cs_pin);
+    spi_release(dev->params.spi);
 }
 
 //=========================== callbacks =======================================
