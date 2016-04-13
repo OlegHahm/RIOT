@@ -574,8 +574,6 @@ void radio_isr(void *unused) {
             radio_vars.startFrame_cb(capturedTime);
             // kick the OS
             return;
-        } else {
-            while(1);
         }
     }
     // end of frame event
@@ -587,8 +585,6 @@ void radio_isr(void *unused) {
             radio_vars.endFrame_cb(capturedTime);
             // kick the OS
             return;
-        } else {
-            while(1);
         }
     }
 
