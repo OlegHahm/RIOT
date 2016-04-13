@@ -249,7 +249,6 @@ static int _tisch_init(gnrc_netdev2_t *gnrc_netdev2)
 
     //-- cross-layer
     idmanager_init();    // call first since initializes EUI64 and isDAGroot
-    puts("foo");
     radio_init(gnrc_netdev2);
     radiotimer_init();
 
