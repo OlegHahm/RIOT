@@ -218,14 +218,14 @@ void radio_getReceivedFrame(uint8_t* pBufRead,
 //=========================== callbacks =======================================
 
 //=========================== interrupt handlers ==============================
-#if 0
-static void event_cb(gnrc_netdev_event_t type, void *data)
+void event_cb(netdev2_t *dev, netdev2_event_t type, void *data)
 {
+    (void) dev;
    // capture the time
    uint32_t capturedTime = radiotimer_getCapturedTime();
 
    // start of frame event
-   if (type == NETDEV_EVENT_RX_STARTED) {
+   if (type == NETDEV2_EVENT_RX_STARTED) {
        DEBUG("Start of frame.\n");
       // change state
       radio_vars.state = RADIOSTATE_RECEIVING;
@@ -237,8 +237,8 @@ static void event_cb(gnrc_netdev_event_t type, void *data)
       }
    }
    // end of frame event
-   if (type == NETDEV_EVENT_RX_COMPLETE
-       || type == NETDEV_EVENT_TX_COMPLETE) {
+   if (type == NETDEV2_EVENT_RX_COMPLETE
+       || type == NETDEV2_EVENT_TX_COMPLETE) {
        DEBUG("End of Frame.\n");
       // change state
       radio_vars.state = RADIOSTATE_TXRX_DONE;
@@ -248,7 +248,7 @@ static void event_cb(gnrc_netdev_event_t type, void *data)
       } else {
          while(1);
       }
-      if (type == NETDEV_EVENT_RX_COMPLETE) {
+      if (type == NETDEV2_EVENT_RX_COMPLETE) {
          gnrc_pktsnip_t *pkt;
 
         /* get pointer to the received packet */
@@ -261,7 +261,6 @@ static void event_cb(gnrc_netdev_event_t type, void *data)
       }
    }
 }
-#endif
 
 #else
 

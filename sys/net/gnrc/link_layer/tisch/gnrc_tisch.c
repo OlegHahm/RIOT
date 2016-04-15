@@ -225,7 +225,10 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
     gnrc_netdev2_t *gnrc_netdev2 = (gnrc_netdev2_t*) dev->isr_arg;
     (void) gnrc_netdev2;
 
+    void event_cb(netdev2_t *dev, netdev2_event_t event, void *data);
+    event_cb(dev, event, data);
     if (event == NETDEV2_EVENT_ISR) {
+
         /* TODO: pipe this into 802154 from TISCH */
     }
     else {
