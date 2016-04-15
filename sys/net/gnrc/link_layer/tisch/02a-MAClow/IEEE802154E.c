@@ -186,6 +186,7 @@ This function executes in ISR mode, when the new slot timer fires.
 */
 void isr_ieee154e_newSlot(void) {
    radio_setTimerPeriod(TsSlotDuration);
+   //puts("new");
    if (ieee154e_vars.isSync==FALSE) {
       if (idmanager_getIsDAGroot()==TRUE) {
          changeIsSync(TRUE);
@@ -892,7 +893,7 @@ port_INLINE void activity_ti1ORri1(void) {
 
    // check the schedule to see what type of slot this is
    cellType = schedule_getType();
-   printf("cellType: %i\n", cellType);
+   //printf("cellType: %i\n", cellType);
    switch (cellType) {
       case CELLTYPE_TXRX:
       case CELLTYPE_TX:
@@ -919,6 +920,7 @@ port_INLINE void activity_ti1ORri1(void) {
                changeToRX=TRUE;
             }
          } else {
+//puts("TXDATAOFFSET");
             // change state
             changeState(S_TXDATAOFFSET);
             // change owner
@@ -929,7 +931,7 @@ port_INLINE void activity_ti1ORri1(void) {
                ieee154e_getAsn(sync_IE.asn);
                sync_IE.join_priority = (neighbors_getMyDAGrank()/MINHOPRANKINCREASE)-1; //poipoi -- use dagrank(rank)-1
                memcpy(ieee154e_vars.dataToSend->l2_ASNpayload,&sync_IE,sizeof(sync_IE_ht));
-               puts("EB");
+               //puts("EB");
             }
             // record that I attempt to transmit this packet
             ieee154e_vars.dataToSend->l2_numTxAttempts++;
@@ -984,7 +986,7 @@ port_INLINE void activity_ti1ORri1(void) {
 }
 
 port_INLINE void activity_ti2(void) {
-
+//puts("TXDATAPREPRARE");
    // change state
    changeState(S_TXDATAPREPARE);
 
@@ -1044,7 +1046,7 @@ port_INLINE void activity_ti3(void) {
    radiotimer_schedule(DURATION_tt3);
 
    // give the 'go' to transmit
-   puts("->");
+   //puts("->");
    radio_txNow();
 }
 
@@ -1062,6 +1064,7 @@ port_INLINE void activity_tie2(void) {
 //start of frame interrupt
 port_INLINE void activity_ti4(PORT_RADIOTIMER_WIDTH capturedTime) {
    // change state
+//puts("TXDATA");
    changeState(S_TXDATA);
 
    // cancel tt3
@@ -1823,7 +1826,7 @@ port_INLINE void incrementAsnOffset(void) {
       ieee154e_vars.slotOffset  = (ieee154e_vars.slotOffset+1)%frameLength;
    }
    ieee154e_vars.asnOffset   = (ieee154e_vars.asnOffset+1)%16;
-   printf("Slot: %i\n", ieee154e_vars.slotOffset);
+   //printf("Slot: %i\n", ieee154e_vars.slotOffset);
 }
 
 //from upper layer that want to send the ASN to compute timing or latency
@@ -2202,6 +2205,7 @@ will do that for you, but assume that something went wrong.
 */
 void endSlot(void) {
 
+   //puts("end");
    // turn off the radio
    radio_rfOff();
    // compute the duty cycle if radio has been turned on
