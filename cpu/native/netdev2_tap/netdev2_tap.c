@@ -338,9 +338,11 @@ static int _send(netdev2_t *netdev, const struct iovec *vector, int n)
         if (_preloaded) {
             err(EXIT_FAILURE, "netdev2_tap: TX buffer not empty");
         }
+        uint8_t *ptr = _tx_buffer;
         for (int i = 0; i < n; i++) {
-            memcpy(_tx_buffer, vector->iov_base, vector->iov_len);
+            memcpy(ptr, vector->iov_base, vector->iov_len);
             _preloaded += vector->iov_len;
+            ptr += _preloaded;
             vector++;
         }
     }

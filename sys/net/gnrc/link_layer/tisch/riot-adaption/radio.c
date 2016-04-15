@@ -28,6 +28,14 @@ typedef struct {
 radio_vars_t radio_vars;
 
 #ifndef MODULE_AT86RF2XX
+#ifdef MODULE_NETDEV2_ETH
+#include "net/ethernet/hdr.h"
+/** TODO: fix for other ethernet drivers */
+#include "netdev2_tap.h"
+ethernet_hdr_t _eth_hdr;
+#endif
+
+
 //=========================== prototypes ======================================
 // static void event_cb(gnrc_netdev_event_t event, void *data);
 
@@ -142,11 +150,24 @@ void radio_loadPacket(uint8_t* packet, uint8_t len) {
    radio_vars.state = RADIOSTATE_LOADING_PACKET;
 
    /* wrap data into pktsnip */
-   struct iovec vector;
-   vector.iov_base = packet;
-   vector.iov_len = len;
+   uint8_t i = 0;
+#ifdef MODULE_NETDEV2_ETH
+   struct iovec vector[2];
+   netdev2_tap_t *dev = (netdev2_tap_t*)radio_vars.dev;
+    memset(_eth_hdr.dst, 0xFF, ETHERNET_ADDR_LEN);
+   memcpy(_eth_hdr.src, dev->addr, ETHERNET_ADDR_LEN);
+   _eth_hdr.type = byteorder_htons(ETHERTYPE_UNKNOWN);;
+   vector[i].iov_base = (ethernet_hdr_t*) &_eth_hdr;
+   vector[i].iov_len = sizeof(ethernet_hdr_t);
+   i++;
+#else
+   struct iovec vector[1];
+#endif
+   vector[i].iov_base = packet;
+   vector[i].iov_len = len;
    // load packet in TXFIFO
-   radio_vars.dev->driver->send(radio_vars.dev, &vector, 1);
+   radio_vars.dev->driver->send(radio_vars.dev, vector, (sizeof(vector) /
+                                                         sizeof(struct iovec)));
 
    // change state
    radio_vars.state = RADIOSTATE_PACKET_LOADED;
