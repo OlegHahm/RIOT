@@ -2,6 +2,7 @@
 #include "board_info.h"
 #include "radio.h"
 #include "board.h"
+#include "xtimer.h"
 #include "radiotimer.h"
 #include "net/gnrc/pktbuf.h"
 #include "net/gnrc/netapi.h"
@@ -53,6 +54,10 @@ void radio_init(gnrc_netdev2_t *dev_par) {
    radio_vars.dev->driver->set(radio_vars.dev, NETOPT_RX_START_IRQ, &(enable), sizeof(netopt_enable_t));
    enable = NETOPT_ENABLE;
    radio_vars.dev->driver->set(radio_vars.dev, NETOPT_RX_END_IRQ, &(enable), sizeof(netopt_enable_t));
+#ifndef CPU_NATIVE
+   enable = NETOPT_ENABLE;
+   radio_vars.dev->driver->set(radio_vars.dev, NETOPT_TX_END_IRQ, &(enable), sizeof(netopt_enable_t));
+#endif
    enable = NETOPT_DISABLE;
    radio_vars.dev->driver->set(radio_vars.dev, NETOPT_AUTOACK, &(enable), sizeof(netopt_enable_t));
    enable = NETOPT_ENABLE;
@@ -155,6 +160,18 @@ void radio_txEnable(void) {
    radio_vars.state = RADIOSTATE_TX_ENABLED;
 }
 
+#ifdef CPU_NATIVE
+xtimer_t _tx_timer;
+
+static void _tx_complete_isr(void* arg)
+{
+    (void) arg;
+    if (radio_vars.dev->event_callback) {
+        radio_vars.dev->event_callback(radio_vars.dev, NETDEV2_EVENT_TX_COMPLETE, NULL);
+    }
+}
+#endif
+
 void radio_txNow(void) {
    PORT_TIMER_WIDTH val;
    // change state
@@ -162,6 +179,10 @@ void radio_txNow(void) {
 
    netopt_state_t state = NETOPT_STATE_TX;
    radio_vars.dev->driver->set(radio_vars.dev, NETOPT_STATE, &(state), sizeof(netopt_state_t));
+#ifdef CPU_NATIVE
+    _tx_timer.callback = &_tx_complete_isr;
+    xtimer_set(&_tx_timer, 3600);
+#endif
 
    // The AT86RF231 does not generate an interrupt when the radio transmits the
    // SFD, which messes up the MAC state machine. The danger is that, if we leave
