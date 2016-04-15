@@ -36,6 +36,7 @@ extern "C" {
 #endif
 
 #define NETDEV2_TAP_OPT_PRELOADING     (0x0100)       /**< preloading enabled */
+#define NETDEV2_TAP_OPT_TELL_TX_END    (0x0200)       /**< enables TX end IRQ */
 
 /**
  * @brief tap interface state
