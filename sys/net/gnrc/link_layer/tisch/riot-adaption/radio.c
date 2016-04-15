@@ -4,6 +4,7 @@
 #include "board.h"
 #include "xtimer.h"
 #include "radiotimer.h"
+#include "net/netdev2/ieee802154.h"
 #include "net/gnrc/pktbuf.h"
 #include "net/gnrc/netapi.h"
 #include "net/gnrc/netreg.h"
@@ -243,12 +244,29 @@ void radio_getReceivedFrame(uint8_t* pBufRead,
                              int8_t* pRssi,
                             uint8_t* pLqi,
                                bool* pCrc) {
-    (void) pBufRead;
     (void) pLenRead;
     (void) maxBufLen;
-    (void) pRssi;
-    (void) pLqi;
     (void) pCrc;
+    netdev2_ieee802154_rx_info_t rx_info;
+
+    int bytes_expected = radio_vars.dev->driver->recv(radio_vars.dev, NULL, 0, NULL);
+
+    if (bytes_expected) {
+        int nread = radio_vars.dev->driver->recv(radio_vars.dev, (char*) pBufRead, bytes_expected, &rx_info);
+        if(nread <= 0) {
+            return;
+        }
+
+#ifndef CPU_NATIVE
+        *pLqi = rx_info.lqi;
+        *pRssi = rx_info.rssi;
+#else
+        *pLqi = 0;
+        *pRssi = 0;
+        /* TODO: remove ethernet header */
+#endif
+    }
+
    /* The driver notifies the MAC with the registered
       `event_cb` that a new packet arrived.
       I think this function should not be used to access
@@ -263,6 +281,7 @@ void radio_getReceivedFrame(uint8_t* pBufRead,
 void event_cb(netdev2_t *dev, netdev2_event_t type, void *data)
 {
     (void) dev;
+    (void) data;
    // capture the time
    uint32_t capturedTime = radiotimer_getCapturedTime();
 
@@ -290,17 +309,7 @@ void event_cb(netdev2_t *dev, netdev2_event_t type, void *data)
       } else {
          while(1);
       }
-      if (type == NETDEV2_EVENT_RX_COMPLETE) {
-         gnrc_pktsnip_t *pkt;
 
-        /* get pointer to the received packet */
-        pkt = (gnrc_pktsnip_t *)data;
-        /* send the packet to everyone interested in it's type */
-        if (!gnrc_netapi_dispatch_receive(pkt->type, GNRC_NETREG_DEMUX_CTX_ALL, pkt)) {
-            DEBUG("6TiSCH: unable to forward packet of type %i\n", pkt->type);
-            gnrc_pktbuf_release(pkt);
-        }
-      }
    }
 }
 
