@@ -192,6 +192,7 @@ void isr_ieee154e_newSlot(void) {
          incrementAsnOffset();
          ieee154e_syncSlotOffset();
          ieee154e_vars.nextActiveSlotOffset = schedule_getNextActiveSlotOffset();
+         changeState(S_SLEEP);
       } else {
          activity_synchronize_newSlot();
       }
