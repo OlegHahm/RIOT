@@ -65,9 +65,15 @@
 /* support one tap interface for now */
 netdev2_tap_t netdev2_tap;
 
+/* to support preloading */
+static uint8_t _tx_buffer[ETHERNET_FRAME_LEN];
+static unsigned _preloaded = 0;
+static uint16_t _flags;
+
 /* netdev2 interface */
 static int _init(netdev2_t *netdev);
 static int _send(netdev2_t *netdev, const struct iovec *vector, int n);
+static int _send_now(netdev2_t *netdev, const struct iovec *vector, int n);
 static int _recv(netdev2_t *netdev, char* buf, int n, void *info);
 
 static inline void _get_mac_addr(netdev2_t *netdev, uint8_t *dst)
@@ -154,6 +160,25 @@ static int _set(netdev2_t *dev, netopt_t opt, void *value, size_t value_len)
             break;
         case NETOPT_PROMISCUOUSMODE:
             _set_promiscous(dev, ((bool *)value)[0]);
+            break;
+        case NETOPT_PRELOADING:
+            if (((bool *)value)[0]) {
+                _flags |= NETDEV2_TAP_OPT_PRELOADING;
+            }
+            else {
+                _flags &= ~NETDEV2_TAP_OPT_PRELOADING;
+            }
+            break;
+        case NETOPT_STATE:
+            if (*((netopt_state_t *)value) == NETOPT_STATE_TX) {
+                if ((_flags & NETDEV2_TAP_OPT_PRELOADING)) {
+                    struct iovec vector;
+                    vector.iov_base = _tx_buffer;
+                    vector.iov_len  = _preloaded;
+                    _send_now(dev, &vector, 1);
+                    _preloaded = 0;
+                }
+            }
             break;
         default:
             return -ENOTSUP;
@@ -284,7 +309,7 @@ static int _recv(netdev2_t *netdev2, char *buf, int len, void *info)
     return -1;
 }
 
-static int _send(netdev2_t *netdev, const struct iovec *vector, int n)
+static int _send_now(netdev2_t *netdev, const struct iovec *vector, int n)
 {
     netdev2_tap_t *dev = (netdev2_tap_t*)netdev;
     int res = _native_writev(dev->tap_fd, vector, n);
@@ -298,6 +323,25 @@ static int _send(netdev2_t *netdev, const struct iovec *vector, int n)
 #endif
     if (netdev->event_callback) {
         netdev->event_callback(netdev, NETDEV2_EVENT_TX_COMPLETE, NULL);
+    }
+    return res;
+}
+
+static int _send(netdev2_t *netdev, const struct iovec *vector, int n)
+{
+    int res = 0;
+    if (!(_flags & NETDEV2_TAP_OPT_PRELOADING)) {
+        res = _send_now(netdev, vector, n);
+    }
+    else {
+        if (_preloaded) {
+            err(EXIT_FAILURE, "netdev2_tap: TX buffer not empty");
+        }
+        for (int i = 0; i < n; i++) {
+            memcpy(_tx_buffer, vector->iov_base, vector->iov_len);
+            _preloaded += vector->iov_len;
+            vector++;
+        }
     }
     return res;
 }

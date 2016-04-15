@@ -35,6 +35,8 @@ extern "C" {
 #include "net/if.h"
 #endif
 
+#define NETDEV2_TAP_OPT_PRELOADING     (0x0100)       /**< preloading enabled */
+
 /**
  * @brief tap interface state
  */
