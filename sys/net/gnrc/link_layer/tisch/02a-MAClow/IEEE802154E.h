@@ -247,6 +247,7 @@ typedef struct {
    bool                      isSecurityEnabled;       // whether security is applied
    // time correction
    int16_t                   timeCorrection;          // store the timeCorrection, prepend and retrieve it inside of frame header
+   uint32_t                  slotStartTS;
 } ieee154e_vars_t;
 
 BEGIN_PACK

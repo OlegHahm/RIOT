@@ -4,6 +4,7 @@
 
 #include "radiotimer.h"
 #include "board_info.h"
+#include "IEEE802154E.h"
 
 // #include "riot.h"
 
@@ -28,7 +29,7 @@ typedef struct {
 } radiotimer_vars_t;
 
 radiotimer_vars_t radiotimer_vars;
-
+extern ieee154e_vars_t    ieee154e_vars;
 
 void radiotimer_init(void) {
    // clear local variables
@@ -57,7 +58,7 @@ void radiotimer_start(PORT_RADIOTIMER_WIDTH period) {
 //===== direct access
 
 PORT_RADIOTIMER_WIDTH radiotimer_getValue(void) {
-    return (PORT_RADIOTIMER_WIDTH) xtimer_now();
+    return (PORT_RADIOTIMER_WIDTH) (xtimer_now() - ieee154e_vars.slotStartTS);
 }
 
 void radiotimer_setPeriod(PORT_RADIOTIMER_WIDTH period) {
@@ -84,12 +85,13 @@ void radiotimer_cancel(void) {
     DEBUG("%s\n", __PRETTY_FUNCTION__);
     // timer_set(OWSN_TIMER, 1, 0);
     xtimer_remove(&(radiotimer_vars.s_timer));
+    xtimer_set(&(radiotimer_vars.s_timer), radiotimer_vars.currentSlotPeriod);
 }
 
 //===== capture
 
 inline PORT_RADIOTIMER_WIDTH radiotimer_getCapturedTime(void) {
-    return (PORT_RADIOTIMER_WIDTH)(xtimer_now());
+    return (PORT_RADIOTIMER_WIDTH)(xtimer_now() - ieee154e_vars.slotStartTS);
 }
 
 //=========================== private =========================================
@@ -109,4 +111,5 @@ void radiotimer_isr_p(void* arg) {
     if (radiotimer_vars.overflow_cb != NULL) {
         radiotimer_vars.overflow_cb();
     }
+    ieee154e_vars.slotStartTS = xtimer_now();
 }
