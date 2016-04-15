@@ -50,6 +50,7 @@
 
 #include "async_read.h"
 
+#include "xtimer.h"
 #include "net/eui64.h"
 #include "net/netdev2.h"
 #include "net/netdev2/eth.h"
@@ -309,6 +310,16 @@ static int _recv(netdev2_t *netdev2, char *buf, int len, void *info)
     return -1;
 }
 
+static void _tx_complete_isr(void* arg)
+{
+    netdev2_t *netdev = (netdev2_t*) arg;
+    if (netdev->event_callback) {
+        netdev->event_callback(netdev, NETDEV2_EVENT_TX_COMPLETE, NULL);
+    }
+}
+
+xtimer_t _tx_timer;
+
 static int _send_now(netdev2_t *netdev, const struct iovec *vector, int n)
 {
     netdev2_tap_t *dev = (netdev2_tap_t*)netdev;
@@ -321,9 +332,15 @@ static int _send_now(netdev2_t *netdev, const struct iovec *vector, int n)
     }
     netdev->stats.tx_bytes += bytes;
 #endif
+#ifndef MODULE_GNRC_TISCH
     if (netdev->event_callback) {
         netdev->event_callback(netdev, NETDEV2_EVENT_TX_COMPLETE, NULL);
     }
+#else
+    _tx_timer.callback = &_tx_complete_isr;
+    _tx_timer.arg      = netdev;
+    xtimer_set(&_tx_timer, 3600);
+#endif
     return res;
 }
 
