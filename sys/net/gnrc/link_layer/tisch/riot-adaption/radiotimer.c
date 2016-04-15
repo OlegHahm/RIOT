@@ -47,7 +47,7 @@ void radiotimer_setCompareCb(radiotimer_compare_cbt cb) {
 }
 
 void radiotimer_start(PORT_RADIOTIMER_WIDTH period) {
-    DEBUG("%s\n", __PRETTY_FUNCTION__);
+    DEBUG("%s\n", "radiotimer");
     // timer_init(OWSN_TIMER, 1, &radiotimer_isr);
     // timer_set(OWSN_TIMER, 0, ((unsigned int)TIMER_TICKS(period)));
     
@@ -62,7 +62,7 @@ PORT_RADIOTIMER_WIDTH radiotimer_getValue(void) {
 }
 
 void radiotimer_setPeriod(PORT_RADIOTIMER_WIDTH period) {
-    DEBUG("%s\n", __PRETTY_FUNCTION__);
+    DEBUG("radiotimer_setPeriod: %u, %u\n", period, ieee154e_vars.slotStartTS);
     // timer_set(OWSN_TIMER, 0, ((unsigned int)TIMER_TICKS(period)));
     
     radiotimer_vars.currentSlotPeriod = period;
@@ -76,13 +76,13 @@ PORT_RADIOTIMER_WIDTH radiotimer_getPeriod(void) {
 //===== compare
 
 void radiotimer_schedule(PORT_RADIOTIMER_WIDTH offset) {
-    DEBUG("%s\n", __PRETTY_FUNCTION__);
+    DEBUG("%s schedule\n", "radiotimer");
     // timer_set(OWSN_TIMER, 1, TIMER_TICKS(offset));
-    xtimer_set(&(radiotimer_vars.s_timer), (uint32_t) offset);
+    xtimer_set(&(radiotimer_vars.s_timer), (uint32_t) (offset));
 }
 
 void radiotimer_cancel(void) {
-    DEBUG("%s\n", __PRETTY_FUNCTION__);
+    DEBUG("%s cancel\n", "radiotimer");
     // timer_set(OWSN_TIMER, 1, 0);
     xtimer_remove(&(radiotimer_vars.s_timer));
     xtimer_set(&(radiotimer_vars.s_timer), radiotimer_vars.currentSlotPeriod);
@@ -99,7 +99,7 @@ inline PORT_RADIOTIMER_WIDTH radiotimer_getCapturedTime(void) {
 //=========================== interrupt handlers ==============================
 void radiotimer_isr_s(void* arg) {
     (void) arg;
-    DEBUG("%s cmp\n", __PRETTY_FUNCTION__);
+    DEBUG("%s cmp\n", "radiotimer");
     if (radiotimer_vars.compare_cb!=NULL) {
         radiotimer_vars.compare_cb();
     }
@@ -107,7 +107,7 @@ void radiotimer_isr_s(void* arg) {
 
 void radiotimer_isr_p(void* arg) {
     (void) arg;
-    DEBUG("%s cmp\n", __PRETTY_FUNCTION__);
+    DEBUG("%s cmp\n", "radiotimer");
     if (radiotimer_vars.overflow_cb != NULL) {
         radiotimer_vars.overflow_cb();
     }
