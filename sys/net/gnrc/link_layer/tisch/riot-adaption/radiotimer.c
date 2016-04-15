@@ -85,7 +85,7 @@ void radiotimer_cancel(void) {
     DEBUG("%s cancel\n", "radiotimer");
     // timer_set(OWSN_TIMER, 1, 0);
     xtimer_remove(&(radiotimer_vars.s_timer));
-    xtimer_set(&(radiotimer_vars.s_timer), radiotimer_vars.currentSlotPeriod);
+    xtimer_set(&(radiotimer_vars.p_timer), radiotimer_vars.currentSlotPeriod);
 }
 
 //===== capture
