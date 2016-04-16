@@ -7,10 +7,10 @@
  */
 
 /**
- * @defgroup    sys_checksum_crc16_ccitt CRC16-CCITT
+ * @defgroup    sys_checksum_crc16_ccitt CRC16-CCITT AUG
  * @ingroup     sys_checksum
  *
- * @brief       CRC16-CCITT checksum algorithm
+ * @brief       CRC16-CCITT AUG checksum algorithm
  * @details     This implementation of CRC16 is based on the CCITT
  *              specification using 0x1D0F as a start value.
  *              Using a different start value is possible by calling
@@ -22,8 +22,8 @@
  * @author      Ludwig Knüpfer <ludwig.knuepfer@fu-berlin.de>
  */
 
-#ifndef CRC16_CCITT_H
-#define CRC16_CCITT_H
+#ifndef CRC16_CCITT_AUG_H
+#define CRC16_CCITT_AUG_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -33,18 +33,19 @@ extern "C" {
 #endif
 
 /**
- * @brief           Update CRC16-CCITT
+ * @brief           Update CRC16-CCITT AUG
  *
  * @param[in]  crc  A start value for the CRC calculation, usually the
  *                  return value of a previous call to
- *                  crc16_ccitt_calc() or crc16_ccitt_update()
+ *                  @ref crc16_ccitt_aug_calc() or @ref
+ *                  crc16_ccitt_aug_update()
  * @param[in]  buf  Start of the memory area to checksum
  * @param[in]  len  Number of bytes to checksum
  *
  * @return          Checksum of the specified memory area based on the
  *                  given start value
  */
-uint16_t crc16_ccitt_update(uint16_t crc, const unsigned char *buf, size_t len);
+uint16_t crc16_ccitt_aug_update(uint16_t crc, const unsigned char *buf, size_t len);
 
 /**
  * @brief           Calculate CRC16-CCITT
@@ -54,7 +55,7 @@ uint16_t crc16_ccitt_update(uint16_t crc, const unsigned char *buf, size_t len);
  *
  * @return          Checksum of the specified memory area
  */
-uint16_t crc16_ccitt_calc(const unsigned char *buf, size_t len);
+uint16_t crc16_ccitt_aug_calc(const unsigned char *buf, size_t len);
 
 
 #ifdef __cplusplus

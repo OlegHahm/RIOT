@@ -10,16 +10,16 @@
 
 #include "embUnit/embUnit.h"
 
-#include "checksum/crc16_ccitt.h"
+#include "checksum/crc16_ccitt_aug.h"
 
 #include "tests-checksum.h"
 
 static int calc_and_compare_crc_with_update(const unsigned char *buf,
         size_t len, size_t split, uint16_t expected)
 {
-    uint16_t result = crc16_ccitt_calc(buf, split);
+    uint16_t result = crc16_ccitt_aug_calc(buf, split);
 
-    result = crc16_ccitt_update(result, buf + split, len - split);
+    result = crc16_ccitt_aug_update(result, buf + split, len - split);
 
     return result == expected;
 }
@@ -27,7 +27,7 @@ static int calc_and_compare_crc_with_update(const unsigned char *buf,
 static int calc_and_compare_crc(const unsigned char *buf, size_t len,
         uint16_t expected)
 {
-    uint16_t result = crc16_ccitt_calc(buf, len);
+    uint16_t result = crc16_ccitt_aug_calc(buf, len);
 
     return result == expected;
 }
@@ -88,7 +88,7 @@ static void test_checksum_crc16_ccitt_sequence_4bytes(void)
                 sizeof(buf) / 2, expect));
 }
 
-Test *tests_checksum_crc16_ccitt_tests(void)
+Test *tests_checksum_crc16_ccitt_aug_tests(void)
 {
     EMB_UNIT_TESTFIXTURES(fixtures) {
         /* Reference values according to
@@ -100,7 +100,7 @@ Test *tests_checksum_crc16_ccitt_tests(void)
         new_TestFixture(test_checksum_crc16_ccitt_sequence_4bytes),
     };
 
-    EMB_UNIT_TESTCALLER(checksum_crc16_ccitt_tests, NULL, NULL, fixtures);
+    EMB_UNIT_TESTCALLER(checksum_crc16_ccitt_aug_tests, NULL, NULL, fixtures);
 
-    return (Test *)&checksum_crc16_ccitt_tests;
+    return (Test *)&checksum_crc16_ccitt_aug_tests;
 }

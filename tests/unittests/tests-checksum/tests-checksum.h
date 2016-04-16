@@ -30,11 +30,19 @@ extern "C" {
 void tests_checksum(void);
 
 /**
- * @brief   Generates tests for checksum/crc16_ccitt.h
+ * @brief   Generates tests for checksum/crc16_ccitt_aug.h
  *
  * @return  embUnit tests if successful, NULL if not.
  */
-Test *tests_checksum_crc16_ccitt_tests(void);
+Test *tests_checksum_crc16_ccitt_aug_tests(void);
+
+/**
+ * @brief   Generates tests for checksum/crc16_ccitt_kermit.h
+ *
+ * @return  embUnit tests if successful, NULL if not.
+ */
+Test *tests_checksum_crc16_ccitt_kermit_tests(void);
+
 
 /**
  * @brief   Generates tests for checksum/fletcher16.h
