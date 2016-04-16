@@ -80,6 +80,7 @@ void     radio_getReceivedFrame(uint8_t* bufRead,
                                 uint8_t* lqi,
                                    bool* crc);
 
+void radio_event_cb(netdev2_t *dev, netdev2_event_t type, void *data);
 // interrupt handlers
 void radio_isr(void *unused);
 

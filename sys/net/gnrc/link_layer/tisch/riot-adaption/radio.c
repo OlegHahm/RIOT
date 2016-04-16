@@ -38,7 +38,6 @@ ethernet_hdr_t _eth_hdr;
 
 
 //=========================== prototypes ======================================
-// static void event_cb(gnrc_netdev_event_t event, void *data);
 
 //=========================== public ==========================================
 
@@ -278,39 +277,51 @@ void radio_getReceivedFrame(uint8_t* pBufRead,
 //=========================== callbacks =======================================
 
 //=========================== interrupt handlers ==============================
-void event_cb(netdev2_t *dev, netdev2_event_t type, void *data)
+void radio_event_cb(netdev2_t *dev, netdev2_event_t type, void *data)
 {
     (void) dev;
     (void) data;
-   // capture the time
-   uint32_t capturedTime = radiotimer_getCapturedTime();
+    // capture the time
+    uint32_t capturedTime = radiotimer_getCapturedTime();
+    gnrc_netdev2_t *gnrc_netdev2 = (gnrc_netdev2_t*) dev->isr_arg;
 
-   // start of frame event
-   if (type == NETDEV2_EVENT_RX_STARTED) {
-       DEBUG("Start of frame.\n");
-      // change state
-      radio_vars.state = RADIOSTATE_RECEIVING;
-      if (radio_vars.startFrame_cb!=NULL) {
-         // call the callback
-         radio_vars.startFrame_cb(capturedTime);
-      } else {
-         while(1);
-      }
-   }
-   // end of frame event
-   if (type == NETDEV2_EVENT_RX_COMPLETE
-       || type == NETDEV2_EVENT_TX_COMPLETE) {
-       DEBUG("End of Frame.\n");
-      // change state
-      radio_vars.state = RADIOSTATE_TXRX_DONE;
-      if (radio_vars.endFrame_cb!=NULL) {
-         // call the callback
-         radio_vars.endFrame_cb(capturedTime);
-      } else {
-         while(1);
-      }
+    if (type == NETDEV2_EVENT_ISR) {
+        msg_t msg;
 
-   }
+        msg.type = NETDEV2_MSG_TYPE_EVENT;
+        msg.content.ptr = (void*) gnrc_netdev2;
+
+        if (msg_send(&msg, gnrc_netdev2->pid) <= 0) {
+            puts("gnrc_netdev2: possibly lost interrupt.");
+        }
+    }
+
+    // start of frame event
+    if (type == NETDEV2_EVENT_RX_STARTED) {
+        DEBUG("Start of frame.\n");
+        // change state
+        radio_vars.state = RADIOSTATE_RECEIVING;
+        if (radio_vars.startFrame_cb!=NULL) {
+            // call the callback
+            radio_vars.startFrame_cb(capturedTime);
+        } else {
+            while(1);
+        }
+    }
+    // end of frame event
+    if (type == NETDEV2_EVENT_RX_COMPLETE
+        || type == NETDEV2_EVENT_TX_COMPLETE) {
+        DEBUG("End of Frame.\n");
+        // change state
+        radio_vars.state = RADIOSTATE_TXRX_DONE;
+        if (radio_vars.endFrame_cb!=NULL) {
+            // call the callback
+            radio_vars.endFrame_cb(capturedTime);
+        } else {
+            while(1);
+        }
+
+    }
 }
 
 #else

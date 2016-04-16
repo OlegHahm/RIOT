@@ -27,6 +27,7 @@
 #include "net/gnrc/netdev2/ieee802154.h"
 #include "net/gnrc/tisch.h"
 #include "net/gnrc.h"
+#include "od.h"
 #include "net/gnrc/nettype.h"
 
 #include "radio.h"
@@ -213,36 +214,6 @@ void iphc_receive(OpenQueueEntry_t *msg)
     openqueue_freePacketBuffer(msg);
 }
 
-/**
- * @brief   Function called by the device driver on device events
- *
- * @param[in] event         type of event
- * @param[in] data          optional parameter
- */
-static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
-{
-    (void) data;
-    gnrc_netdev2_t *gnrc_netdev2 = (gnrc_netdev2_t*) dev->isr_arg;
-    (void) gnrc_netdev2;
-
-    void event_cb(netdev2_t *dev, netdev2_event_t event, void *data);
-    event_cb(dev, event, data);
-    if (event == NETDEV2_EVENT_ISR) {
-
-        /* TODO: pipe this into 802154 from TISCH */
-    }
-    else {
-        DEBUG("tisch: event triggered -> %i\n", event);
-        switch(event) {
-            case NETDEV2_EVENT_RX_COMPLETE:
-                DEBUG("tisch: received RX complete - this should not have happened!\n");
-                break;
-            default:
-                DEBUG("tisch: warning: unhandled event %u.\n", event);
-        }
-    }
-}
-
 static int _tisch_init(gnrc_netdev2_t *gnrc_netdev2)
 {
     /* check if given netdev device is defined and the driver is set */
@@ -293,7 +264,7 @@ static void *_tisch_thread(void *args)
     _tisch_init(gnrc_netdev2);
 
     /* register the event callback with the device driver */
-    dev->event_callback = _event_cb;
+    dev->event_callback = radio_event_cb;
     dev->isr_arg = (void*) gnrc_netdev2;
 
     /* register the device to the network stack*/
@@ -329,7 +300,7 @@ static void *_tisch_thread(void *args)
                     scheduler_dbg.numTasksCur--;
                 }
                 break;
-            case GNRC_NETDEV_MSG_TYPE_EVENT:
+            case NETDEV2_MSG_TYPE_EVENT:
                 DEBUG("tisch: GNRC_NETDEV_MSG_TYPE_EVENT received\n");
                 dev->driver->isr(dev);
                 break;
