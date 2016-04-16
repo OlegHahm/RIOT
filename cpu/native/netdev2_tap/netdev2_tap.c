@@ -351,7 +351,7 @@ static int _send(netdev2_t *netdev, const struct iovec *vector, int n)
         for (int i = 0; i < n; i++) {
             memcpy(ptr, vector->iov_base, vector->iov_len);
             _preloaded += vector->iov_len;
-            ptr += _preloaded;
+            ptr += vector->iov_len;
             vector++;
         }
     }
