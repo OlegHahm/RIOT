@@ -4,6 +4,7 @@
 #include "board.h"
 #include "xtimer.h"
 #include "radiotimer.h"
+#include "checksum/crc16_ccitt_kermit.h"
 #include "net/netdev2/ieee802154.h"
 #include "net/gnrc/pktbuf.h"
 #include "net/gnrc/netapi.h"
@@ -143,7 +144,6 @@ void radio_rfOff(void) {
 }
 
 //===== TX
-
 void radio_loadPacket(uint8_t* packet, uint8_t len) {
    DEBUG("rf load\n");
    // change state
@@ -152,14 +152,17 @@ void radio_loadPacket(uint8_t* packet, uint8_t len) {
    /* wrap data into pktsnip */
    uint8_t i = 0;
 #ifdef MODULE_NETDEV2_ETH
-   struct iovec vector[2];
+   uint16_t fcs = byteorder_htons(crc16_ccitt_kermit_calc(packet, len)).u16;
+   struct iovec vector[3];
    netdev2_tap_t *dev = (netdev2_tap_t*)radio_vars.dev;
     memset(_eth_hdr.dst, 0xFF, ETHERNET_ADDR_LEN);
    memcpy(_eth_hdr.src, dev->addr, ETHERNET_ADDR_LEN);
    _eth_hdr.type = byteorder_htons(ETHERTYPE_UNKNOWN);;
-   vector[i].iov_base = (ethernet_hdr_t*) &_eth_hdr;
-   vector[i].iov_len = sizeof(ethernet_hdr_t);
-   i++;
+   vector[0].iov_base = (ethernet_hdr_t*) &_eth_hdr;
+   vector[0].iov_len = sizeof(ethernet_hdr_t);
+   i = 1;
+   vector[2].iov_base = &fcs;
+   vector[2].iov_len = sizeof(uint16_t);
 #else
    struct iovec vector[1];
 #endif

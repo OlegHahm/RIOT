@@ -556,4 +556,5 @@ endif
 ifneq (,$(filter gnrc_tisch,$(USEMODULE)))
     USEMODULE += xtimer
     USEMODULE += ieee802154
+    USEMODULE += checksum
 endif
