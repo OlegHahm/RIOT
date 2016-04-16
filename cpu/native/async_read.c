@@ -38,6 +38,11 @@ static void _sigio_child(int fd);
 static void _async_io_isr(void) {
     fd_set rfds;
 
+    for (int i = 0; i < _next_index; i++) {
+        if (FD_ISSET(_fds[i], &rfds)) {
+            _native_async_read_callbacks[i](_fds[i]);
+        }
+    }
     FD_ZERO(&rfds);
 
     int max_fd = 0;

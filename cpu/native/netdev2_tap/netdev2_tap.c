@@ -71,6 +71,9 @@ static uint8_t _tx_buffer[ETHERNET_FRAME_LEN];
 static unsigned _preloaded = 0;
 static uint16_t _flags;
 
+/* XXX: hack to enable RX start and end ISR */
+static bool _rx_start = true;
+
 /* netdev2 interface */
 static int _init(netdev2_t *netdev);
 static int _send(netdev2_t *netdev, const struct iovec *vector, int n);
@@ -105,7 +108,13 @@ static inline int _set_promiscous(netdev2_t *netdev, int value)
 static inline void _isr(netdev2_t *netdev)
 {
     if (netdev->event_callback) {
-        netdev->event_callback(netdev, NETDEV2_EVENT_RX_COMPLETE, NULL);
+        if (_rx_start) {
+            netdev->event_callback(netdev, NETDEV2_EVENT_RX_STARTED, NULL);
+        }
+        else{
+            netdev->event_callback(netdev, NETDEV2_EVENT_RX_COMPLETE, NULL);
+        }
+        _rx_start = !_rx_start;
     }
 #if DEVELHELP
     else {
