@@ -270,14 +270,9 @@ void radio_getReceivedFrame(uint8_t* pBufRead,
         *pRssi = 0;
         /* TODO: remove ethernet header */
 #endif
+        /* TODO: check CRC */
+        *pCrc = true;
     }
-
-   /* The driver notifies the MAC with the registered
-      `event_cb` that a new packet arrived.
-      I think this function should not be used to access
-      the new packet.
-      RSSI and LQI are already parsed into the netif portion
-      of the pktsnip. */
 }
 
 //=========================== callbacks =======================================
