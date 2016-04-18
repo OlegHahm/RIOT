@@ -328,6 +328,7 @@ void ieee154e_startOfFrame(PORT_RADIOTIMER_WIDTH capturedTime) {
             printf("ieee154e: wrong state in new slot: %i, %i\n",
                                      (errorparameter_t)ieee154e_vars.state,
                                      (errorparameter_t)ieee154e_vars.slotOffset);
+            printf("Time was %i\n", capturedTime);
             // abort
             endSlot();
             break;
@@ -640,6 +641,7 @@ port_INLINE void activity_synchronize_endOfFrame(PORT_RADIOTIMER_WIDTH capturedT
       changeIsSync(TRUE);
 
       // log the info
+      printf("synched in slot %i\n", ieee154e_vars.slotOffset);
       // openserial_printInfo(COMPONENT_IEEE802154E,ERR_SYNCHRONIZED,
       //                       (errorparameter_t)ieee154e_vars.slotOffset,
       //                       (errorparameter_t)0);
@@ -786,6 +788,7 @@ port_INLINE bool ieee154e_processIEs(OpenQueueEntry_t* pkt, uint16_t* lenIE) {
             // at this point, ASN and frame length are known
             // the current slotoffset can be inferred
             ieee154e_syncSlotOffset();
+            printf("slotOffset is now %i\n", ieee154e_vars.slotOffset);
             schedule_syncSlotOffset(ieee154e_vars.slotOffset);
             ieee154e_vars.nextActiveSlotOffset = schedule_getNextActiveSlotOffset();
             /*
@@ -931,6 +934,7 @@ port_INLINE void activity_ti1ORri1(void) {
                ieee154e_getAsn(sync_IE.asn);
                sync_IE.join_priority = (neighbors_getMyDAGrank()/MINHOPRANKINCREASE)-1; //poipoi -- use dagrank(rank)-1
                memcpy(ieee154e_vars.dataToSend->l2_ASNpayload,&sync_IE,sizeof(sync_IE_ht));
+               printf("Sending EB in slot %i\n", ieee154e_vars.slotOffset);
                //puts("EB");
             }
             // record that I attempt to transmit this packet
@@ -1958,6 +1962,7 @@ void synchronizePacket(PORT_RADIOTIMER_WIDTH timeReceived) {
 
    // calculate new period
    timeCorrection                 =  (PORT_SIGNED_INT_WIDTH)((PORT_SIGNED_INT_WIDTH)timeReceived-(PORT_SIGNED_INT_WIDTH)TsTxOffset);
+   printf("timeCorrection: %i = %i - %i\n", timeCorrection, timeReceived, TsTxOffset);
 
    newPeriod                      =  TsSlotDuration;
 
