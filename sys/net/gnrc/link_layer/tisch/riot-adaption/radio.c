@@ -670,4 +670,61 @@ void radio_isr(void *unused) {
 
     return;
 }
+
+void radio_event_cb(netdev2_t *dev, netdev2_event_t type, void *data)
+{
+    (void) dev;
+    (void) data;
+    // capture the time
+    uint32_t capturedTime = radiotimer_getCapturedTime();
+    gnrc_netdev2_t *gnrc_netdev2 = (gnrc_netdev2_t*) dev->isr_arg;
+
+    if (type == NETDEV2_EVENT_ISR) {
+        msg_t msg;
+
+        msg.type = NETDEV2_MSG_TYPE_EVENT;
+        msg.content.ptr = (void*) gnrc_netdev2;
+
+        if (msg_send(&msg, gnrc_netdev2->pid) <= 0) {
+            puts("gnrc_netdev2: possibly lost interrupt.");
+        }
+    }
+
+    // start of frame event
+    if (type == NETDEV2_EVENT_RX_STARTED) {
+        DEBUG("Start of frame.\n");
+        // change state
+        radio_vars.state = RADIOSTATE_RECEIVING;
+        if (radio_vars.startFrame_cb!=NULL) {
+            // call the callback
+            radio_vars.startFrame_cb(capturedTime);
+        } else {
+            while(1);
+        }
+    }
+    // end of frame event
+    if (type == NETDEV2_EVENT_RX_COMPLETE
+        || type == NETDEV2_EVENT_TX_COMPLETE) {
+        DEBUG("End of Frame.\n");
+        // change state
+        radio_vars.state = RADIOSTATE_TXRX_DONE;
+        if (radio_vars.endFrame_cb!=NULL) {
+#ifdef CPU_NATIVE
+            if (type == NETDEV2_EVENT_RX_COMPLETE) {
+                _rx_timer.callback = &_rx_complete_isr;
+                _rx_timer.arg = (uint32_t*) capturedTime;
+                xtimer_set(&_rx_timer, 3600);
+            }
+            else
+#endif
+            // call the callback
+            radio_vars.endFrame_cb(capturedTime);
+        } else {
+            while(1);
+        }
+
+    }
+}
+
+
 #endif
