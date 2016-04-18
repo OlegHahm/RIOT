@@ -62,7 +62,7 @@ static struct itimerval itv;
 static unsigned long ts2ticks(struct timespec *tp)
 {
     /* TODO: check for overflow */
-    return((tp->tv_sec * NATIVE_TIMER_SPEED) + (tp->tv_nsec / 1000));
+    return((tp->tv_sec * NATIVE_TIMER_SPEED) + (tp->tv_nsec / 10000));
 }
 
 /**
@@ -134,7 +134,7 @@ int timer_set(tim_t dev, int channel, unsigned int offset)
         offset = NATIVE_TIMER_MIN_RES;
     }
 
-    do_timer_set(offset);
+    do_timer_set(offset*10);
 
     return 1;
 }
