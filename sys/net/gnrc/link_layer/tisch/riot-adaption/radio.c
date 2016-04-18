@@ -260,7 +260,7 @@ void radio_getReceivedFrame(uint8_t* pBufRead,
         }
         *pLenRead = nread;
 
-#ifndef CPU_NATIVE
+#ifdef CPU_NATIVE
         *pLenRead -= sizeof(ethernet_hdr_t);
         memmove(pBufRead, pBufRead + sizeof(ethernet_hdr_t), *pLenRead);
         *pLqi = rx_info.lqi;
