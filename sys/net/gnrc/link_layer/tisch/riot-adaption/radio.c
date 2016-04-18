@@ -278,6 +278,16 @@ void radio_getReceivedFrame(uint8_t* pBufRead,
 //=========================== callbacks =======================================
 
 //=========================== interrupt handlers ==============================
+#ifdef CPU_NATIVE
+xtimer_t _rx_timer;
+
+static void _rx_complete_isr(void* arg)
+{
+    uint32_t capturedTime = (uint32_t) arg;
+    radio_vars.endFrame_cb(capturedTime);
+}
+#endif
+
 void radio_event_cb(netdev2_t *dev, netdev2_event_t type, void *data)
 {
     (void) dev;
@@ -316,6 +326,14 @@ void radio_event_cb(netdev2_t *dev, netdev2_event_t type, void *data)
         // change state
         radio_vars.state = RADIOSTATE_TXRX_DONE;
         if (radio_vars.endFrame_cb!=NULL) {
+#ifdef CPU_NATIVE
+            if (type == NETDEV2_EVENT_RX_COMPLETE) {
+                _rx_timer.callback = &_rx_complete_isr;
+                _rx_timer.arg = (uint32_t*) capturedTime;
+                xtimer_set(&_rx_timer, 3600);
+            }
+            else
+#endif
             // call the callback
             radio_vars.endFrame_cb(capturedTime);
         } else {
