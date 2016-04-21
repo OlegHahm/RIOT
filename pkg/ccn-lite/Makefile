@@ -1,6 +1,6 @@
 PKG_NAME=ccn-lite
-PKG_URL=https://github.com/cn-uofbasel/ccn-lite/
-PKG_VERSION=9e48d328e162e97f091d913ada0bf50f58d1d3d7
+PKG_URL=https://github.com/OlegHahm/ccn-lite/
+PKG_VERSION=clustering
 
 .PHONY: all
 
