@@ -175,11 +175,10 @@ typedef struct {
 extern struct ccnl_relay_s ccnl_relay;
 
 /**
- * @brief Function pointer type for local producer function
+ * @brief Function pointer type for local producer and consumer function
  */
-typedef int (*ccnl_producer_func)(struct ccnl_relay_s *relay,
-                                  struct ccnl_face_s *from,
-                                  struct ccnl_pkt_s *pkt);
+typedef int (*ccnl_local_func)(struct ccnl_relay_s *relay, struct
+                                  ccnl_face_s *from, struct ccnl_pkt_s *pkt);
 
 /**
  * @brief Function pointer type for caching strategy function
@@ -275,9 +274,26 @@ void ccnl_fib_show(struct ccnl_relay_s *relay);
  * Setting a local producer function allows to generate content on the fly or
  * react otherwise on any kind of incoming interest.
  *
+ * If the return value of @p func is 0, it is being continued to be processed
+ * by the CCN-lite stack, if the return value is 1,  processing is stopped
+ *
  * @param[in] func  The function to be called first for any incoming interest
  */
-void ccnl_set_local_producer(ccnl_producer_func func);
+void ccnl_set_local_producer(ccnl_local_func func);
+
+/**
+ * @brief Set a local consumer function
+ *
+ * Setting a local consumer function allows to handle particular content chunks
+ * specifically, e.g. by not caching it.
+
+ * If the return value of @p func is 0, it is being continued to be processed
+ * by the CCN-lite stack, if the return value is 1,  processing is stopped
+ *
+ * @param[in] func  The function to be called first for any incoming content
+ *                  chunk
+ */
+void ccnl_set_local_consumer(ccnl_local_func func);
 
 /**
  * @brief Set a function to control the caching strategy
