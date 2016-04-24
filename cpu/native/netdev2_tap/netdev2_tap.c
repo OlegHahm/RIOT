@@ -60,6 +60,11 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
+/* support one tap interface for now */
+netdev2_tap_t netdev2_tap;
+
+static netopt_state_t _state = NETOPT_STATE_IDLE;
+
 /* netdev2 interface */
 static int _init(netdev2_t *netdev);
 static int _send(netdev2_t *netdev, const struct iovec *vector, unsigned n);
@@ -92,6 +97,10 @@ static inline int _set_promiscous(netdev2_t *netdev, int value)
 
 static inline void _isr(netdev2_t *netdev)
 {
+    if ((_state != NETOPT_STATE_RX) && (_state != NETOPT_STATE_IDLE)) {
+        DEBUG("netdev2_tap: RX disabled, ignoring incoming packet\n");
+        return;
+    }
     if (netdev->event_callback) {
         netdev->event_callback(netdev, NETDEV2_EVENT_RX_COMPLETE);
     }
@@ -140,6 +149,10 @@ static int _set(netdev2_t *dev, netopt_t opt, void *value, size_t value_len)
             break;
         case NETOPT_PROMISCUOUSMODE:
             _set_promiscous(dev, ((bool *)value)[0]);
+            break;
+        case NETOPT_STATE:
+            _state = *((netopt_state_t *)value);
+            res = sizeof(netopt_state_t);
             break;
         default:
             return -ENOTSUP;
