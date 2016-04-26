@@ -95,12 +95,10 @@ static inline int _set_promiscous(netdev2_t *netdev, int value)
     return value;
 }
 
+static void _continue_reading(netdev2_tap_t *dev);
+
 static inline void _isr(netdev2_t *netdev)
 {
-    if ((_state != NETOPT_STATE_RX) && (_state != NETOPT_STATE_IDLE)) {
-        DEBUG("netdev2_tap: RX disabled, ignoring incoming packet\n");
-        return;
-    }
     if (netdev->event_callback) {
         netdev->event_callback(netdev, NETDEV2_EVENT_RX_COMPLETE);
     }
@@ -310,6 +308,18 @@ static void _tap_isr(int fd, void *arg) {
     (void) fd;
 
     netdev2_t *netdev = (netdev2_t *)arg;
+
+    if ((_state != NETOPT_STATE_RX) && (_state != NETOPT_STATE_IDLE)) {
+        DEBUG("netdev2_tap: RX disabled, ignoring incoming packet\n");
+        static uint8_t buf[ETHERNET_FRAME_LEN];
+
+        /* "clear" interrupt */
+        netdev2_tap_t *dev = (netdev2_tap_t*)netdev;
+        real_read(dev->tap_fd, buf, sizeof(buf));
+
+        _continue_reading(dev);
+        return;
+    }
 
     if (netdev->event_callback) {
         netdev->event_callback(netdev, NETDEV2_EVENT_ISR);
