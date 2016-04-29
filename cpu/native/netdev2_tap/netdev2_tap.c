@@ -127,6 +127,10 @@ static int _get(netdev2_t *dev, netopt_t opt, void *value, size_t max_len)
             *((bool*)value) = (bool)_get_promiscous(dev);
             res = sizeof(bool);
             break;
+        case NETOPT_STATE:
+            *((netopt_state_t*)value) = _state;
+            res = sizeof(netopt_state_t);
+            break;
         default:
             res = netdev2_eth_get(dev, opt, value, max_len);
             break;
