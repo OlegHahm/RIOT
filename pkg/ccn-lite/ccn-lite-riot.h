@@ -183,6 +183,9 @@ int ccnl_send_interest(int suite, char *name, unsigned int *chunknum,
  *
  * @post The thread should unregister from @ref netreg after this function returns
  *
+ * @note This function calls @ref msg_receive and will discard any message that
+ *       does not either indicate a received CCN content chunk or a timeout.
+ *
  * @param[out] buf      Buffer to stores the received content
  * @param[in]  buf_len  Size of @p buf
  * @param[in]  timeout  Maximum to wait for the chunk, set to a default value if 0
