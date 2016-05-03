@@ -45,9 +45,26 @@ extern "C" {
  *
  * @{
  */
-#define ccnl_malloc(s)                  malloc(s)
-#define ccnl_calloc(n,s)                calloc(n,s)
-#define ccnl_realloc(p,s)               realloc(p,s)
+#ifndef CCNL_DEBUG_MALLOC
+#define ccnl_malloc(s)      malloc(s)
+#define ccnl_calloc(n,s)    calloc(n,s)
+#define ccnl_realloc(p,s)   realloc(p,s)
+#else
+static inline void *ccnl_malloc(size_t s) {
+    printf("malloc: %i\n", (int) s);
+    return malloc(s);
+}
+
+static inline void *ccnl_calloc(size_t n, size_t s) {
+    printf("calloc: %i\n", (int) s);
+    return calloc(n,s);
+}
+
+static inline void *ccnl_realloc(void *p, size_t s) {
+    printf("realloc: %i\n", (int) s);
+    return realloc(p,s);
+}
+#endif
 #define ccnl_free(p)                    free(p)
 /**
  * @}
