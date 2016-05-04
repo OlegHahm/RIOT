@@ -197,11 +197,12 @@ int ccnl_open_netif(kernel_pid_t if_pid, gnrc_nettype_t netreg_type);
  * @param[out] buf      Buffer to write the content chunk to
  * @param[in] buf_len   Size of @p buf
  *
- * @return 0 on successfully sent Interest
- * @return -1 if Interested couldn't be sent
+ * @return pointer to the successfully sent Interest
+ * @return NULL if Interested couldn't be sent
  */
-int ccnl_send_interest(int suite, char *name, unsigned int *chunknum,
-                       unsigned char *buf, size_t buf_len);
+struct ccnl_interest_s *ccnl_send_interest(int suite, char *name, unsigned int
+                                           *chunknum, unsigned char *buf,
+                                           size_t buf_len);
 
 /**
  * @brief Wait for incoming content chunk
