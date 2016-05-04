@@ -184,6 +184,13 @@ typedef struct {
     size_t buflen;
 } ccnl_interest_t;
 
+typedef struct {
+    struct ccnl_prefix_s *prefix;
+    unsigned char *buf;
+    size_t buflen;
+} ccnl_interest_t;
+
+
 /**
  * Maximum string length for prefix representation
  */
@@ -254,7 +261,7 @@ int ccnl_open_netif(kernel_pid_t if_pid, gnrc_nettype_t netreg_type);
  * @param[in] buf_len   Size of @p buf
  *
  * @return pointer to the successfully sent Interest
- * @return NULL if Interested couldn't be sent
+ * @return NULL if Interest couldn't be sent
  */
 struct ccnl_interest_s *ccnl_send_interest(struct ccnl_prefix_s *prefix,
                                            unsigned char *buf, size_t buf_len);
