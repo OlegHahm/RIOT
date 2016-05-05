@@ -185,6 +185,11 @@ typedef struct {
 } ccnl_interest_t;
 
 /**
+ * Maximum string length for prefix representation
+ */
+#define CCNL_PREFIX_BUFSIZE     (50)
+
+/**
  * Struct holding CCN-Lite's central relay information
  */
 extern struct ccnl_relay_s ccnl_relay;
