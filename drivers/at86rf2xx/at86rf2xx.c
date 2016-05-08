@@ -42,7 +42,7 @@ void at86rf2xx_setup(at86rf2xx_t *dev, const at86rf2xx_params_t *params)
     netdev->driver = &at86rf2xx_driver;
     /* initialize device descriptor */
     memcpy(&dev->params, params, sizeof(at86rf2xx_params_t));
-    dev->idle_state = AT86RF2XX_STATE_TRX_OFF;
+    dev->idle_state = AT86RF2XX_STATE_RX_AACK_ON;
     dev->state = AT86RF2XX_STATE_SLEEP;
     /* initialise SPI */
     spi_init_master(dev->params.spi, SPI_CONF_FIRST_RISING, params->spi_speed);
