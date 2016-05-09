@@ -55,6 +55,7 @@ static const char *_netopt_strmap[] = {
     [NETOPT_STATS]           = "NETOPT_STATS",
     [NETOPT_ENCRYPTION]      = "NETOPT_ENCRYPTION",
     [NETOPT_ENCRYPTION_KEY]  = "NETOPT_ENCRYPTION_KEY",
+    [NETOPT_CCN]             = "NETOPT_CCN",
     [NETOPT_NUMOF]           = "NETOPT_NUMOF",
 };
 

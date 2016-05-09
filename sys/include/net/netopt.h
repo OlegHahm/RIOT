@@ -213,6 +213,11 @@ typedef enum {
     NETOPT_ENCRYPTION,        /**< en/disable encryption */
     NETOPT_ENCRYPTION_KEY,    /**< set encryption key */
 
+    /**
+     * @brief CCN specific options.
+     */
+    NETOPT_CCN,
+
     /* add more options if needed */
 
     /**
