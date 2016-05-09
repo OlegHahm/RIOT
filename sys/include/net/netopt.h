@@ -225,6 +225,11 @@ typedef enum {
     NETOPT_ENCRYPTION_KEY,    /**< set encryption key */
 
     /**
+     * @brief CCN specific options.
+     */
+    NETOPT_CCN,
+
+    /**
      * @brief Test mode for the radio, e.g. for CE or FCC certification
      *
      * Get/set the test mode as type @ref netopt_rf_testmode_t or as uint8_t

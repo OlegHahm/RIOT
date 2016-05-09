@@ -177,6 +177,15 @@ typedef struct {
 #define CCNL_MSG_AGEING         (0x1702)
 
 /**
+ * @ref gnrc_netapi_opt_t context types
+ * @{
+ */
+#define CCNL_CTX_CLEAR_PIT_OWN              (0x0001)
+#define CCNL_CTX_CLEAR_PIT_BUT_OWN          (0x0002)
+#define CCNL_CTX_REMOVE_FIRST_PIT_ENTRY     (0x0003)
+/** @} */
+
+/**
  * Maximum number of elements that can be cached
  */
 #ifndef CCNL_CACHE_SIZE
