@@ -189,7 +189,12 @@ static void *_gnrc_netdev2_thread(void *args)
                 DEBUG("gnrc_netdev2: GNRC_NETAPI_MSG_TYPE_SET received. opt=%s\n",
                         netopt2str(opt->opt));
                 /* set option for device driver */
-                res = gnrc_netdev2->set(gnrc_netdev2, opt->opt, opt->data, opt->data_len);
+                if (gnrc_netdev2->set) {
+                    res = gnrc_netdev2->set(gnrc_netdev2, opt->opt, opt->data, opt->data_len);
+                }
+                else {
+                    res = dev->driver->set(dev, opt->opt, opt->data, opt->data_len);
+                }
                 DEBUG("gnrc_netdev2: response of netdev->set: %i\n", res);
                 /* send reply to calling thread */
                 reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
@@ -202,7 +207,12 @@ static void *_gnrc_netdev2_thread(void *args)
                 DEBUG("gnrc_netdev2: GNRC_NETAPI_MSG_TYPE_GET received. opt=%s\n",
                         netopt2str(opt->opt));
                 /* get option from device driver */
-                res = gnrc_netdev2->get(gnrc_netdev2, opt->opt, opt->data, opt->data_len);
+                if (gnrc_netdev2->get) {
+                    res = gnrc_netdev2->get(gnrc_netdev2, opt->opt, opt->data, opt->data_len);
+                }
+                else {
+                    res = dev->driver->get(dev, opt->opt, opt->data, opt->data_len);
+                }
                 DEBUG("gnrc_netdev2: response of netdev->get: %i\n", res);
                 /* send reply to calling thread */
                 reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
