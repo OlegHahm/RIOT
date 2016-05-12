@@ -90,7 +90,7 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
                     break;
                 }
                 else if (gnrc_netdev2->retrans_head->cnt-- <= 0) {
-                    DEBUG("giving up sending, removing from buffer and queue: %p\n", gnrc_netdev2->retrans_head->pkt);
+                    DEBUG("giving up sending, removing from buffer and queue: %p\n", (void*)gnrc_netdev2->retrans_head->pkt);
                     gnrc_pktbuf_release(gnrc_netdev2->retrans_head->pkt);
                     gnrc_netdev2->retrans_head->pkt = NULL;
                     gnrc_pktqueue_remove_head((gnrc_pktqueue_t**)&(gnrc_netdev2->retrans_head));
@@ -108,7 +108,7 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
                     break;
                 }
                 else {
-                    DEBUG("packet sent, removing from buffer and queue: %p\n", gnrc_netdev2->retrans_head->pkt);
+                    DEBUG("packet sent, removing from buffer and queue: %p\n", (void*) gnrc_netdev2->retrans_head->pkt);
                     gnrc_pktbuf_release(gnrc_netdev2->retrans_head->pkt);
                     gnrc_netdev2->retrans_head->pkt = NULL;
                     gnrc_pktqueue_remove_head((gnrc_pktqueue_t**)&(gnrc_netdev2->retrans_head));
