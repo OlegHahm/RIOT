@@ -263,7 +263,7 @@ char *make_message(const char *format, va_list argp)
     int size = 100;
     char *message, *temp;
 
-    if ((message = malloc(size)) == NULL) {
+    if ((message = real_malloc(size)) == NULL) {
         return NULL;
     }
 
@@ -274,7 +274,7 @@ char *make_message(const char *format, va_list argp)
         if (n < size)
             return message;
         size = n + 1;
-        if ((temp = realloc(message, size)) == NULL) {
+        if ((temp = real_realloc(message, size)) == NULL) {
             free(message);
             return NULL;
         }
