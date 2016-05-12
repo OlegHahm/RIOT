@@ -4,7 +4,7 @@ PKG_VERSION=clustering
 
 .PHONY: all
 
-export RIOT_CFLAGS = ${CFLAGS} ${INCLUDES}
+export RIOT_CFLAGS = ${CFLAGS} ${INCLUDES} -DLOG_LEVEL=LOG_DEBUG
 
 all: git-download
 	"$(MAKE)" -BC $(PKG_BUILDDIR)/src lib-ccn-lite.a
