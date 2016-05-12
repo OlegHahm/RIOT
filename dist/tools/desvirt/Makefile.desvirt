@@ -1,6 +1,6 @@
 TOOL_NAME=desvirt
-TOOL_URL=https://github.com/des-testbed/desvirt.git
-TOOL_VERSION=master
+TOOL_URL=https://github.com/OlegHahm/desvirt.git
+TOOL_VERSION=topo_gen_mesh
 TOOL_DIR=$(RIOTBASE)/dist/tools/$(TOOL_NAME)/$(TOOL_NAME)
 
 .PHONY: desvirt-check desvirt-check-topo-file desvirt-check-topo-args desvirt-clean \
@@ -10,7 +10,7 @@ desvirt-check:
 
     ifeq ($(wildcard $(TOOL_DIR)),)
 	    git clone $(TOOL_URL) $(TOOL_DIR)
-	    cd $(TOOL_DIR) && git reset --hard $(TOOL_VERSION)
+	    cd $(TOOL_DIR) && git reset --hard origin/$(TOOL_VERSION)
     endif
 
 desvirt-check-topo-file: desvirt-check
