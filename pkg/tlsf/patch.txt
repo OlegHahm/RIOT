@@ -9,10 +9,10 @@ index 0000000..a51d6c2
 +include $(RIOTBASE)/Makefile.base
 diff --git tlsf-malloc.c tlsf-malloc.c
 new file mode 100644
-index 0000000..cb16af8
+index 0000000..a77d6d0
 --- /dev/null
 +++ tlsf-malloc.c
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,46 @@
 +#include "irq.h"
 +#include "tlsf-malloc.h"
 +
@@ -28,10 +28,12 @@ index 0000000..cb16af8
 +
 +void *TLSF_MALLOC_NAME(calloc)(size_t count, size_t bytes)
 +{
++    unsigned old_state = irq_disable();
 +    void *result = tlsf_malloc(count * bytes);
 +    if (result) {
 +        memset(result, 0, count * bytes);
 +    }
++    irq_restore(old_state);
 +    return result;
 +}
 +
