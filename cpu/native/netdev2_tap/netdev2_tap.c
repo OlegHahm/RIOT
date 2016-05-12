@@ -332,6 +332,7 @@ static void _tap_isr(int fd) {
         netdev2_tap_t *dev = (netdev2_tap_t*)netdev;
         real_read(dev->tap_fd, buf, sizeof(buf));
 
+        _continue_reading(dev);
         return;
     }
 
