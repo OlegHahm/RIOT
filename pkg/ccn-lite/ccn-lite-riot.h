@@ -37,8 +37,8 @@ extern "C" {
 /**
  * Define the log level of the CCN-Lite stack
  */
-#define LOG_LEVEL LOG_DEBUG
 #include "log.h"
+#include "thread.h"
 
 /**
  * @name Dynamic memory allocation used in CCN-Lite
@@ -49,23 +49,28 @@ extern "C" {
 #define ccnl_malloc(s)      malloc(s)
 #define ccnl_calloc(n,s)    calloc(n,s)
 #define ccnl_realloc(p,s)   realloc(p,s)
+#define ccnl_free(p)                    free(p)
 #else
 static inline void *ccnl_malloc(size_t s) {
-    printf("malloc: %i\n", (int) s);
+    printf("malloc (%i): %i\n", (int) sched_active_pid, (int) s);
     return malloc(s);
 }
 
 static inline void *ccnl_calloc(size_t n, size_t s) {
-    printf("calloc: %i\n", (int) s);
+    printf("calloc (%i): %i\n", (int) sched_active_pid, (int) s);
     return calloc(n,s);
 }
 
 static inline void *ccnl_realloc(void *p, size_t s) {
-    printf("realloc: %i\n", (int) s);
+    printf("realloc (%i): %i\n", (int) sched_active_pid, (int) s);
     return realloc(p,s);
 }
+
+static inline void ccnl_free(void *p) {
+    printf("free (%i)\n", (int) sched_active_pid);
+    free(p);
+}
 #endif
-#define ccnl_free(p)                    free(p)
 /**
  * @}
  */
