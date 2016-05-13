@@ -77,12 +77,17 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
 
                     break;
                 }
-#ifdef MODULE_NETDEV_RETRANS
             case NETDEV2_EVENT_TX_MEDIUM_BUSY:
+                /* need this IRQ for counting failed transmissions */
 #ifdef MODULE_NETSTATS_L2
                 dev->stats.tx_failed++;
-#endif
+                /* if we do netdev retransmissions, we handle failing and
+                 * non-acknowledged transmissions the same way */
+#ifndef MODULE_NETDEV_RETRANS
                 break;
+#endif
+#endif
+#ifdef MODULE_NETDEV_RETRANS
             case NETDEV2_EVENT_TX_NOACK:
                 DEBUG("gnrc_netdev2: no ACK received or medium busy: retrans count is = %u\n", (unsigned) gnrc_netdev2->retrans_head->cnt);
                 if (!gnrc_netdev2->retrans_head) {
@@ -99,10 +104,13 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
                 if (gnrc_netdev2->retrans_head) {
                     gnrc_netdev2->send(gnrc_netdev2, gnrc_netdev2->retrans_head->pkt);
                 }
+                break;
+#endif
             case NETDEV2_EVENT_TX_COMPLETE:
 #ifdef MODULE_NETSTATS_L2
                 dev->stats.tx_success++;
 #endif
+#ifdef MODULE_NETDEV_RETRANS
                 if (!gnrc_netdev2->retrans_head) {
                     DEBUG("\n!!! gnrc_netdev2: queue is empty while handling ACK, this shouldn't happen!\n\n");
                     break;
@@ -117,8 +125,8 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
                 if (gnrc_netdev2->retrans_head) {
                     gnrc_netdev2->send(gnrc_netdev2, gnrc_netdev2->retrans_head->pkt);
                 }
-                break;
 #endif
+                break;
             default:
                 DEBUG("gnrc_netdev2: warning: unhandled event %u.\n", event);
         }
