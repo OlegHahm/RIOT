@@ -20,6 +20,7 @@
 #include <err.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -41,6 +42,8 @@ static void _async_io_isr(void) {
     FD_ZERO(&rfds);
 
     int max_fd = 0;
+    struct timeval t;
+    memset(&t, 0, sizeof(t));
 
     for (int i = 0; i < _next_index; i++) {
         FD_SET(_fds[i], &rfds);
@@ -50,7 +53,7 @@ static void _async_io_isr(void) {
         }
     }
 
-    if (real_select(max_fd + 1, &rfds, NULL, NULL, NULL) > 0) {
+    if (real_select(max_fd + 1, &rfds, NULL, NULL, &t) > 0) {
         for (int i = 0; i < _next_index; i++) {
             if (FD_ISSET(_fds[i], &rfds)) {
                 _native_async_read_callbacks[i](_fds[i]);
