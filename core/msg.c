@@ -214,10 +214,19 @@ int msg_send_receive(msg_t *m, msg_t *reply, kernel_pid_t target_pid)
     unsigned state = irq_disable();
     thread_t *me = (thread_t*) sched_threads[sched_active_pid];
     sched_set_status(me, STATUS_REPLY_BLOCKED);
-    me->wait_data = (void*) reply;
+    uint8_t target_status = ((thread_t*) sched_threads[target_pid])->status;
 
+    if (target_status == STATUS_RECEIVE_BLOCKED) {
+        me->wait_data = (void*) reply;
+    }
     /* msg_send blocks until reply received */
-    return _msg_send(m, target_pid, true, state);
+    int res = _msg_send(m, target_pid, true, state);
+    if ((target_status != STATUS_RECEIVE_BLOCKED) && (res >= 0)) {
+        DEBUG("msg_send_receive(): target is not in STATUS_RECEIVE_BLOCKED, copy response\n");
+        msg_t *response_message = (msg_t*) me->wait_data;
+        *reply = *response_message;
+    }
+    return res;
 }
 
 int msg_reply(msg_t *m, msg_t *reply)
