@@ -20,6 +20,7 @@
 #include <err.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -42,6 +43,8 @@ static void _async_io_isr(void) {
     FD_ZERO(&rfds);
 
     int max_fd = 0;
+    struct timeval t;
+    memset(&t, 0, sizeof(t));
 
     struct timeval timeout = { .tv_usec = 0 };
 
