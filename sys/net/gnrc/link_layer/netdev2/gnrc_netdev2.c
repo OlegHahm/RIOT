@@ -39,7 +39,7 @@
 #include "od.h"
 #endif
 
-#define NETDEV2_NETAPI_MSG_QUEUE_SIZE 8
+#define NETDEV2_NETAPI_MSG_QUEUE_SIZE 32
 
 static void _pass_on_packet(gnrc_pktsnip_t *pkt);
 
