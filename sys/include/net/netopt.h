@@ -40,6 +40,12 @@ typedef enum {
     NETOPT_ADDRESS,             /**< get/set address in host byte order */
 
     /**
+     * @brief    get/set short address in host byte order
+     *
+     * Examples for this include the 16 bit address in IEEE 802.15.4
+     */
+    NETOPT_ADDR_SHORT,
+    /**
      * @brief    get/set long address in host byte order
      *
      * Examples for this include the EUI-64 in IEEE 802.15.4

@@ -545,6 +545,26 @@ void kw2xrf_set_cca_threshold(kw2xrf_t *dev, int8_t value)
     kw2xrf_write_iregs(MKW2XDMI_CCA1_THRESH, (uint8_t*)&value, 1);
 }
 
+static inline int _get_short_addr(gnrc_netdev_t *netdev, void *value, size_t len)
+{
+    if (len < sizeof(uint16_t)) {
+        return -EOVERFLOW;
+    }
+
+    *((uint16_t *)value) = kw2xrf_get_addr_short(dev);
+    return sizeof(uint16_t);
+}
+
+static inline int _get_long_addr(gnrc_netdev_t *netdev, void *value, size_t len)
+{
+    if (len < sizeof(uint64_t)) {
+        return -EOVERFLOW;
+    }
+
+    *((uint64_t *)value) = kw2xrf_get_addr_long(dev);
+    return sizeof(uint64_t);
+}
+
 int kw2xrf_get(gnrc_netdev_t *netdev, netopt_t opt, void *value, size_t max_len)
 {
     kw2xrf_t *dev = (kw2xrf_t *)netdev;
@@ -554,21 +574,20 @@ int kw2xrf_get(gnrc_netdev_t *netdev, netopt_t opt, void *value, size_t max_len)
     }
 
     switch (opt) {
+
         case NETOPT_ADDRESS:
-            if (max_len < sizeof(uint16_t)) {
-                return -EOVERFLOW;
+            if (dev->option & KW2XRF_OPT_SRC_ADDR_LONG) {
+                return _get_long_addr(netdev, value, len);
+            }
+            else {
+                return _get_short_addr(netdev, value, len);
             }
 
-            *((uint16_t *)value) = kw2xrf_get_addr_short(dev);
-            return sizeof(uint16_t);
+        case NETOPT_ADDRESS_SHORT:
+            return _get_short_addr(netdev, value, len);
 
         case NETOPT_ADDRESS_LONG:
-            if (max_len < sizeof(uint64_t)) {
-                return -EOVERFLOW;
-            }
-
-            *((uint64_t *)value) = kw2xrf_get_addr_long(dev);
-            return sizeof(uint64_t);
+            return _get_long_addr(netdev, value, len);
 
         case NETOPT_ADDR_LEN:
             if (max_len < sizeof(uint16_t)) {
@@ -755,6 +774,24 @@ void kw2xrf_set_option(kw2xrf_t *dev, uint16_t option, bool state)
     }
 }
 
+static inline int _set_long_addr(gnrc_netdev_t *netdev, void *value, size_t len)
+{
+    if (len > sizeof(uint64_t)) {
+        return -EOVERFLOW;
+    }
+
+    return kw2xrf_set_addr_long(dev, *((uint64_t *)value));
+}
+
+static inline int _set_short_addr(gnrc_netdev_t *netdev, void *value, size_t len)
+{
+    if (len > sizeof(uint16_t)) {
+        return -EOVERFLOW;
+    }
+
+    return kw2xrf_set_addr(dev, *((uint16_t *)value));
+}
+
 int kw2xrf_set(gnrc_netdev_t *netdev, netopt_t opt, void *value, size_t value_len)
 {
     kw2xrf_t *dev = (kw2xrf_t *)netdev;
@@ -768,18 +805,18 @@ int kw2xrf_set(gnrc_netdev_t *netdev, netopt_t opt, void *value, size_t value_le
             return kw2xrf_set_channel(dev, (uint8_t *)value, value_len);
 
         case NETOPT_ADDRESS:
-            if (value_len > sizeof(uint16_t)) {
-                return -EOVERFLOW;
+            if (dev->option & KW2XRF_OPT_SRC_ADDR_LONG) {
+                return _get_long_addr(netdev, value, value_len);
+            }
+            else {
+                return _get_short_addr(netdev, value, value_len);
             }
 
-            return kw2xrf_set_addr(dev, *((uint16_t *)value));
+        case NETOPT_ADDRESS_SHORT:
+            return _get_short_addr(netdev, value, value_len);
 
         case NETOPT_ADDRESS_LONG:
-            if (value_len > sizeof(uint64_t)) {
-                return -EOVERFLOW;
-            }
-
-            return kw2xrf_set_addr_long(dev, *((uint64_t *)value));
+            return _get_long_addr(netdev, value, value_len);
 
         case NETOPT_SRC_LEN:
             if (value_len > sizeof(uint16_t)) {

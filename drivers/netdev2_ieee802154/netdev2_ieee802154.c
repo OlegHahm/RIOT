@@ -47,6 +47,24 @@ static int _get_iid(netdev2_ieee802154_t *dev, eui64_t *value, size_t max_len)
     return sizeof(eui64_t);
 }
 
+static inline int _get_short_addr(netdev2_ieee802154_t *dev, void *value, size_t len)
+{
+    if (len < sizeof(dev->short_addr)) {
+        return -EOVERFLOW;
+    }
+    memcpy(value, dev->short_addr, sizeof(dev->short_addr));
+    return sizeof(dev->short_addr);
+}
+
+static inline int _get_long_addr(netdev2_ieee802154_t *dev, void *value, size_t len)
+{
+    if (max_len < sizeof(dev->long_addr)) {
+        return -EOVERFLOW;
+    }
+    memcpy(value, dev->long_addr, sizeof(dev->long_addr));
+    return sizeof(dev->long_addr);
+}
+
 int netdev2_ieee802154_get(netdev2_ieee802154_t *dev, netopt_t opt, void *value,
                            size_t max_len)
 {
@@ -54,15 +72,21 @@ int netdev2_ieee802154_get(netdev2_ieee802154_t *dev, netopt_t opt, void *value,
 
     switch (opt) {
         case NETOPT_ADDRESS:
-            assert(max_len >= sizeof(dev->short_addr));
-            memcpy(value, dev->short_addr, sizeof(dev->short_addr));
-            res = sizeof(dev->short_addr);
+            if (dev->option & KW2XRF_OPT_SRC_ADDR_LONG) {
+                res = _get_long_addr(dev, value, max_len);
+            }
+            else {
+                res = _get_short_addr(dev, value, max_len);
+            }
+            break;
+
+        case NETOPT_ADDRESS_SHORT:
+            res = _get_short_addr(dev, value, max_len);
             break;
         case NETOPT_ADDRESS_LONG:
-            assert(max_len >= sizeof(dev->long_addr));
-            memcpy(value, dev->long_addr, sizeof(dev->long_addr));
-            res = sizeof(dev->long_addr);
+            res = _get_short_addr(dev, value, max_len);
             break;
+
         case NETOPT_ADDR_LEN:
         case NETOPT_SRC_LEN:
             assert(max_len == sizeof(uint16_t));
@@ -132,6 +156,26 @@ int netdev2_ieee802154_get(netdev2_ieee802154_t *dev, netopt_t opt, void *value,
     return res;
 }
 
+static inline int _set_short_addr(netdev2_ieee802154_t *dev, void *value, size_t len)
+{
+    if (len > sizeof(dev->short_addr)) {
+        return -EOVERFLOW;
+    }
+    memset(dev->short_addr, 0, sizeof(dev->short_addr));
+    memcpy(dev->short_addr, value, len);
+    return sizeof(dev->short_addr);
+}
+
+static inline int _set_long_addr(netdev2_ieee802154_t *dev, void *value, size_t len)
+{
+    if (len > sizeof(dev->long_addr)) {
+        return -EOVERFLOW;
+    }
+    memset(dev->long_addr, 0, sizeof(dev->long_addr));
+    memcpy(dev->long_addr, value, len);
+    return sizeof(dev->long_addr);
+}
+
 int netdev2_ieee802154_set(netdev2_ieee802154_t *dev, netopt_t opt, void *value,
                            size_t len)
 {
@@ -151,17 +195,21 @@ int netdev2_ieee802154_set(netdev2_ieee802154_t *dev, netopt_t opt, void *value,
             break;
         }
         case NETOPT_ADDRESS:
-            assert(len <= sizeof(dev->short_addr));
-            memset(dev->short_addr, 0, sizeof(dev->short_addr));
-            memcpy(dev->short_addr, value, len);
-            res = sizeof(dev->short_addr);
+            if (dev->option & KW2XRF_OPT_SRC_ADDR_LONG) {
+                res = _set_long_addr(dev, value, len);
+            }
+            else {
+                res = _set_short_addr(dev, value, len);
+            }
+            break;
+
+        case NETOPT_ADDRESS_SHORT:
+            res = _set_short_addr(dev, value, len);
             break;
         case NETOPT_ADDRESS_LONG:
-            assert(len <= sizeof(dev->long_addr));
-            memset(dev->long_addr, 0, sizeof(dev->long_addr));
-            memcpy(dev->long_addr, value, len);
-            res = sizeof(dev->long_addr);
+            res = _set_long_addr(dev, value, len);
             break;
+
         case NETOPT_ADDR_LEN:
         case NETOPT_SRC_LEN:
             assert(len == sizeof(uint16_t));

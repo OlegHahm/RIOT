@@ -739,6 +739,13 @@ static int _get(gnrc_netdev_t *netdev, netopt_t opt, void *value, size_t max_len
 
     switch (opt) {
         case NETOPT_ADDRESS:
+            if (dev->option & KW2XRF_OPT_SRC_ADDR_LONG) {
+                return _get_addr_long(dev, (uint8_t *)value, max_len);
+            }
+            else
+                return _get_addr_short(dev, (uint8_t *)value, max_len);
+            }
+        case NETOPT_ADDRESS_SHORT:
             return _get_addr_short(dev, (uint8_t *)value, max_len);
         case NETOPT_ADDRESS_LONG:
             return _get_addr_long(dev, (uint8_t *)value, max_len);
@@ -792,6 +799,13 @@ static int _set(gnrc_netdev_t *netdev, netopt_t opt, void *value, size_t value_l
 
     switch (opt) {
         case NETOPT_ADDRESS:
+            if (dev->option & KW2XRF_OPT_SRC_ADDR_LONG) {
+                return -ENOTSUP;
+            }
+            else
+                return _set_addr(dev, (uint8_t *)value, value_len);
+            }
+        case NETOPT_ADDRESS_SHORT:
             return _set_addr(dev, (uint8_t *)value, value_len);
         case NETOPT_ADDR_LEN:
         case NETOPT_SRC_LEN:

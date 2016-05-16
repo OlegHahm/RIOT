@@ -318,6 +318,26 @@ static int _rem_cb(gnrc_netdev_t *dev, gnrc_netdev_event_cb_t cb)
     return 0;
 }
 
+static inline int _get_short_addr(gnrc_netdev_t *netdev, void *value, size_t len)
+{
+    if (len < sizeof(uint16_t)) {
+        return -EOVERFLOW;
+    }
+
+    _set_uint16_ptr(value, byteorder_ltobs(dev->addr).u16);
+    return sizeof(uint16_t);
+}
+
+static inline int _get_long_addr(gnrc_netdev_t *netdev, void *value, size_t len)
+{
+    if (len < sizeof(uint64_t)) {
+        return -EOVERFLOW;
+    }
+
+    _set_uint64_ptr(value, byteorder_ltobll(dev->eui64).u64);
+    return sizeof(uint64_t);
+}
+
 static int _get(gnrc_netdev_t *netdev, netopt_t opt, void *value, size_t max_len)
 {
     gnrc_zep_t *dev = (gnrc_zep_t *)netdev;
@@ -336,21 +356,20 @@ static int _get(gnrc_netdev_t *netdev, netopt_t opt, void *value, size_t max_len
             return sizeof(uint16_t);
 
         case NETOPT_ADDRESS:
-            if (max_len < sizeof(uint16_t)) {
-                return -EOVERFLOW;
+            if (dev->flags & GNRC_ZEP_FLAGS_SRC_ADDR_LONG) {
+                return _get_long_addr(netdev, value, max_len);
+            }
+            else
+                return _get_short_addr(netdev, value, value_len);
             }
 
-            _set_uint16_ptr(value, byteorder_ltobs(dev->addr).u16);
-            return sizeof(uint16_t);
+        case NETOPT_ADDRESS_SHORT:
+            return _set_short_addr(netdev, value, value_len);
 
+        case NETOPT_ADDRESS_SHORT:
+            return _get_short_addr(netdev, value, max_len);
         case NETOPT_ADDRESS_LONG:
-            if (max_len < sizeof(uint64_t)) {
-                return -EOVERFLOW;
-            }
-
-            _set_uint64_ptr(value, byteorder_ltobll(dev->eui64).u64);
-            return sizeof(uint64_t);
-
+            return _get_long_addr(netdev, value, max_len);
         case NETOPT_ADDR_LEN:
             if (max_len < sizeof(uint16_t)) {
                 return -EOVERFLOW;
@@ -430,6 +449,32 @@ static int _get(gnrc_netdev_t *netdev, netopt_t opt, void *value, size_t max_len
     }
 }
 
+static inline int _set_short_addr(gnrc_netdev_t *netdev, void *value, size_t len)
+{
+    if (len < sizeof(be_uint16_t)) {
+        return -EOVERFLOW;
+    }
+    else {
+        be_uint16_t *val = value;
+
+        dev->addr = byteorder_btols(*val);
+        return sizeof(be_uint16_t);
+    }
+}
+
+static inline int _set_long_addr(gnrc_netdev_t *netdev, void *value, size_t len)
+{
+    if (len < sizeof(be_uint64_t)) {
+        return -EOVERFLOW;
+    }
+    else {
+        be_uint64_t *val = value;
+
+        dev->eui64 = byteorder_btolll(*val);
+        return sizeof(be_uint64_t);
+    }
+}
+
 static int _set(gnrc_netdev_t *netdev, netopt_t opt, void *value, size_t value_len)
 {
     gnrc_zep_t *dev = (gnrc_zep_t *)netdev;
@@ -453,27 +498,17 @@ static int _set(gnrc_netdev_t *netdev, netopt_t opt, void *value, size_t value_l
             return sizeof(uint16_t);
 
         case NETOPT_ADDRESS:
-            if (value_len < sizeof(be_uint16_t)) {
-                return -EOVERFLOW;
+            if (dev->flags & GNRC_ZEP_FLAGS_SRC_ADDR_LONG) {
+                return _set_long_addr(netdev, value, value_len);
             }
-            else {
-                be_uint16_t *val = value;
-
-                dev->addr = byteorder_btols(*val);
-                return sizeof(be_uint16_t);
+            else
+                return _set_short_addr(netdev, value, value_len);
             }
 
+        case NETOPT_ADDRESS_SHORT:
+            return _set_short_addr(netdev, value, value_len);
         case NETOPT_ADDRESS_LONG:
-            if (value_len < sizeof(be_uint64_t)) {
-                return -EOVERFLOW;
-            }
-            else {
-                be_uint64_t *val = value;
-
-                dev->eui64 = byteorder_btolll(*val);
-                return sizeof(be_uint64_t);
-            }
-
+            return _set_long_addr(netdev, value, value_len);
         case NETOPT_ADDR_LEN:
             if (value_len < sizeof(uint16_t)) {
                 return -EOVERFLOW;

@@ -395,7 +395,7 @@ static int _set(netdev2_t *netdev, netopt_t opt, void *val, size_t len)
     }
 
     switch (opt) {
-        case NETOPT_ADDRESS:
+        case NETOPT_ADDRESS_SHORT:
             if (len > sizeof(uint16_t)) {
                 res = -EOVERFLOW;
             }
