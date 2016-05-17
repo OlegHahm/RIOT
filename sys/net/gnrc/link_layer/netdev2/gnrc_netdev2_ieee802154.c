@@ -291,6 +291,14 @@ static int _set(gnrc_netdev2_t *gnrc_netdev2, netopt_t opt, void *val, size_t le
     }
     else {
 #endif
+        if (opt == NETOPT_ADDRESS) {
+            if (dev->flags & NETDEV2_IEEE802154_SRC_MODE_LONG) {
+                opt = NETOPT_ADDRESS_LONG;
+            }
+            else {
+                opt = NETOPT_ADDRESS_SHORT;
+            }
+        }
         res = dev->netdev.driver->set((netdev2_t *)dev, opt, val, len);
 #ifdef MODULE_NETDEV_RETRANS
     }
@@ -319,6 +327,14 @@ static int _get(gnrc_netdev2_t *gnrc_netdev2, netopt_t opt, void *val, size_t ma
     }
     else {
 #endif
+        if (opt == NETOPT_ADDRESS) {
+            if (dev->flags & NETDEV2_IEEE802154_SRC_MODE_LONG) {
+                opt = NETOPT_ADDRESS_LONG;
+            }
+            else {
+                opt = NETOPT_ADDRESS_SHORT;
+            }
+        }
         res = dev->netdev.driver->get((netdev2_t *)dev, opt, val, max_len);
 #ifdef MODULE_NETDEV_RETRANS
     }

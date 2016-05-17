@@ -44,7 +44,7 @@ typedef enum {
      *
      * Examples for this include the 16 bit address in IEEE 802.15.4
      */
-    NETOPT_ADDR_SHORT,
+    NETOPT_ADDRESS_SHORT,
     /**
      * @brief    get/set long address in host byte order
      *
