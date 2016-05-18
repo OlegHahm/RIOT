@@ -119,6 +119,7 @@ static int _msg_send(msg_t *m, kernel_pid_t target_pid, bool block, unsigned sta
             DEBUG("msg_send: %" PRIkernel_pid ": Receiver not waiting, block=%u\n",
                   me->pid, block);
             irq_restore(state);
+            printf("Message from %u to %u was lost\n", (unsigned) me->pid, (unsigned) target_pid);
             return 0;
         }
 
