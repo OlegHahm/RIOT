@@ -166,6 +166,7 @@ typedef struct {
 #define CCNL_CTX_CLEAR_PIT_OWN              (0x0001)
 #define CCNL_CTX_CLEAR_PIT_BUT_OWN          (0x0002)
 #define CCNL_CTX_REMOVE_FIRST_PIT_ENTRY     (0x0003)
+#define CCNL_CTX_PRINT_CS                   (0x0004)
 /** @} */
 
 /**
