@@ -151,7 +151,7 @@ static inline void ccnl_free(void *p) {
 /**
  * Size of the message queue of CCN-Lite's event loop
  */
-#define CCNL_QUEUE_SIZE     (32)
+#define CCNL_QUEUE_SIZE     (64)
 
 /**
  * Message type for signalling a timeout while waiting for a content chunk
