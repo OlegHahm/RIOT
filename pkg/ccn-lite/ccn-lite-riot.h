@@ -209,8 +209,15 @@ extern struct ccnl_relay_s ccnl_relay;
 /**
  * @brief Function pointer type for local producer and consumer function
  */
-typedef int (*ccnl_local_func)(struct ccnl_relay_s *relay, struct
-                                  ccnl_face_s *from, struct ccnl_pkt_s *pkt);
+typedef int (*ccnl_local_func)(struct ccnl_relay_s *relay,
+                               struct ccnl_face_s *from,
+                               struct ccnl_pkt_s *pkt);
+
+/**
+ * @brief Function pointer type for caching strategy function
+ */
+typedef int (*ccnl_cache_strategy_func)(struct ccnl_relay_s *relay,
+                                        struct ccnl_content_s *c);
 
 /**
  * @brief Function pointer type for caching strategy function
