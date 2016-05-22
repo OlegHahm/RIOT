@@ -186,8 +186,15 @@ extern struct ccnl_relay_s ccnl_relay;
 /**
  * @brief Function pointer type for local producer and consumer function
  */
-typedef int (*ccnl_local_func)(struct ccnl_relay_s *relay, struct
-                                  ccnl_face_s *from, struct ccnl_pkt_s *pkt);
+typedef int (*ccnl_local_func)(struct ccnl_relay_s *relay,
+                               struct ccnl_face_s *from,
+                               struct ccnl_pkt_s *pkt);
+
+/**
+ * @brief Function pointer type for caching strategy function
+ */
+typedef int (*ccnl_cache_strategy_func)(struct ccnl_relay_s *relay,
+                                        struct ccnl_content_s *c);
 
 /**
  * @brief   Start the main CCN-Lite event-loop
@@ -291,6 +298,21 @@ void ccnl_set_local_producer(ccnl_local_func func);
  *                  chunk
  */
 void ccnl_set_local_consumer(ccnl_local_func func);
+
+/**
+ * @brief Set a function to control the caching strategy
+ *
+ * The given function will be called if the cache is full and a new content
+ * chunk arrives. It shall remove (at least) one entry from the cache.
+ *
+ * If the return value of @p func is 0, the default caching strategy will be
+ * applied by the CCN-lite stack. If the return value is 1, it is assumed that
+ * (at least) one entry has been removed from the cache.
+ *
+ * @param[in] func  The function to be called for an incoming content chunk if
+ *                  the cache is full.
+ */
+void ccnl_set_cache_strategy_remove(ccnl_cache_strategy_func func);
 
 #ifdef __cplusplus
 }
