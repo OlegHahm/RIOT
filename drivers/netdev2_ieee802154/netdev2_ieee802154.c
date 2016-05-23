@@ -58,7 +58,7 @@ static inline int _get_short_addr(netdev2_ieee802154_t *dev, void *value, size_t
 
 static inline int _get_long_addr(netdev2_ieee802154_t *dev, void *value, size_t len)
 {
-    if (max_len < sizeof(dev->long_addr)) {
+    if (len < sizeof(dev->long_addr)) {
         return -EOVERFLOW;
     }
     memcpy(value, dev->long_addr, sizeof(dev->long_addr));
@@ -72,7 +72,7 @@ int netdev2_ieee802154_get(netdev2_ieee802154_t *dev, netopt_t opt, void *value,
 
     switch (opt) {
         case NETOPT_ADDRESS:
-            if (dev->option & KW2XRF_OPT_SRC_ADDR_LONG) {
+            if (dev->flags & NETDEV2_IEEE802154_SRC_MODE_LONG) {
                 res = _get_long_addr(dev, value, max_len);
             }
             else {
@@ -81,7 +81,7 @@ int netdev2_ieee802154_get(netdev2_ieee802154_t *dev, netopt_t opt, void *value,
             break;
 
         case NETOPT_ADDRESS_SHORT:
-            res = _get_short_addr(dev, value, max_len);
+            res = _get_long_addr(dev, value, max_len);
             break;
         case NETOPT_ADDRESS_LONG:
             res = _get_short_addr(dev, value, max_len);
@@ -195,7 +195,7 @@ int netdev2_ieee802154_set(netdev2_ieee802154_t *dev, netopt_t opt, void *value,
             break;
         }
         case NETOPT_ADDRESS:
-            if (dev->option & KW2XRF_OPT_SRC_ADDR_LONG) {
+            if (dev->flags & NETDEV2_IEEE802154_SRC_MODE_LONG) {
                 res = _set_long_addr(dev, value, len);
             }
             else {
