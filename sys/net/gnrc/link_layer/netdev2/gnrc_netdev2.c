@@ -40,6 +40,7 @@
 #endif
 
 #define NETDEV2_NETAPI_MSG_QUEUE_SIZE 32
+static msg_t msg_queue[NETDEV2_NETAPI_MSG_QUEUE_SIZE];
 
 static void _pass_on_packet(gnrc_pktsnip_t *pkt);
 
@@ -159,7 +160,7 @@ static void *_gnrc_netdev2_thread(void *args)
 
     gnrc_netapi_opt_t *opt;
     int res;
-    msg_t msg, reply, msg_queue[NETDEV2_NETAPI_MSG_QUEUE_SIZE];
+    msg_t msg, reply;
 
     /* setup the MAC layers message queue */
     msg_init_queue(msg_queue, NETDEV2_NETAPI_MSG_QUEUE_SIZE);
