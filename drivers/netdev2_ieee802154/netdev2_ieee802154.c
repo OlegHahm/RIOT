@@ -81,10 +81,10 @@ int netdev2_ieee802154_get(netdev2_ieee802154_t *dev, netopt_t opt, void *value,
             break;
 
         case NETOPT_ADDRESS_SHORT:
-            res = _get_long_addr(dev, value, max_len);
+            res = _get_short_addr(dev, value, max_len);
             break;
         case NETOPT_ADDRESS_LONG:
-            res = _get_short_addr(dev, value, max_len);
+            res = _get_long_addr(dev, value, max_len);
             break;
 
         case NETOPT_ADDR_LEN:
