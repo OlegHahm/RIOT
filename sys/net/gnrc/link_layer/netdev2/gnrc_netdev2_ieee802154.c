@@ -298,6 +298,7 @@ static int _set(gnrc_netdev2_t *gnrc_netdev2, netopt_t opt, void *val, size_t le
                 opt = NETOPT_ADDRESS_SHORT;
             }
         }
+#ifdef MODULE_NETDEV_RETRANS
         if ((opt == NETOPT_STATE) && (*((netopt_state_t*)val) == NETOPT_STATE_SLEEP)) {
             printf("_set_ieee802154: received sleep request, flush retransmission queue\n");
             while (gnrc_netdev2->retrans_head != NULL) {
@@ -307,6 +308,7 @@ static int _set(gnrc_netdev2_t *gnrc_netdev2, netopt_t opt, void *val, size_t le
                 gnrc_pktqueue_remove_head((gnrc_pktqueue_t**)&(gnrc_netdev2->retrans_head));
             }
         }
+#endif
 
         res = dev->netdev.driver->set((netdev2_t *)dev, opt, val, len);
 #ifdef MODULE_NETDEV_RETRANS
