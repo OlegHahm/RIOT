@@ -116,7 +116,8 @@ static int _netif_stats(kernel_pid_t dev, unsigned module, bool reset)
         printf("           Statistics for %s\n"
                "            RX packets %u  bytes %u\n"
                "            TX packets %u (Multicast: %u)  bytes %u\n"
-               "            TX succeeded %u errors %u\n",
+               "            TX succeeded %u errors %u\n"
+               "            time active: %u, time sleeping: %u\n",
                _netstats_module_to_str(module),
                (unsigned) stats->rx_count,
                (unsigned) stats->rx_bytes,
@@ -124,7 +125,9 @@ static int _netif_stats(kernel_pid_t dev, unsigned module, bool reset)
                (unsigned) stats->tx_mcast_count,
                (unsigned) stats->tx_bytes,
                (unsigned) stats->tx_success,
-               (unsigned) stats->tx_failed);
+               (unsigned) stats->tx_failed,
+               (unsigned) stats->time_active,
+               (unsigned) stats->time_sleeping);
         res = 0;
     }
     return res;

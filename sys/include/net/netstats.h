@@ -51,6 +51,8 @@ typedef struct {
     uint32_t tx_bytes;          /**< sent bytes */
     uint32_t rx_count;          /**< received (data) packets */
     uint32_t rx_bytes;          /**< received bytes */
+    uint64_t time_active;       /**< time spent in active mode */
+    uint64_t time_sleeping;     /**< time spent in sleeping mode */
 } netstats_t;
 
 #ifdef __cplusplus

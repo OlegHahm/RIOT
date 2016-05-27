@@ -27,9 +27,14 @@
 #include "at86rf2xx_internal.h"
 #include "at86rf2xx_registers.h"
 #include "periph/spi.h"
+#include "xtimer.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
+
+static uint8_t _last_state = AT86RF2XX_STATE_SLEEP;
+static uint64_t _go_active_ts;
+static uint64_t _go_sleeping_ts;
 
 #ifdef MODULE_AT86RF212B
 /* See: Table 9-15. Recommended Mapping of TX Power, Frequency Band, and
@@ -456,6 +461,31 @@ void at86rf2xx_set_state(at86rf2xx_t *dev, uint8_t state)
         _set_state(dev, AT86RF2XX_STATE_TRX_OFF, state);
         return;
     }
+    if (state == AT86RF2XX_STATE_SLEEP) {
+        printf("calculating time while going to sleep, last state: %u\n", (unsigned) _last_state);
+        if (_last_state != AT86RF2XX_STATE_SLEEP) {
+            printf("change of state detected\n");
+            _go_sleeping_ts = xtimer_now64();
+            if (_go_active_ts) {
+                printf("adding\n");
+                ((netdev2_t *)dev)->stats.time_active += (_go_sleeping_ts - _go_active_ts);
+            }
+        }
+        _last_state = state;
+    }
+    else {
+        printf("calculating time while going active, last state: %u\n", (unsigned) _last_state);
+        if (_last_state == AT86RF2XX_STATE_SLEEP) {
+            printf("change of state detected\n");
+            _go_active_ts = xtimer_now64();
+            if (_go_sleeping_ts) {
+                printf("adding\n");
+                ((netdev2_t *)dev)->stats.time_sleeping += (_go_active_ts - _go_sleeping_ts);
+            }
+        }
+        _last_state = state;
+    }
+
 
     /* make sure there is no ongoing transmission, or state transition already
      * in progress */
