@@ -462,24 +462,24 @@ void at86rf2xx_set_state(at86rf2xx_t *dev, uint8_t state)
         return;
     }
     if (state == AT86RF2XX_STATE_SLEEP) {
-        printf("calculating time while going to sleep, last state: %u\n", (unsigned) _last_state);
+        DEBUG("calculating time while going to sleep, last state: %u\n", (unsigned) _last_state);
         if (_last_state != AT86RF2XX_STATE_SLEEP) {
-            printf("change of state detected\n");
+            DEBUG("change of state detected\n");
             _go_sleeping_ts = xtimer_now64();
             if (_go_active_ts) {
-                printf("adding\n");
+                DEBUG("adding\n");
                 ((netdev2_t *)dev)->stats.time_active += (_go_sleeping_ts - _go_active_ts);
             }
         }
         _last_state = state;
     }
     else {
-        printf("calculating time while going active, last state: %u\n", (unsigned) _last_state);
+        DEBUG("calculating time while going active, last state: %u\n", (unsigned) _last_state);
         if (_last_state == AT86RF2XX_STATE_SLEEP) {
-            printf("change of state detected\n");
+            DEBUG("change of state detected\n");
             _go_active_ts = xtimer_now64();
             if (_go_sleeping_ts) {
-                printf("adding\n");
+                DEBUG("adding\n");
                 ((netdev2_t *)dev)->stats.time_sleeping += (_go_active_ts - _go_sleeping_ts);
             }
         }
