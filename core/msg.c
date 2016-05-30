@@ -217,9 +217,7 @@ int msg_send_receive(msg_t *m, msg_t *reply, kernel_pid_t target_pid)
     sched_set_status(me, STATUS_REPLY_BLOCKED);
     uint8_t target_status = ((thread_t*) sched_threads[target_pid])->status;
 
-    if (target_status == STATUS_RECEIVE_BLOCKED) {
-        me->wait_data = (void*) reply;
-    }
+    me->wait_data = (void*) reply;
     /* msg_send blocks until reply received */
     int res = _msg_send(m, target_pid, true, state);
     if ((target_status != STATUS_RECEIVE_BLOCKED) && (res >= 0)) {
