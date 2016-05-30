@@ -178,6 +178,13 @@ static inline void ccnl_free(void *p) {
  */
 #define CCNL_PREFIX_BUFSIZE     (50)
 
+typedef struct {
+    char *name;
+    unsigned *chunknum;
+    unsigned char *buf;
+    size_t buflen;
+} ccnl_interest_t;
+
 /**
  * Struct holding CCN-Lite's central relay information
  */
