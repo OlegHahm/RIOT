@@ -202,8 +202,7 @@ typedef struct {
 #endif
 
 typedef struct {
-    char *name;
-    unsigned *chunknum;
+    struct ccnl_prefix_s *prefix;
     unsigned char *buf;
     size_t buflen;
 } ccnl_interest_t;
