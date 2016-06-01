@@ -179,8 +179,7 @@ static inline void ccnl_free(void *p) {
 #define CCNL_PREFIX_BUFSIZE     (50)
 
 typedef struct {
-    char *name;
-    unsigned *chunknum;
+    struct ccnl_prefix_s *prefix;
     unsigned char *buf;
     size_t buflen;
 } ccnl_interest_t;
@@ -225,18 +224,15 @@ int ccnl_open_netif(kernel_pid_t if_pid, gnrc_nettype_t netreg_type);
 /**
  * @brief Sends out an Interest
  *
- * @param[in] suite     CCN packet format
- * @param[in] name      The name that is requested
- * @param[in] chunknum  Number of the requested content chunk
+ * @param[in] prefix    The name that is requested
  * @param[out] buf      Buffer to write the content chunk to
  * @param[in] buf_len   Size of @p buf
  *
  * @return pointer to the successfully sent Interest
  * @return NULL if Interested couldn't be sent
  */
-struct ccnl_interest_s *ccnl_send_interest(int suite, char *name, unsigned int
-                                           *chunknum, unsigned char *buf,
-                                           size_t buf_len);
+struct ccnl_interest_s *ccnl_send_interest(struct ccnl_prefix_s *prefix,
+                                           unsigned char *buf, size_t buf_len);
 
 /**
  * @brief Wait for incoming content chunk
