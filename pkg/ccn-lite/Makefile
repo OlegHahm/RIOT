@@ -5,7 +5,7 @@ PKG_LICENSE=ISC
 
 .PHONY: all
 
-export RIOT_CFLAGS = ${CFLAGS} ${INCLUDES} -DLOG_LEVEL=LOG_DEBUG
+export RIOT_CFLAGS = ${CFLAGS} ${INCLUDES} -DLOG_LEVEL=LOG_WARNING
 
 all: git-download
 	"$(MAKE)" -BC $(PKG_BUILDDIR)/src lib-ccn-lite.a
