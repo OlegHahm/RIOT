@@ -291,6 +291,13 @@ static int _get(netdev2_t *netdev, netopt_t opt, void *val, size_t max_len)
                 !!(dev->netdev.flags & AT86RF2XX_OPT_CSMA);
             return sizeof(netopt_enable_t);
 
+#ifdef MODULE_NETSTATS_L2
+        case NETOPT_STATS:
+            assert(max_len == sizeof(uintptr_t));
+            extern void at86rf2xx_update_stats(at86rf2xx_t *dev);
+            at86rf2xx_update_stats(dev);
+            break;
+#endif
         default:
             /* Can still be handled in second switch */
             break;

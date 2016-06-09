@@ -525,6 +525,24 @@ void at86rf2xx_set_state(at86rf2xx_t *dev, uint8_t state)
     }
 }
 
+void at86rf2xx_update_stats(at86rf2xx_t *dev)
+{
+    if (_last_state == AT86RF2XX_STATE_SLEEP) {
+        uint64_t now = xtimer_now64();
+        if (_go_sleeping_ts) {
+            ((netdev2_t *)dev)->stats.time_sleeping += (now - _go_sleeping_ts);
+            _go_sleeping_ts = now;
+        }
+    }
+    else {
+        uint64_t now = xtimer_now64();
+        if (_go_active_ts) {
+            ((netdev2_t *)dev)->stats.time_active += (now - _go_active_ts);
+            _go_active_ts = now;
+        }
+    }
+}
+
 void at86rf2xx_reset_state_machine(at86rf2xx_t *dev)
 {
     uint8_t old_state;
