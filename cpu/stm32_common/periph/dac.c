@@ -63,6 +63,10 @@ int8_t dac_init(dac_t line)
 
 void dac_set(dac_t line, uint16_t value)
 {
+#ifndef DAC_CONFIG
+    (void) line;
+    (void) value;
+#else
     value = (value >> 4);       /* scale to 12-bit */
 #ifdef DAC_DHR12R2_DACC2DHR
     if (dac_config[line].chan) {
@@ -76,16 +80,25 @@ void dac_set(dac_t line, uint16_t value)
 
     _DAC(line)->DHR12R1 = value;
 #endif
+#endif
 }
 
 void dac_poweron(dac_t line)
 {
+#ifndef DAC_CONFIG
+    (void) line;
+#else
     DAC->CR |= (1 << (16 * dac_config[line].chan));
+#endif
 }
 
 void dac_poweroff(dac_t line)
 {
+#ifndef DAC_CONFIG
+    (void) line;
+#else
     DAC->CR &= ~(1 << (16 * dac_config[line].chan));
+#endif
 }
 
 #else
