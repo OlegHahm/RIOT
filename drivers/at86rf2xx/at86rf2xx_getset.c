@@ -32,9 +32,11 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
+#ifdef MODULE_NETSTATS_L2
 static uint8_t _last_state = AT86RF2XX_STATE_SLEEP;
 static uint64_t _go_active_ts;
 static uint64_t _go_sleeping_ts;
+#endif
 
 #ifdef MODULE_AT86RF212B
 /* See: Table 9-15. Recommended Mapping of TX Power, Frequency Band, and
@@ -440,6 +442,7 @@ void at86rf2xx_set_state(at86rf2xx_t *dev, uint8_t state)
         return;
     }
 
+#ifdef MODULE_NETSTATS_L2
     if (state == AT86RF2XX_STATE_SLEEP) {
         DEBUG("calculating time while going to sleep, last state: %u\n", (unsigned) _last_state);
         if (_last_state != AT86RF2XX_STATE_SLEEP) {
@@ -464,7 +467,7 @@ void at86rf2xx_set_state(at86rf2xx_t *dev, uint8_t state)
         }
         _last_state = state;
     }
-
+#endif
 
     /* make sure there is no ongoing transmission, or state transition already
      * in progress */
@@ -500,6 +503,7 @@ void at86rf2xx_set_state(at86rf2xx_t *dev, uint8_t state)
     }
 }
 
+#ifdef MODULE_NETSTATS_L2
 void at86rf2xx_update_stats(at86rf2xx_t *dev)
 {
     if (_last_state == AT86RF2XX_STATE_SLEEP) {
@@ -517,6 +521,7 @@ void at86rf2xx_update_stats(at86rf2xx_t *dev)
         }
     }
 }
+#endif
 
 void at86rf2xx_reset_state_machine(at86rf2xx_t *dev)
 {
