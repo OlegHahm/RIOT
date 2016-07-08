@@ -187,7 +187,8 @@ static int _send(gnrc_netdev2_t *gnrc_netdev2, gnrc_pktsnip_t *pkt)
     size_t n, src_len;
     uint8_t mhr[IEEE802154_MAX_HDR_LEN];
     uint8_t flags = (uint8_t)(state->flags & NETDEV2_IEEE802154_SEND_MASK);
-    le_uint16_t dev_pan = byteorder_btols(byteorder_htons(state->pan));
+    le_uint16_t dst_pan = byteorder_btols(byteorder_htons(state->pan));
+    le_uint16_t src_pan = byteorder_btols(byteorder_htons(state->pan));
 
     flags |= IEEE802154_FCF_TYPE_DATA;
     if (pkt == NULL) {
@@ -219,10 +220,16 @@ static int _send(gnrc_netdev2_t *gnrc_netdev2, gnrc_pktsnip_t *pkt)
         src_len = IEEE802154_SHORT_ADDRESS_LEN;
         src = state->short_addr;
     }
+    /* XXX: extract options from netif header */
+    if (netif_hdr->options) {
+        src_pan = ((ieee802154_options_t*)netif_hdr->options)->src_pan;
+        dst_pan = ((ieee802154_options_t*)netif_hdr->options)->dst_pan;
+    }
+
     /* fill MAC header, seq should be set by device */
     if ((res = ieee802154_set_frame_hdr(mhr, src, src_len,
                                         dst, netif_hdr->dst_l2addr_len,
-                                        dev_pan, dev_pan, flags,
+                                        src_pan, dst_pan, flags,
                                         state->seq++)) == 0) {
         DEBUG("_send_ieee802154: Error preperaring frame\n");
         return -EINVAL;
