@@ -82,6 +82,7 @@ typedef struct {
     uint8_t flags;              /**< flags as defined above */
     uint8_t rssi;               /**< rssi of received packet (optional) */
     uint8_t lqi;                /**< lqi of received packet (optional) */
+    void *options;              /**< l2 specific options */
 } gnrc_netif_hdr_t;
 
 /**

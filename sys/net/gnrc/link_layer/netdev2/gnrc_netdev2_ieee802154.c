@@ -219,6 +219,7 @@ static int _send(gnrc_netdev2_t *gnrc_netdev2, gnrc_pktsnip_t *pkt)
         src_len = IEEE802154_SHORT_ADDRESS_LEN;
         src = state->short_addr;
     }
+    /* XXX: extract options from netif header */
     /* fill MAC header, seq should be set by device */
     if ((res = ieee802154_set_frame_hdr(mhr, src, src_len,
                                         dst, netif_hdr->dst_l2addr_len,
