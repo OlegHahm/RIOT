@@ -82,6 +82,7 @@ typedef struct {
     uint8_t flags;              /**< flags as defined above */
     uint8_t rssi;               /**< rssi of received packet (optional) */
     uint8_t lqi;                /**< lqi of received packet (optional) */
+    void *options;              /**< l2 specific options */
 } gnrc_netif_hdr_t;
 
 /**
@@ -100,6 +101,7 @@ static inline void gnrc_netif_hdr_init(gnrc_netif_hdr_t *hdr, uint8_t src_l2addr
     hdr->rssi = 0;
     hdr->lqi = 0;
     hdr->flags = 0;
+    hdr->options = NULL;
 }
 
 /**

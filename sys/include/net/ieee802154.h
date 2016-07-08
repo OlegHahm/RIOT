@@ -135,6 +135,14 @@ extern const uint8_t ieee802154_addr_bcast[IEEE802154_ADDR_BCAST_LEN];
 /** @} */
 
 /**
+ * @brief Optional parameters for IEEE802.15.4 packets
+ */
+typedef struct {
+    le_uint16_t src_pan;        /**< source PAN identifier */
+    le_uint16_t dst_pan;        /**< destination PAN identifier */
+} ieee802154_options_t;
+
+/**
  * @brief   Initializes an IEEE 802.15.4 MAC frame header in @p buf.
  *
  * @pre Resulting header must fit in memory allocated at @p buf.
