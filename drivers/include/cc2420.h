@@ -22,6 +22,7 @@
 #define CC2420_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "periph/spi.h"
 #include "periph/gpio.h"
