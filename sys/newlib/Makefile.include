@@ -60,6 +60,7 @@ ifeq ($(TOOLCHAIN),llvm)
   NEWLIB_INCLUDES := -isystem $(NEWLIB_INCLUDE_DIR) -nostdinc
   NEWLIB_INCLUDES += $(addprefix -isystem ,$(abspath $(wildcard $(dir $(NEWLIB_INCLUDE_DIR))/usr/include)))
 endif
+NEWLIB_INCLUDES := -isystem $(NEWLIB_INCLUDE_DIR)
 
 ifeq (1,$(USE_NEWLIB_NANO))
   NEWLIB_NANO_INCLUDE_DIR ?= $(NEWLIB_INCLUDE_DIR)/newlib-nano
