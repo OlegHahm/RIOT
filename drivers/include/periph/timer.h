@@ -48,6 +48,14 @@ extern "C" {
 #endif
 
 /**
+ * @brief   Status codes used by the timer peripheral driver interface
+ */
+enum {
+        TIMER_OK    =  0,   /**< everything went as planned */
+        TIMER_FAIL  =  1,   /**< something went wrong */
+};
+
+/**
  * @brief   Default timer type
  *
  * We chose the name of tim_t here to avoid naming clashes with other libraries
