@@ -82,7 +82,7 @@ void timer_init(tim_t dev, unsigned long freq, timer_cb_t cb, void *arg)
     (void)freq;
     DEBUG("%s\n", __func__);
     assert(dev < TIMER_NUMOF);
-    assert(freq < NATIVE_TIMER_SPEED);
+    assert(freq == NATIVE_TIMER_SPEED);
 
     /* initialize time delta */
     time_null = 0;
