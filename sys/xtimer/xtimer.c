@@ -232,11 +232,13 @@ static void _mutex_timeout(void *arg)
 {
     mutex_thread_t *mt = (mutex_thread_t *)arg;
 
-    mt->timeout = 1;
-    list_node_t *node = list_remove(&mt->mutex->queue,
-                                    (list_node_t *)&mt->thread->rq_entry);
-    if ((node != NULL) && (mt->mutex->queue.next == NULL)) {
-        mt->mutex->queue.next = MUTEX_LOCKED;
+    mt->timeout = -1;
+    if (mt->mutex->queue.next != MUTEX_LOCKED) {
+        list_node_t *node = list_remove(&mt->mutex->queue,
+                                        (list_node_t *)&mt->thread->rq_entry);
+        if ((node != NULL) && (mt->mutex->queue.next == NULL)) {
+            mt->mutex->queue.next = MUTEX_LOCKED;
+        }
     }
     sched_set_status(mt->thread, STATUS_PENDING);
     thread_yield_higher();
@@ -246,14 +248,27 @@ int xtimer_mutex_lock_timeout(mutex_t *mutex, uint64_t timeout)
 {
     xtimer_t t;
     mutex_thread_t mt = { mutex, (thread_t *)sched_active_thread, 0 };
+    int locked = mutex_trylock(mutex);
 
-    if (timeout != 0) {
-        t.callback = _mutex_timeout;
-        t.arg = (void *)((mutex_thread_t *)&mt);
-        _xtimer_set64(&t, timeout, timeout >> 32);
+    if (locked || (timeout == 0)) {
+        return (locked - 1);
     }
 
-    mutex_lock(mutex);
+    t.callback = _mutex_timeout;
+    t.arg = (void *)((mutex_thread_t *)&mt);
+    _xtimer_set64(&t, timeout, timeout >> 32);
+
+    /* a timeout lower than XTIMER_BACKOFF causes the xtimer to spin rather
+     * than to set a timer for interrupt. Hence, we shall make the mutex_lock
+     * call blocking only when the interrupt can occur. */
+    int block = (timeout > XTIMER_BACKOFF);
+    locked = _mutex_lock(mutex, block);
     xtimer_remove(&t);
-    return -mt.timeout;
+
+    if (block) {
+        return mt.timeout;
+    }
+    else {
+        return (locked - 1);
+    }
 }
