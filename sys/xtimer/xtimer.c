@@ -250,25 +250,22 @@ int xtimer_mutex_lock_timeout(mutex_t *mutex, uint64_t timeout)
     mutex_thread_t mt = { mutex, (thread_t *)sched_active_thread, 0 };
     int locked = mutex_trylock(mutex);
 
-    if (locked || (timeout == 0)) {
-        return (locked - 1);
+    if (!locked && (timeout != 0)) {
+
+        t.callback = _mutex_timeout;
+        t.arg = (void *)((mutex_thread_t *)&mt);
+        _xtimer_set64(&t, timeout, timeout >> 32);
+
+        /* a timeout lower than XTIMER_BACKOFF causes the xtimer to spin rather
+         * than to set a timer for interrupt. Hence, we shall make the mutex_lock
+         * call blocking only when the interrupt can occur. */
+        int block = (timeout > XTIMER_BACKOFF);
+        locked = _mutex_lock(mutex, block);
+        xtimer_remove(&t);
+        if (block) {
+            locked = mt.timeout + 1;
+        }
     }
 
-    t.callback = _mutex_timeout;
-    t.arg = (void *)((mutex_thread_t *)&mt);
-    _xtimer_set64(&t, timeout, timeout >> 32);
-
-    /* a timeout lower than XTIMER_BACKOFF causes the xtimer to spin rather
-     * than to set a timer for interrupt. Hence, we shall make the mutex_lock
-     * call blocking only when the interrupt can occur. */
-    int block = (timeout > XTIMER_BACKOFF);
-    locked = _mutex_lock(mutex, block);
-    xtimer_remove(&t);
-
-    if (block) {
-        return mt.timeout;
-    }
-    else {
-        return (locked - 1);
-    }
+    return (locked - 1);
 }
