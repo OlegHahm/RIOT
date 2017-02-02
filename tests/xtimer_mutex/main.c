@@ -24,6 +24,7 @@
 #include "xtimer.h"
 #include "thread.h"
 #include "msg.h"
+#include "fmt.h"
 
 char thread1_stack[THREAD_STACKSIZE_MAIN];
 char thread2_stack[THREAD_STACKSIZE_MAIN];
@@ -34,7 +35,9 @@ static kernel_pid_t mainpid, pid, pid2;
 
 static int tx_lock(int tx, uint64_t timeout)
 {
-    printf("thread%d timeout: %" PRIu64 ", mutex: ", tx, timeout);
+    printf("thread%d timeout: ", tx);
+    print_u64_dec(timeout);
+    printf(", mutex: ");
     if (mutex.queue.next == NULL) {
         printf("unlocked");
     }
