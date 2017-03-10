@@ -52,6 +52,8 @@ int main(void)
     ret = pn532_init_spi(&pn532, &pn532_conf[0]);
 #endif
 
+    /* cppcheck-suppress uninitvar */
+    /* i2c or spi init could return error at some point */
     if (ret != 0) {
         LOG_INFO("init error %d\n", ret);
     }

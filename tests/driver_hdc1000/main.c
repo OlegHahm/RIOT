@@ -33,7 +33,6 @@ int main(void)
 {
     hdc1000_t dev;
     int16_t temp, hum;
-    size_t len;
     char tstr[8];
     char hstr[8];
 
@@ -51,6 +50,7 @@ int main(void)
     while (1) {
         hdc1000_read(&dev, &temp, &hum);
 
+        size_t len;
         len = fmt_s16_dfp(tstr, temp, 2);
         tstr[len] = '\0';
         len = fmt_s16_dfp(hstr, hum, 2);
