@@ -215,7 +215,7 @@ int msg_send_receive(msg_t *m, msg_t *reply, kernel_pid_t target_pid)
     unsigned state = irq_disable();
     thread_t *me = (thread_t*) sched_threads[sched_active_pid];
     sched_set_status(me, STATUS_REPLY_BLOCKED);
-    uint8_t target_status = ((thread_t*) sched_threads[target_pid])->status;
+    me->wait_data = (void*) reply;
 
     /* we re-use (abuse) reply for sending, because wait_data might be
      * overwritten if the target is not in RECEIVE_BLOCKED */
