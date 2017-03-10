@@ -77,6 +77,7 @@ int main(void)
 #endif
 
     puts("On-board LED test\n");
+    /* cppcheck-suppress knownConditionTrueFalse */
     if (numof == 0) {
         puts("NO LEDs AVAILABLE");
     }
