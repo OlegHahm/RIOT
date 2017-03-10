@@ -156,14 +156,6 @@ static inline void ccnl_free(void *p) {
  */
 #define CCNL_QUEUE_SIZE     (64)
 
-/**
- * @brief Data structure for interest packet
- */
-typedef struct {
-    struct ccnl_prefix_s *prefix;   /**< requested prefix */
-    unsigned char *buf;             /**< buffer to store the interest packet */
-    size_t buflen;                  /**< size of the buffer */
-} ccnl_interest_t;
 
 
 /**
@@ -201,6 +193,9 @@ typedef struct {
 #define CCNL_CACHE_SIZE
 #endif
 
+/**
+ * @brief Data structure for interest packet
+ */
 typedef struct {
     struct ccnl_prefix_s *prefix;
     unsigned char *buf;
@@ -218,12 +213,6 @@ extern struct ccnl_relay_s ccnl_relay;
 typedef int (*ccnl_local_func)(struct ccnl_relay_s *relay,
                                struct ccnl_face_s *from,
                                struct ccnl_pkt_s *pkt);
-
-/**
- * @brief Function pointer type for caching strategy function
- */
-typedef int (*ccnl_cache_strategy_func)(struct ccnl_relay_s *relay,
-                                        struct ccnl_content_s *c);
 
 /**
  * @brief Function pointer type for caching strategy function
