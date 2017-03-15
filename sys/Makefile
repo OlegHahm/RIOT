@@ -111,6 +111,9 @@ endif
 ifneq (,$(filter emcute,$(USEMODULE)))
     DIRS += net/application_layer/emcute
 endif
+ifneq (,$(filter smtp,$(USEMODULE)))
+    DIRS += net/application_layer/smtp
+endif
 
 ifneq (,$(filter constfs,$(USEMODULE)))
     DIRS += fs/constfs
