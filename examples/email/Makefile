@@ -12,7 +12,7 @@ RIOTBASE ?= $(CURDIR)/../..
 USEMODULE += gnrc_netdev_default
 USEMODULE += auto_init_gnrc_netif
 # Specify the mandatory networking modules for IPv6 and UDP
-USEMODULE += gnrc_sock_udp
+USEMODULE += gnrc_sock_tcp
 USEMODULE += gnrc_ipv6_default
 # Include SMTP
 USEMODULE += smtp 

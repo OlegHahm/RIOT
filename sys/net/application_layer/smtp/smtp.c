@@ -18,30 +18,65 @@
  * @}
  */
 
-sock_tcp_ep_t smtp_mx_relay;
+#include <stddef.h>
+
+#include "net/smtp.h"
+#include "net/ipv6/addr.h"
+#include "net/sock.h"
+#include "net/sock/tcp.h"
+
+sock_tcp_ep_t smtp_mx_relay = { AF_INET6, IPV6_ADDR_UNSPECIFIED, 0, SMTP_DEFAULT_PORT };
+
+static int _smtp_cmd(sock_tcp_t *s, char *cmd, size_t len);
 
 void smtp_server_init(sock_tcp_ep_t *s)
 {
+    (void) s;
 }
 
-int smtp_sendmail(char *recipient, char *subject, size_t slen,
-                       char *message, size_t mlen)
+int smtp_sendmail(char *recipient, size_t rlen, char *subject, size_t slen,
+                  char *message, size_t mlen)
 {
-    int res;
-    sock_tcp_ep_t remote = SOCK_IPV6_EP_ANY;
-    remote.port = 12345;
-    ipv6_addr_from_str((ipv6_addr_t *)&remote.addr,
-                       "fe80::d8fa:55ff:fedf:4523");
+    sock_tcp_t sock;
+
+    if (sock_tcp_connect(&sock, &smtp_mx_relay, 0, 0) < 0) {
+        puts("Error connecting sock");
+        return 1;
+    }
+    _smtp_cmd(&sock, "HELO" SMTP_DEFAULT_HOSTNAME "\n", sizeof("HELO\n") + strlen(SMTP_DEFAULT_HOSTNAME));
+    _smtp_cmd(&sock, "MAIL FROM: <" SMTP_DEFAULT_USER"@" SMTP_DEFAULT_HOSTNAME ">\n",
+              sizeof("MAIL FROM: <@>\n") + sizeof(SMTP_DEFAULT_USER) + sizeof(SMTP_DEFAULT_HOSTNAME));
+    char rcpt_to_str[sizeof("RCPT TO: \n") + rlen];
+    sprintf(rcpt_to_str, "RCPT TO: <%s>\n", recipient);
+    _smtp_cmd(&sock, rcpt_to_str, sizeof(rcpt_to_str));
+    sock_tcp_disconnect(&sock);
     return 0;
-}
-
-void smtp_set_relay(sock_tcp_ep_t *relay)
-{
 }
 
 int smtp_add_local_user(char *recipient, smtp_cb_t *cb)
 {
+    (void) recipient;
+    (void) cb;
     return 0;
 }
 
-#endif /* SMTP_H */
+static int _smtp_cmd(sock_tcp_t *s, char *cmd, size_t len)
+{
+    uint8_t buf[128];
+    if ((res = sock_tcp_write(&sock, )) < 0) {
+        puts("Errored on write");
+    }
+    else {
+        if ((res = sock_tcp_read(&sock, buf, sizeof(buf),
+                                 SOCK_NO_TIMEOUT)) < 0) {
+            puts("Disconnected");
+        }
+        printf("Read: \"");
+        for (int i = 0; i < res; i++) {
+            printf("%c", buf[i]);
+        }
+        puts("\"");
+    }
+
+    return 0;
+}

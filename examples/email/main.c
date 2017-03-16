@@ -25,17 +25,86 @@
 #include "net/sock/tcp.h"
 #include "net/smtp.h"
 
-static char stack[THREAD_STACKSIZE_DEFAULT];
+#define EMAIL_MAX_MSG_SIZE  (512)
+
 static msg_t queue[8];
+
+static int _readline(char *buf, size_t size)
+{
+    char *line_buf_ptr = buf;
+
+    while (1) {
+        if ((line_buf_ptr - buf) >= ((int) size) - 1) {
+            return -1;
+        }
+
+        int c = getchar();
+        if (c < 0) {
+            return 1;
+        }
+
+        /* We allow Unix linebreaks (\n), DOS linebreaks (\r\n), and Mac linebreaks (\r). */
+        /* QEMU transmits only a single '\r' == 13 on hitting enter ("-serial stdio"). */
+        /* DOS newlines are handled like hitting enter twice, but empty lines are ignored. */
+        if (c == '\r' || c == '\n') {
+            *line_buf_ptr = '\0';
+#ifndef SHELL_NO_ECHO
+            putchar('\r');
+            putchar('\n');
+#endif
+
+            /* return 1 if line is empty, 0 otherwise */
+            return line_buf_ptr == buf;
+        }
+        /* QEMU uses 0x7f (DEL) as backspace, while 0x08 (BS) is for most terminals */
+        else if (c == 0x08 || c == 0x7f) {
+            if (line_buf_ptr == buf) {
+                /* The line is empty. */
+                continue;
+            }
+
+            *--line_buf_ptr = '\0';
+            /* white-tape the character */
+#ifndef SHELL_NO_ECHO
+            putchar('\b');
+            putchar(' ');
+            putchar('\b');
+#endif
+        }
+        else {
+            *line_buf_ptr++ = c;
+#ifndef SHELL_NO_ECHO
+            putchar(c);
+#endif
+        }
+    }
+}
 
 static int cmd_sendmail(int argc, char **argv)
 {
-    smtp_sendmail(argv[1], argv[2]);
+    char mail_buf[EMAIL_MAX_MSG_SIZE];
+    if (argc < 3) {
+        return -EINVAL;
+    }
+    printf("Sending mail to %s,\n, subject is %s\n", argv[1], argv[2]);
+    puts("Please enter message text and enter with an empty line.");
+    int cnt = 0;
+    char *buf = mail_buf;
+    while (!cnt) {
+        cnt = _readline(buf, EMAIL_MAX_MSG_SIZE);
+        if (cnt < 0) {
+            puts("Error");
+            return -EIO;
+        }
+        buf += cnt;
+    }
+    smtp_sendmail(argv[1], strlen(argv[1]), argv[2], strlen(argv[2]), mail_buf, cnt);
     return 0;
 }
 
 static int cmd_relay(int argc, char **argv)
 {
+    (void) argc;
     if (ipv6_addr_from_str((ipv6_addr_t *)&smtp_mx_relay.addr.ipv6, argv[1]) == NULL) {
         printf("error parsing IPv6 address\n");
         return 1;

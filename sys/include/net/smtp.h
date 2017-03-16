@@ -18,12 +18,24 @@
  * @author      Oliver Hahm <oliver.hahm@inria.fr> 
  */
  
+#include "net/sock/tcp.h"
+
 #ifndef SMTP_H
 #define SMTP_H
 
 #ifndef SMTP_MAX_USERS
-#define SMTP_MAX_USERS  (3)
+#   define SMTP_MAX_USERS  (3)
 #endif
+
+#ifndef SMTP_DEFAULT_HOSTNAME
+#   define SMTP_DEFAULT_HOSTNAME "node.riot-os.org"
+#endif
+
+#ifndef SMTP_DEFAULT_USER
+#   define SMTP_DEFAULT_USER "ritos"
+#endif
+
+#define SMTP_DEFAULT_PORT   (25)
 
 /**
  * @brief The default MX relay
@@ -52,6 +64,7 @@ void smtp_server_init(sock_tcp_ep_t *s);
  * @brief   Sends a mail
  *
  * @param[in] recipient     The recipient's email address
+ * @param[in] rlen          Length of the recipient's address 
  * @param[in] subject       Subject of the email
  * @param[in] slen          Length of the subject
  * @param[in] message       The email's body
@@ -59,8 +72,8 @@ void smtp_server_init(sock_tcp_ep_t *s);
  *
  * @return      0 on success, a negative errno value otherwise 
  */
-int smtp_sendmail(char *recipient, char *subject, size_t slen,
-                       char *message, size_t mlen);
+int smtp_sendmail(char *recipient, size_t rlen, char *subject, size_t slen,
+                  char *message, size_t mlen);
 
 /**
  * @brief   Adds local email recipient
