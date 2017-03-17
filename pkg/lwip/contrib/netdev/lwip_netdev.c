@@ -214,6 +214,7 @@ static err_t _ieee802154_link_output(struct netif *netif, struct pbuf *p)
 static struct pbuf *_get_recv_pkt(netdev_t *dev)
 {
     int len = dev->driver->recv(dev, _tmp_buf, sizeof(_tmp_buf), NULL);
+    printf("len: %i, %s\n", len, _tmp_buf);
 
     assert(((unsigned)len) <= UINT16_MAX);
     struct pbuf *p = pbuf_alloc(PBUF_RAW, (u16_t)len, PBUF_POOL);
