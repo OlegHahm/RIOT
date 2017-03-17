@@ -19,7 +19,9 @@
  */
 
 #include <stddef.h>
+#include <string.h>
 
+#include "fmt.h"
 #include "net/smtp.h"
 #include "net/ipv6/addr.h"
 #include "net/sock.h"
@@ -27,7 +29,7 @@
 
 sock_tcp_ep_t smtp_mx_relay = { AF_INET6, IPV6_ADDR_UNSPECIFIED, 0, SMTP_DEFAULT_PORT };
 
-static int _smtp_cmd(sock_tcp_t *s, char *cmd, size_t len);
+static int _smtp_cmd(sock_tcp_t *s, const char *cmd, const size_t len);
 
 void smtp_server_init(sock_tcp_ep_t *s)
 {
@@ -37,18 +39,47 @@ void smtp_server_init(sock_tcp_ep_t *s)
 int smtp_sendmail(char *recipient, size_t rlen, char *subject, size_t slen,
                   char *message, size_t mlen)
 {
+    char rcpt_to_str[fmt_strlen("RCPT TO: <>\n") + rlen];
+    size_t written = fmt_str(rcpt_to_str, "RCPT TO: <");
+    written += fmt_str(rcpt_to_str + written, recipient);
+    fmt_str(rcpt_to_str + written, ">\n");
+    
+    char hdr_to_str[fmt_strlen("To: <>\n") + rlen];
+    written = fmt_str(hdr_to_str, "To: <");
+    written += fmt_str(hdr_to_str + written, recipient);
+    fmt_str(hdr_to_str + written, ">\n");
+    
+    char hdr_subject_str[fmt_strlen("Subject: \n") + slen];
+    written = fmt_str(hdr_subject_str, "Subject: ");
+    written += fmt_str(hdr_subject_str + written, subject);
+    fmt_str(hdr_subject_str + written, "\n");
+    
+    char *commands[] = {
+        "HELO " SMTP_HOSTNAME "\n",
+        "MAIL FROM: <" SMTP_DEFAULT_USER "@" SMTP_HOSTNAME ">\n",
+        rcpt_to_str,
+        "DATA",
+        "From: <" SMTP_DEFAULT_USER "@" SMTP_HOSTNAME ">\n",
+        hdr_to_str,
+        hdr_subject_str,
+        ""
+    };
     sock_tcp_t sock;
 
     if (sock_tcp_connect(&sock, &smtp_mx_relay, 0, 0) < 0) {
         puts("Error connecting sock");
         return 1;
     }
-    _smtp_cmd(&sock, "HELO" SMTP_DEFAULT_HOSTNAME "\n", sizeof("HELO\n") + strlen(SMTP_DEFAULT_HOSTNAME));
-    _smtp_cmd(&sock, "MAIL FROM: <" SMTP_DEFAULT_USER"@" SMTP_DEFAULT_HOSTNAME ">\n",
-              sizeof("MAIL FROM: <@>\n") + sizeof(SMTP_DEFAULT_USER) + sizeof(SMTP_DEFAULT_HOSTNAME));
-    char rcpt_to_str[sizeof("RCPT TO: \n") + rlen];
-    sprintf(rcpt_to_str, "RCPT TO: <%s>\n", recipient);
-    _smtp_cmd(&sock, rcpt_to_str, sizeof(rcpt_to_str));
+
+
+    for (unsigned i = 0; i < sizeof(commands) / sizeof(*commands); i++) {
+        if (_smtp_cmd(&sock, commands[i], fmt_strlen(commands[i])) < 0) {
+            return 1;
+        }
+    }
+    _smtp_cmd(&sock, message, mlen);
+    _smtp_cmd(&sock, ".\n", 3);
+
     sock_tcp_disconnect(&sock);
     return 0;
 }
@@ -60,22 +91,22 @@ int smtp_add_local_user(char *recipient, smtp_cb_t *cb)
     return 0;
 }
 
-static int _smtp_cmd(sock_tcp_t *s, char *cmd, size_t len)
+static int _smtp_cmd(sock_tcp_t *sock, const char *cmd, const size_t len)
 {
     uint8_t buf[128];
-    if ((res = sock_tcp_write(&sock, )) < 0) {
+    int res;
+    if (len && ((res = sock_tcp_write(sock, cmd, len)) < 0)) {
         puts("Errored on write");
+        return -1;
     }
     else {
-        if ((res = sock_tcp_read(&sock, buf, sizeof(buf),
-                                 SOCK_NO_TIMEOUT)) < 0) {
+        if ((res = sock_tcp_write(sock, "\n", sizeof("\n"))) < 0) {
+            puts("Errored on write");
+            return -1;
+        }
+        if ((res = sock_tcp_read(sock, buf, sizeof(buf), SOCK_NO_TIMEOUT)) < 0) {
             puts("Disconnected");
         }
-        printf("Read: \"");
-        for (int i = 0; i < res; i++) {
-            printf("%c", buf[i]);
-        }
-        puts("\"");
     }
 
     return 0;

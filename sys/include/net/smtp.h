@@ -27,15 +27,15 @@
 #   define SMTP_MAX_USERS  (3)
 #endif
 
-#ifndef SMTP_DEFAULT_HOSTNAME
-#   define SMTP_DEFAULT_HOSTNAME "node.riot-os.org"
+#ifndef SMTP_HOSTNAME
+#   define SMTP_HOSTNAME "node.riot-os.org"
 #endif
 
 #ifndef SMTP_DEFAULT_USER
 #   define SMTP_DEFAULT_USER "ritos"
 #endif
 
-#define SMTP_DEFAULT_PORT   (25)
+#define SMTP_DEFAULT_PORT   (12345)
 
 /**
  * @brief The default MX relay
@@ -52,7 +52,6 @@ extern sock_tcp_ep_t smtp_mx_relay;
  */
 typedef void(*smtp_cb_t)(const char *subject, size_t slen, char *message,
                          size_t mlen);
-
 /**
  * @brief   Initializes and start a local SMTP server
  *

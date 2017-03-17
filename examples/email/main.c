@@ -86,7 +86,7 @@ static int cmd_sendmail(int argc, char **argv)
     if (argc < 3) {
         return -EINVAL;
     }
-    printf("Sending mail to %s,\n, subject is %s\n", argv[1], argv[2]);
+    printf("Sending mail to %s,\nsubject is %s\n", argv[1], argv[2]);
     puts("Please enter message text and enter with an empty line.");
     int cnt = 0;
     char *buf = mail_buf;
