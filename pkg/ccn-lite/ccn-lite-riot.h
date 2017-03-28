@@ -28,6 +28,7 @@
 #include "ccnl-defs.h"
 #include "ccnl-core.h"
 #include "ccnl-headers.h"
+#include "ccnl-utils.h"
 #include "net/gnrc/netreg.h"
 
 #ifdef __cplusplus
@@ -39,19 +40,6 @@ extern "C" {
  */
 #define LOG_LEVEL LOG_DEBUG
 #include "log.h"
-
-/**
- * @name Dynamic memory allocation used in CCN-Lite
- *
- * @{
- */
-#define ccnl_malloc(s)                  malloc(s)
-#define ccnl_calloc(n,s)                calloc(n,s)
-#define ccnl_realloc(p,s)               realloc(p,s)
-#define ccnl_free(p)                    free(p)
-/**
- * @}
- */
 
 /**
  * Closing an interface or socket from CCN-Lite
