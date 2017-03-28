@@ -1,6 +1,6 @@
 PKG_NAME=ccn-lite
 PKG_URL=https://github.com/OlegHahm/ccn-lite/
-PKG_VERSION=caching
+PKG_VERSION=7b3a12a8c1f8449f62b5d722eb804c8fd91baa3
 
 .PHONY: all
 
