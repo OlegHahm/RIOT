@@ -184,27 +184,6 @@ typedef struct {
     size_t buflen;
 } ccnl_interest_t;
 
-typedef struct {
-    struct ccnl_prefix_s *prefix;
-    unsigned char *buf;
-    size_t buflen;
-} ccnl_interest_t;
-
-
-/**
- * Maximum string length for prefix representation
- */
-#define CCNL_PREFIX_BUFSIZE     (50)
-
-/**
- * Message type for signalling a timeout while waiting for a content chunk
- */
-#define CCNL_MSG_TIMEOUT        (0x1701)
-
-/**
- * Message type for advancing the ageing timer
- */
-#define CCNL_MSG_AGEING         (0x1702)
 
 /**
  * Maximum number of elements that can be cached
