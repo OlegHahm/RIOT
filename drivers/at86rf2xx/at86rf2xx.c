@@ -116,7 +116,7 @@ void at86rf2xx_reset(at86rf2xx_t *dev)
     at86rf2xx_reg_read(dev, AT86RF2XX_REG__IRQ_STATUS);
 
     /* go into RX state */
-    at86rf2xx_set_state(dev, AT86RF2XX_STATE_RX_AACK_ON);
+    at86rf2xx_set_state(dev, AT86RF2XX_STATE_RX_ON);
 
     DEBUG("at86rf2xx_reset(): reset complete.\n");
 }
@@ -143,15 +143,12 @@ void at86rf2xx_tx_prepare(at86rf2xx_t *dev)
     /* make sure ongoing transmissions are finished */
     do {
         state = at86rf2xx_get_status(dev);
-    } while (state == AT86RF2XX_STATE_BUSY_RX_AACK ||
-             state == AT86RF2XX_STATE_BUSY_TX_ARET);
-
-    if (state != AT86RF2XX_STATE_TX_ARET_ON) {
+    } while (state == AT86RF2XX_STATE_BUSY_RX ||
+             state == AT86RF2XX_STATE_BUSY_TX);
+    if (state != AT86RF2XX_STATE_PLL_ON) {
         dev->idle_state = state;
     }
-
-    at86rf2xx_set_state(dev, AT86RF2XX_STATE_TX_ARET_ON);
-
+    at86rf2xx_set_state(dev, AT86RF2XX_STATE_PLL_ON);
     dev->tx_frame_len = IEEE802154_FCS_LEN;
 }
 

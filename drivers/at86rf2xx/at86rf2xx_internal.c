@@ -112,8 +112,9 @@ void at86rf2xx_fb_stop(const at86rf2xx_t *dev)
 uint8_t at86rf2xx_get_status(const at86rf2xx_t *dev)
 {
     /* if sleeping immediately return state */
-    if(dev->state == AT86RF2XX_STATE_SLEEP)
+    if(dev->state == AT86RF2XX_STATE_SLEEP) {
         return dev->state;
+    }
 
     return at86rf2xx_reg_read(dev, AT86RF2XX_REG__TRX_STATUS)
                 & AT86RF2XX_TRX_STATUS_MASK__TRX_STATUS;
