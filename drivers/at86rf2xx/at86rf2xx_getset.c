@@ -432,14 +432,7 @@ static inline void _set_state(at86rf2xx_t *dev, uint8_t state, uint8_t cmd)
 {
     at86rf2xx_reg_write(dev, AT86RF2XX_REG__TRX_STATE, cmd);
 
-    /* To prevent a possible race condition when changing to
-     * RX_AACK_ON state the state doesn't get read back in that
-     * case. See discussion
-     * in https://github.com/RIOT-OS/RIOT/pull/5244
-     */
-    if (state != AT86RF2XX_STATE_RX_AACK_ON) {
-        while (at86rf2xx_get_status(dev) != state) {}
-    }
+    while (at86rf2xx_get_status(dev) != state) {}
 
     dev->state = state;
 }
@@ -465,13 +458,6 @@ uint8_t at86rf2xx_set_state(at86rf2xx_t *dev, uint8_t state)
         return old_state;
     }
 
-    /* we need to go via PLL_ON if we are moving between RX_AACK_ON <-> TX_ARET_ON */
-    if ((old_state == AT86RF2XX_STATE_RX &&
-             state == AT86RF2XX_STATE_TX) ||
-        (old_state == AT86RF2XX_STATE_TX &&
-             state == AT86RF2XX_STATE_RX)) {
-        _set_state(dev, AT86RF2XX_STATE_PLL_ON, AT86RF2XX_STATE_PLL_ON);
-    }
     /* check if we need to wake up from sleep mode */
     if (old_state == AT86RF2XX_STATE_SLEEP) {
         DEBUG("at86rf2xx: waking up from sleep mode\n");
