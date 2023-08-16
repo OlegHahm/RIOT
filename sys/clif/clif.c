@@ -129,7 +129,7 @@ ssize_t clif_add_target_from_buffer(const char *target, size_t target_len, char 
     assert(target);
 
     size_t pos = 0;
-    DEBUG("Adding target: %.*s, len: %d\n", target_len, target, target_len);
+    DEBUG("Adding target: %.*s, len: %u\n", (unsigned)target_len, target, (unsigned)target_len);
 
     if (!buf) {
         return target_len + 2; /* size after adding '<' and '>' */
