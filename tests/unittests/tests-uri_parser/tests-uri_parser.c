@@ -56,9 +56,9 @@ static int _compare_string_buffer(const char *name, const char *input_uri, const
         (strncmp(actual_str, expected_str, actual_len) == 0)) {
         return 0;
     }
-    printf(
-        "\nWith given input uri '%s', expected %s '%s' with length '%d' but got '%.*s' with length '%d'\n",
-        input_uri, name, expected_str, strlen(expected_str), actual_len, actual_str, actual_len);
+    printf("\nWith given input uri '%s', expected %s '%s' with length '%d' but got '%.*s' with "
+           "length '%d'\n", input_uri, name, expected_str, (unsigned)strlen(expected_str),
+           (unsigned)actual_len, actual_str, (unsigned)actual_len);
     return -1;
 }
 
@@ -316,9 +316,9 @@ static void _result_component_scheme_matches_input_scheme(void)
              * we can't use strlen on the result scheme as it is not null terminated,
              * but the uri_parser provides the length separately*/
             if (uri_res.scheme_len != strlen(test_vec[i]->scheme)) {
-                printf(
-                    "With given input uri '%s', expected a scheme with the length '%d' but got '%d'\n",
-                    test_vec[i]->input_uri, strlen(test_vec[i]->scheme), uri_res.scheme_len);
+                printf("With given input uri '%s', expected a scheme with the length '%d'"
+                       " but got '%d'\n", test_vec[i]->input_uri,
+                       (unsigned)strlen(test_vec[i]->scheme), uri_res.scheme_len);
                 TEST_FAIL(failure_msg);
             }
             else {

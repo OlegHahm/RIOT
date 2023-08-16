@@ -87,7 +87,7 @@ static int print_shell_bufsize(int argc, char **argv)
 {
     (void)argc;
     (void)argv;
-    printf("%d\n", sizeof(line_buf));
+    printf("%u\n", (unsigned)sizeof(line_buf));
 
     return 0;
 }
