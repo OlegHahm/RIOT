@@ -330,7 +330,7 @@ static inline void _print_download_progress(suit_manifest_t *manifest,
     (void)manifest;
     (void)offset;
     (void)len;
-    DEBUG("_suit_flashwrite(): writing %u bytes at pos %u\n", len, offset);
+    DEBUG("_suit_flashwrite(): writing %u bytes at pos %u\n", (unsigned)len, (unsigned)offset);
 #if defined(MODULE_PROGRESS_BAR)
     if (image_size != 0) {
         char _suffix[7] = { 0 };
