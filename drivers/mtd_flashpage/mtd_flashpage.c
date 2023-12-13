@@ -35,7 +35,7 @@
 #define ENABLE_DEBUG 0
 #include "debug.h"
 
-#define MTD_FLASHPAGE_END_ADDR     ((uint32_t) CPU_FLASH_BASE + (FLASHPAGE_NUMOF * FLASHPAGE_SIZE))
+#define MTD_FLASHPAGE_END_ADDR     ((uintptr_t) CPU_FLASH_BASE + (FLASHPAGE_NUMOF * FLASHPAGE_SIZE))
 
 static int _init(mtd_dev_t *dev)
 {
@@ -44,7 +44,10 @@ static int _init(mtd_dev_t *dev)
     assert(dev->pages_per_sector * dev->page_size == FLASHPAGE_SIZE);
     assert(!(super->offset % dev->pages_per_sector));
 
+    /* Avoid '>= 0 is always true' warning */
+#if CPU_FLASH_BASE != 0
     assert((uintptr_t)flashpage_addr(super->offset / dev->pages_per_sector) >= CPU_FLASH_BASE);
+#endif
     assert((uintptr_t)flashpage_addr(super->offset / dev->pages_per_sector)
            + dev->pages_per_sector * dev->page_size * dev->sector_count <= MTD_FLASHPAGE_END_ADDR);
     assert((uintptr_t)flashpage_addr(super->offset / dev->pages_per_sector)
