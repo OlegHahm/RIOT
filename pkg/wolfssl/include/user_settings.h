@@ -32,6 +32,7 @@ extern "C" {
 /* GNRC support enabled if not
  * using sockets
  */
+
 #ifndef MODULE_WOLFSSL_SOCKET
 #ifndef WOLFSSL_NO_SOCK
 #define WOLFSSL_NO_SOCK
@@ -183,9 +184,15 @@ int strncasecmp(const char *s1, const char * s2, size_t sz);
 #define HAVE_ECC
 #define FP_ECC
 #define WOLFSSL_HAVE_SP_ECC
-#define WOLFSSL_HAVE_SP_ECC
 #define ECC_TIMING_RESISTANT
 #define HAVE_SUPPORTED_CURVES
+
+//meins
+#define HAVE_EXTENDED_MASTER
+#define HAVE_AESCCM
+#define HAVE_RPK
+#undef HAVE_SHA256
+#define HAVE_SECURE_RENEGOTIATION
 #endif
 
 #undef HAVE_BLAKE2B
@@ -225,7 +232,21 @@ int strncasecmp(const char *s1, const char * s2, size_t sz);
 
 #undef WOLFSSL_STATIC_PSK
 #ifdef MODULE_WOLFSSL_PSK
+
+#define HAVE_AESCCM
+#define HAVE_EXTENDED_MASTER
+#define HAVE_SECURE_RENEGOTIATION
 #define WOLFSSL_STATIC_PSK
+
+#if CONFIG_DTLS_FORCE_EXTENDED_MASTER_SECRET == 1
+    #define REQUIRE_EXTENDED_MASTER
+#endif
+
+#if CONFIG_DTLS_FORCE_RENEGOTIATION_INFO == 1
+    #define REQUIRE_SECURE_RENEGOTIATION
+#endif
+
+
 #endif
 
 #undef HAVE_LIBZ
